@@ -1,7 +1,7 @@
+import ChipCarousel from './ChipCarousel';
 import { BetAmountInput } from '../../common/components/BetAmountInput';
 import { BetButton } from '../../common/components/BettingControls';
 import useRouletteStore from '../store/rouletteStore';
-import ChipCarousel from './ChipCarousel';
 
 interface BettingControlsProps {
   betButtonText?: string;

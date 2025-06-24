@@ -9,7 +9,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
+
+import { Button } from './button';
 import {
   Table as TableUI,
   TableBody,
@@ -18,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from './table';
-import { Button } from './button';
 
 interface CommonDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,7 +33,8 @@ interface CommonDataTableProps<TData, TValue> {
 
 // Type declaration to extend ColumnDef with our custom meta properties
 declare module '@tanstack/react-table' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
+  //Used to add custom properties to the column definition
   interface ColumnMeta<TData, TValue> {
     alignment?: 'left' | 'right' | 'center';
   }

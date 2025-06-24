@@ -1,12 +1,14 @@
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { BadgeDollarSignIcon } from 'lucide-react';
-import { Games } from '@/const/games';
+import { useState } from 'react';
+
 import { playRound } from '@/api/games/mines';
-import GameSettingsBar from '../common/components/game-settings';
+import { Games } from '@/const/games';
+
+import ActiveGameTile from './components/ActiveGameTile';
 import BettingControls from './components/BettingControls';
-import useMinesStore from './store/minesStore';
+import InactiveGameTile from './components/InactiveGameTile';
 import {
   useIsGameActive,
   useIsGameLost,
@@ -17,8 +19,8 @@ import {
   useSelectedTiles,
   useTotalPayout,
 } from './store/minesSelectors';
-import ActiveGameTile from './components/ActiveGameTile';
-import InactiveGameTile from './components/InactiveGameTile';
+import useMinesStore from './store/minesStore';
+import GameSettingsBar from '../common/components/game-settings';
 
 export function Mines(): JSX.Element {
   const { setGameState, gameState } = useMinesStore();

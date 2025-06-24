@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
 import { SiGoogle } from '@icons-pack/react-simple-icons';
+import { useEffect } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,7 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { BASE_API_URL } from '@/const/routes';
+
 import { useAuthStore } from '../store/authStore';
+
 
 export function LoginModal(): JSX.Element {
   const { user, isModalOpen, hideLoginModal } = useAuthStore();
@@ -18,7 +22,7 @@ export function LoginModal(): JSX.Element {
     localStorage.setItem('auth_redirect', currentUrl);
 
     // Redirect to Google OAuth endpoint
-    window.location.href = 'http://localhost:5000/api/v1/auth/google';
+    window.location.href = `${BASE_API_URL}/api/v1/auth/google`;
   };
 
   // Close the modal when user becomes authenticated

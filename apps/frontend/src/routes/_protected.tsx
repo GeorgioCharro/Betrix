@@ -1,8 +1,9 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { QueryClient } from '@tanstack/react-query';
-import { getAuthState } from '@/features/auth/store/authStore';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+
 import { getUserDetails } from '@/api/auth';
 import { Header } from '@/components/Header';
+import { getAuthState } from '@/features/auth/store/authStore';
 
 export const Route = createFileRoute('/_protected')({
   async beforeLoad({ context }) {

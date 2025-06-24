@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Roulette } from '@/features/games/roulette';
-import { Mines } from '@/features/games/mines';
-import { Plinkoo } from '@/features/games/plinkoo';
+
+import Blackjack from '@/features/games/blackjack';
 import { DiceGame } from '@/features/games/dice';
 import { Keno } from '@/features/games/keno';
-import Blackjack from '@/features/games/blackjack';
+import { Mines } from '@/features/games/mines';
+import { Plinkoo } from '@/features/games/plinkoo';
+import { Roulette } from '@/features/games/roulette';
 
 export const Route = createFileRoute('/_protected/casino/games/$gameId')({
   component: GamePage,

@@ -1,4 +1,5 @@
 import type { MinesRound } from '@repo/common/game-utils/mines/types.js';
+
 import useMinesStore from './minesStore';
 
 export const useIsGameActive = (): boolean =>

@@ -8,12 +8,13 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import { StatusCodes } from 'http-status-codes';
-import { authRouter, gameRouter, userRouter } from './routes';
+import { authRouter, gameRouter } from './routes';
+import { initGraphQL } from './graphql';
 import './config/passport';
 import notFoundMiddleware from './middlewares/not-found';
 import { errorHandlerMiddleware } from './middlewares/error-handler';
 
-export const createServer = (): Express => {
+export const createServer = async (): Promise<Express> => {
   const app = express();
   app
     .disable('x-powered-by')
@@ -39,13 +40,16 @@ export const createServer = (): Express => {
       })
     )
     .use(passport.initialize())
-    .use(passport.session())
+    .use(passport.session());
+
+  await initGraphQL(app);
+
+  app
     .get('/health', (_, res) => {
       return res.status(StatusCodes.OK).json({ ok: true });
     })
     .use('/api/v1/auth', authRouter)
-    .use('/api/v1/games', gameRouter)
-    .use('/api/v1/user', userRouter);
+    .use('/api/v1/games', gameRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);

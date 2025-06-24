@@ -1,10 +1,11 @@
-import * as React from 'react';
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import type { AuthState } from '@/features/auth/store/authStore';
-import { useAuthStore } from '@/features/auth/store/authStore';
+import * as React from 'react';
+
 import { setupInterceptors } from '@/api/_utils/axiosInstance';
 import { LoginModal } from '@/features/auth/components/LoginModal';
+import type { AuthState } from '@/features/auth/store/authStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface RouterContext {
   authStore: AuthState | undefined;
@@ -26,6 +27,13 @@ function RootLayout(): JSX.Element {
       },
     });
   }, [setUser, showLoginModal]);
+  React.useEffect(() => {
+    const redirectUrl = localStorage.getItem('auth_redirect');
+    if (redirectUrl) {
+      localStorage.removeItem('auth_redirect');
+      window.location.href = redirectUrl;
+    }
+  }, []);
 
   return (
     <>

@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+
 import { startGame, getActiveGame, cashOut } from '@/api/games/mines';
+import InputWithIcon from '@/common/forms/components/input-with-icon';
+import { Button } from '@/components/ui/button';
 import CommonSelect from '@/components/ui/common-select';
 import { Label } from '@/components/ui/label';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { BetButton } from '../../common/components/BettingControls';
+
 import { BetAmountInput } from '../../common/components/BetAmountInput';
-import useMinesStore from '../store/minesStore';
+import { BetButton } from '../../common/components/BettingControls';
 import { useIsGameActive, useLastRound } from '../store/minesSelectors';
+import useMinesStore from '../store/minesStore';
 
 function BettingControls(): JSX.Element {
   const { betAmount, setBetAmount, minesCount, setMinesCount, setGameState } =

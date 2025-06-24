@@ -1,8 +1,8 @@
-import ZeroBet from './ZeroBet';
-import NumberBet from './NumberBet';
+import BottomBets from './BottomBets';
 import ColumnBet from './ColumnBet';
 import DozenBet from './DozenBet';
-import BottomBets from './BottomBets';
+import NumberBet from './NumberBet';
+import ZeroBet from './ZeroBet';
 
 function RouletteTable(): JSX.Element {
   return (

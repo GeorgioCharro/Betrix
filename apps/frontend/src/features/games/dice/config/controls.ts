@@ -1,5 +1,6 @@
-import { Percent, RefreshCw, XIcon } from 'lucide-react';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
+import { Percent, RefreshCw, XIcon } from 'lucide-react';
+
 import type { DiceStore } from '../store/diceStore';
 
 export interface BaseControl {

@@ -1,16 +1,20 @@
-import type { ApiResponse } from '@repo/common/types';
-import { fetchGet } from './_utils/fetch';
 
-interface BalanceResponse {
-  balance: number;
-}
+import { gql } from '@apollo/client';
+
+import { graphqlClient } from './graphql/client';
+
+
+
+const BALANCE_QUERY = gql`
+  query Balance {
+    balance
+  }
+`;
 
 export const getBalance = async (): Promise<number> => {
-  const { data } = await fetchGet<Promise<ApiResponse<BalanceResponse>>>(
-    '/api/v1/user/balance',
-    {
-      withCredentials: true,
-    }
-  );
+  const { data } = await graphqlClient.query<{ balance: number }>({
+    query: BALANCE_QUERY,
+    fetchPolicy: 'no-cache',
+  });
   return data.balance;
 };

@@ -1,4 +1,5 @@
 import { Users, Coins, TrendingUp, Timer } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
 
 const stats = [

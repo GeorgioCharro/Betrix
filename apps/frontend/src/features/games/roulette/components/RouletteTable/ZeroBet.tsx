@@ -1,18 +1,20 @@
-import { useRef } from 'react';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import { sum } from 'lodash';
 import { motion } from 'motion/react';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
+import { useRef } from 'react';
+
 import { cn } from '@/lib/utils';
+
+import DroppableArea from './DroppableArea';
+import { useRouletteContext } from '../../context/RouletteContext';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
-import { getIsNumberHover } from '../../utils/hover';
 import useRouletteStore from '../../store/rouletteStore';
-import Chip from '../Chip';
 import {
   useWinningNumber,
   useBetKey,
 } from '../../store/rouletteStoreSelectors';
-import { useRouletteContext } from '../../context/RouletteContext';
-import DroppableArea from './DroppableArea';
+import { getIsNumberHover } from '../../utils/hover';
+import Chip from '../Chip';
 
 function ZeroBet(): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();

@@ -1,4 +1,5 @@
 import type { DicePlaceBetResponse } from '@repo/common/game-utils/dice/types.js';
+
 import { cn } from '@/lib/utils';
 
 interface DiceResultPillsCarouselProps {

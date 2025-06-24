@@ -1,13 +1,14 @@
-import type { UseMutateFunction } from '@tanstack/react-query';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   DicePlaceBetRequestBody,
   DicePlaceBetResponse,
 } from '@repo/common/game-utils/dice/types.js';
 import type { ApiResponse } from '@repo/common/types';
+import type { UseMutateFunction } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { placeBet } from '@/api/games/dice';
-import { useAudio } from '@/common/hooks/useAudio';
 import win from '@/assets/audio/win.mp3';
+import { useAudio } from '@/common/hooks/use-audio';
 
 interface UseDiceBettingProps {
   setResult: (result: DicePlaceBetResponse) => void;

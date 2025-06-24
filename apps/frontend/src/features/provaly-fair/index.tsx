@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from '@tanstack/react-router';
 import { ScaleIcon } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 const provablyFairRoutes = [

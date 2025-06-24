@@ -1,19 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
-import React, { Fragment, useMemo } from 'react';
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
 import {
   calculateMines,
   convertFloatsToGameEvents,
 } from '@repo/common/game-utils/mines/utils.js';
-import { HashLoader } from 'react-spinners';
+import { useQuery } from '@tanstack/react-query';
 import { chunk } from 'lodash';
+import React, { Fragment, useMemo } from 'react';
+import { HashLoader } from 'react-spinners';
+
+import { Label } from '@/components/ui/label';
 import {
   byteGenerator,
   getFisherYatesShuffle,
   getGeneratedFloats,
 } from '@/lib/crypto';
 import { cn } from '@/lib/utils';
-import { Label } from '@/components/ui/label';
 
 const generateUniqueId = (
   prefix: string,

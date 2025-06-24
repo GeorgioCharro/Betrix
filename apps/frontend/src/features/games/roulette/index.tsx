@@ -1,20 +1,22 @@
-import { sum } from 'lodash';
 import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
 import { validateBets } from '@repo/common/game-utils/roulette/validations.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { sum } from 'lodash';
 import { BadgeDollarSignIcon, RefreshCcwIcon, Undo2Icon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { placeBet } from '@/api/games/roulette';
+
 import { getBalance } from '@/api/balance';
+import { placeBet } from '@/api/games/roulette';
+import { Button } from '@/components/ui/button';
 import { Games } from '@/const/games';
-import GameSettingsBar from '../common/components/game-settings';
+
 import BettingControls from './components/BettingControls';
 import RouletteTable from './components/RouletteTable';
 import RouletteWheel from './components/RouletteWheel';
-import useRouletteStore from './store/rouletteStore';
-import { parseBetId } from './utils/helpers';
 import { RouletteProvider } from './context/RouletteContext';
+import useRouletteStore from './store/rouletteStore';
 import { useWinningNumber } from './store/rouletteStoreSelectors';
+import { parseBetId } from './utils/helpers';
+import GameSettingsBar from '../common/components/game-settings';
 
 export function Roulette({
   isPreview = false,

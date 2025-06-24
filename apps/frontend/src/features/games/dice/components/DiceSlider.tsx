@@ -1,5 +1,6 @@
 import { Slider as ResultSlider } from '@/components/ui/dice-result-slider';
 import { Slider } from '@/components/ui/dice-slider';
+
 import useDiceStore from '../store/diceStore';
 
 interface DiceSliderProps {

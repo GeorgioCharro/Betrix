@@ -1,11 +1,13 @@
 import { SiGoogle } from '@icons-pack/react-simple-icons';
+
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { BASE_API_URL } from '@/const/routes';
 
 export default function Login(): JSX.Element {
   const handleGoogleLogin = (): void => {
-    window.location.href = 'http://localhost:5000/api/v1/auth/google';
+    window.location.href = `${BASE_API_URL}/api/v1/auth/google`;
   };
 
   return (

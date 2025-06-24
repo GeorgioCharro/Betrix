@@ -5,19 +5,31 @@ module.exports = {
   parserOptions: {
     project: true,
   },
-  ignorePatterns: ['tailwind.config.js'],
+  ignorePatterns: ['tailwind.config.js', '../../api/**/*'],
   rules: {
-    'unicorn/filename-case': [
-      'error',
+    'import/order': [
+      'warn',
       {
-        cases: {
-          kebabCase: true,
-          pascalCase: true,
-          camelCase: true,
+        groups: [
+          'builtin', // Node "fs", "path"
+          'external', // NPM packages
+          'internal', // Aliased imports (like "@/components")
+          ['parent', 'sibling', 'index'], // Relative paths
+        ],
+        pathGroups: [
+          {
+            pattern: '@/**',
+            group: 'internal',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
         },
-        ignore: ['FeaturedGames.tsx'],
+        'newlines-between': 'always',
       },
     ],
-    'eslint-comments/require-description': 'off',
+    'unicorn/filename-case': 'off', // ✅ disabled filename casing rule
   },
 };

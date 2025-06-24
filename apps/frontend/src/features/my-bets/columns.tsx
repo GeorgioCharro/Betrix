@@ -1,8 +1,9 @@
 import type { PaginatedBetData } from '@repo/common/types';
-import type { ColumnDef } from '@tanstack/react-table';
-import { BadgeDollarSign, ListChecksIcon } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import type { ColumnDef } from '@tanstack/react-table';
 import { format, isValid } from 'date-fns';
+import { BadgeDollarSign, ListChecksIcon } from 'lucide-react';
+
 import { GAME_VALUES_MAPPING } from '@/const/games';
 import { cn } from '@/lib/utils';
 

@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { NotepadTextIcon } from 'lucide-react';
 import { useState } from 'react';
+
 import { fetchUserBetHistory } from '@/api/user';
 import { CommonDataTable } from '@/components/ui/common-data-table';
+
 import { columns } from './columns';
 
 function MyBets(): JSX.Element {

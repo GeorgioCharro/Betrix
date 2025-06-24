@@ -1,10 +1,11 @@
 const HOUSE_EDGE = 0.99;
 
-export const getResult = () => {
+export const getResult = (_clientSeed: string) => {
   // const floats = rng.generateFloats({
   //   clientSeed,
   //   count: 1,
   // });
+  // TODO: Replace with actual RNG logic
   const floats = [2];
   const floatPoint = (1e8 / (floats[0] * 1e8 + 1)) * HOUSE_EDGE;
 

@@ -1,9 +1,10 @@
-import { Fragment, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { HashLoader } from 'react-spinners';
 import { calculateFinalOutcome } from '@repo/common/game-utils/dice/utils.js';
-import { getGeneratedFloats, byteGenerator } from '@/lib/crypto';
+import { useQuery } from '@tanstack/react-query';
+import { Fragment, useMemo } from 'react';
+import { HashLoader } from 'react-spinners';
+
 import { Label } from '@/components/ui/label';
+import { getGeneratedFloats, byteGenerator } from '@/lib/crypto';
 import { cn } from '@/lib/utils';
 // Simple function to
 //  generate a stable unique ID without using array indices

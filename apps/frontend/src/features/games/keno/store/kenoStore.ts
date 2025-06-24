@@ -1,8 +1,8 @@
-import { create } from 'zustand';
 import type {
   KenoResponse,
   KenoRisk,
 } from '@repo/common/game-utils/keno/types.js';
+import { create } from 'zustand';
 
 interface KenoStore {
   betAmount: number;

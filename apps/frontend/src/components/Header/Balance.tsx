@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { BadgeDollarSign } from 'lucide-react';
+
 import { getBalance } from '@/api/balance';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import InputWithIcon from '@/common/forms/components/input-with-icon';
 
 export function Balance(): JSX.Element {
   const { data: balance } = useQuery({

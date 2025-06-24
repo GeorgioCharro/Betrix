@@ -1,14 +1,16 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
 import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
-import CommonSelect from '@/components/ui/common-select';
-import { Button } from '@/components/ui/button';
+import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { placeBet } from '@/api/games/keno';
-import { BetButton } from '../../common/components/BettingControls';
+import { Button } from '@/components/ui/button';
+import CommonSelect from '@/components/ui/common-select';
+
 import { BetAmountInput } from '../../common/components/BetAmountInput';
-import useKenoStore from '../store/kenoStore';
+import { BetButton } from '../../common/components/BettingControls';
 import { KenoRiskDropdown } from '../const';
 import { useSelectedTiles } from '../store/kenoSelectors';
+import useKenoStore from '../store/kenoStore';
 
 function BettingControls(): JSX.Element {
   const {

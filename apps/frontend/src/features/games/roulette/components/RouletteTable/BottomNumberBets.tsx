@@ -1,16 +1,18 @@
-import { useMemo } from 'react';
+import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import sum from 'lodash/sum';
 import { motion } from 'motion/react';
-import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
+import { useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
+
+import { useRouletteContext } from '../../context/RouletteContext';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
-import Chip from '../Chip';
 import {
   useWinningNumber,
   useBetKey,
 } from '../../store/rouletteStoreSelectors';
-import { useRouletteContext } from '../../context/RouletteContext';
+import Chip from '../Chip';
 
 function BottomNumberBets({
   action,

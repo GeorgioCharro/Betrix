@@ -1,9 +1,10 @@
-import { CopyIcon } from 'lucide-react';
 import type { ProvablyFairStateResponse } from '@repo/common/types';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import { CopyIcon } from 'lucide-react';
+
+import InputWithIcon from '@/common/forms/components/input-with-icon';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
 function ActiveSeeds({
   activeSeeds,

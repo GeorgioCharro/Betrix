@@ -1,7 +1,8 @@
-import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import { Tally3 } from 'lucide-react';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
+import { Tally3 } from 'lucide-react';
+import * as React from 'react';
+
 import { cn } from '@/lib/utils';
 
 const Slider = React.forwardRef<

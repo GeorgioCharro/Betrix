@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
 import { BadgeDollarSignIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { formatCompactNumber, getYellowToRedColor } from '@/lib/formatters';
+import { useMemo } from 'react';
+
 import CommonTooltip from '@/components/ui/common-tooltip';
+import { formatCompactNumber, getYellowToRedColor } from '@/lib/formatters';
+import { cn } from '@/lib/utils';
 
 interface ChipProps {
   size?: number;

@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Games, GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
+
 import CommonSelect from '@/components/ui/common-select';
+import { Games, GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
+
 import type { VerificationInputsState } from '../games/common/components/fairness-modal/VerificationInputs';
 import VerificationInputs from '../games/common/components/fairness-modal/VerificationInputs';
 import VerificationResult from '../games/common/components/fairness-modal/VerificationResult';
 import DiceResultBreakdown from '../games/dice/components/DiceResultBreakdown';
-import RouletteResultBreakdown from '../games/roulette/components/RouletteResultBreakdown';
-import MinesResultBreakdown from '../games/mines/components/MinesResultBreakdown';
 import KenoResultBreakdown from '../games/keno/components/KenoResultBreakdown';
+import MinesResultBreakdown from '../games/mines/components/MinesResultBreakdown';
+import RouletteResultBreakdown from '../games/roulette/components/RouletteResultBreakdown';
 
 function ProvablyFairCalculation(): JSX.Element {
   const [outcome, setOutcome] = useState<string | number[] | null>(null);

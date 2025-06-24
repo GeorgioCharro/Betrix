@@ -1,4 +1,5 @@
 import axios, { type AxiosRequestConfig } from 'axios';
+
 import { BASE_API_URL } from '@/const/routes';
 
 export const fetchGet = async <R>(

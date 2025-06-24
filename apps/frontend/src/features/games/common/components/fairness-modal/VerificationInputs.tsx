@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
-import { Label } from '@/components/ui/label';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import { cn } from '@/lib/utils';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Button } from '@/components/ui/button';
+import CommonSelect from '@/components/ui/common-select';
+import { Label } from '@/components/ui/label';
+import { Games, type Game } from '@/const/games';
+import { cn } from '@/lib/utils';
 import type { GameMeta } from '@/lib/verificationOutcomes';
 import { getVerificationOutcome } from '@/lib/verificationOutcomes';
-import { Games, type Game } from '@/const/games';
-import CommonSelect from '@/components/ui/common-select';
 
 export interface VerificationInputsState {
   clientSeed: string;

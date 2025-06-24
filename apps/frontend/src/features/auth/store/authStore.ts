@@ -1,5 +1,6 @@
 import type { IUser } from '@repo/common/types';
 import { create } from 'zustand';
+
 import { getStoredUser, setStoredUser } from '../utils/storage';
 
 export interface AuthState {

@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
 import { sum } from 'lodash';
-import { getBetTypeSelectionId } from '../../utils/helpers';
-import useRouletteStore from '../../store/rouletteStore';
-import Chip from '../Chip';
-import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
+import { useEffect, useState } from 'react';
+
 import { useRouletteContext } from '../../context/RouletteContext';
+import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
+import useRouletteStore from '../../store/rouletteStore';
+import { getBetTypeSelectionId } from '../../utils/helpers';
+import Chip from '../Chip';
 
 interface PositionValues {
   top: string | number;

@@ -1,15 +1,16 @@
-import useDiceStore from '@/features/games/dice/store/diceStore';
 import { Games } from '@/const/games';
-import { BettingControls } from '../common/components/BettingControls';
-import GameSettingsBar from '../common/components/game-settings';
+import useDiceStore from '@/features/games/dice/store/diceStore';
+
+import { DiceGameControls } from './components/DiceGameControls';
 import { DiceResultPillsCarousel } from './components/DiceResultPillsCarousel';
-import { useDiceAudio } from './hooks/useDiceAudio';
+import DiceSlider from './components/DiceSlider';
+import { diceGameControls } from './config/controls';
 import { useDiceBetting } from './hooks/useBetting';
+import { useDiceAudio } from './hooks/useDiceAudio';
 import { useResultSlider } from './hooks/useResultSlider';
 import { useSliderValue } from './hooks/useSliderValue';
-import DiceSlider from './components/DiceSlider';
-import { DiceGameControls } from './components/DiceGameControls';
-import { diceGameControls } from './config/controls';
+import { BettingControls } from '../common/components/BettingControls';
+import GameSettingsBar from '../common/components/game-settings';
 
 export function DiceGame(): JSX.Element {
   const diceState = useDiceStore();

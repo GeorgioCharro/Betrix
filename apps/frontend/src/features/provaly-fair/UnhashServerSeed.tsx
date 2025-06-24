@@ -1,11 +1,12 @@
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { AlertCircleIcon } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+
 import { fetchRevealedServerSeed } from '@/api/user';
+import InputWithIcon from '@/common/forms/components/input-with-icon';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 function UnhashServerSeed(): JSX.Element {
   const [hashedServerSeed, setHashedServerSeed] = useState<string>('');

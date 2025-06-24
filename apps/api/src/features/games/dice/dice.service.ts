@@ -4,6 +4,15 @@ import {
 } from '@repo/common/game-utils/dice/index.js';
 import type { UserInstance } from '../../user/user.service';
 
+export interface DiceBetResult {
+  state: {
+    target: number;
+    condition: DiceCondition;
+    result: number;
+  };
+  payoutMultiplier: number;
+}
+
 const getPayoutMultiplier = ({
   condition,
   target,
@@ -32,7 +41,7 @@ export const getResult = ({
   target: number;
   condition: DiceCondition;
   userInstance: UserInstance;
-}) => {
+}): DiceBetResult => {
   const [float] = userInstance.generateFloats(1);
   const result = (float * 10001) / 100; // 0.00 to 100.00
 

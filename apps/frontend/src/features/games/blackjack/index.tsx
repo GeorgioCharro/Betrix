@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { Games } from '@/const/games';
-import GameSettingsBar from '../common/components/game-settings';
+
 import BettingControls from './components/BettingControls';
+import GameSettingsBar from '../common/components/game-settings';
 
 export default function Blackjack(): JSX.Element {
   return (

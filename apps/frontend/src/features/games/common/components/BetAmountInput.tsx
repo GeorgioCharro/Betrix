@@ -1,9 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { BadgeDollarSign } from 'lucide-react';
+
+import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Label } from '@/components/ui/label';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import type { BettingControlsProps } from './BettingControls';
+
 import { BetAmountButton } from './BetAmountButton';
+import type { BettingControlsProps } from './BettingControls';
 
 export function BetAmountInput({
   betAmount,

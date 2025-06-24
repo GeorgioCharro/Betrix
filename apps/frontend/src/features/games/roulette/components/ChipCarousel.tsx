@@ -1,10 +1,12 @@
-import { useRef, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRef, useEffect } from 'react';
+
 import { Label } from '@/components/ui/label';
-import useRouletteStore from '../store/rouletteStore';
+
+import Chip from './Chip';
 import ScrollNextButton from './ScrollNextButton';
 import ScrollPrevButton from './ScrollPrevButton';
-import Chip from './Chip';
+import useRouletteStore from '../store/rouletteStore';
 
 function ChipCarousel(): JSX.Element {
   const scrollContainerRef = useRef<HTMLDivElement>(null);

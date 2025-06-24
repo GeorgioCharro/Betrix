@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ProvablyFairStateResponse } from '@repo/common/types';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+
 import { fetchActiveSeeds, fetchRotateSeedPair } from '@/api/user';
+
 import ActiveSeeds from './ActiveSeeds';
 import RotateSeedPair from './RotateSeedPair';
 

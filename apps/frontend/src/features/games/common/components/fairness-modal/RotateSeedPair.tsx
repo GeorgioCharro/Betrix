@@ -1,11 +1,12 @@
 import type { ProvablyFairStateResponse } from '@repo/common/types';
-import { useState } from 'react';
 import { CopyIcon } from 'lucide-react';
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { useState } from 'react';
+
+import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { generateRandomString } from '@/lib/crypto';
+import { cn } from '@/lib/utils';
 
 interface RotateSeedPairProps {
   rotateSeedPair: (clientSeed: string) => void;

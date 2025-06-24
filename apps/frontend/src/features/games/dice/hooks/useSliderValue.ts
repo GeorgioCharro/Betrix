@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useAudio } from '@/common/hooks/useAudio';
+
 import tick from '@/assets/audio/tick.mp3';
+import { useAudio } from '@/common/hooks/use-audio';
+
 import useDiceStore from '../store/diceStore';
 
 export function useSliderValue(): {

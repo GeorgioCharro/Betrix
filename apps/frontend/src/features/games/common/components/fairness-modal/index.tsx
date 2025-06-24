@@ -1,5 +1,6 @@
 import { ScaleIcon } from 'lucide-react';
 import { useState } from 'react';
+
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Games, type Game } from '@/const/games';
 import { cn } from '@/lib/utils';
+
 import Seeds from './Seeds';
 import Verify from './Verify';
 

@@ -1,5 +1,5 @@
-import { Slider } from '@/components/ui/dice-slider';
 import { Slider as ResultSlider } from '@/components/ui/dice-result-slider';
+import { Slider } from '@/components/ui/dice-slider';
 
 function DiceResultPreview({ result }: { result: number }): JSX.Element {
   return (

@@ -1,7 +1,9 @@
 import { SettingsIcon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import CommonTooltip from '@/components/ui/common-tooltip';
 import type { Game } from '@/const/games';
+
 import { FairnessModal } from '../fairness-modal';
 
 function GameSettingsBar({ game }: { game: Game }): JSX.Element {

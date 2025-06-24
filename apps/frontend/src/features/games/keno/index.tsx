@@ -4,9 +4,10 @@ import {
   PAYOUT_MULTIPLIERS,
 } from '@repo/common/game-utils/keno/constants.js';
 import { BadgeDollarSign, BadgeDollarSignIcon } from 'lucide-react';
-import { Games } from '@/const/games';
+
 import { Label } from '@/components/ui/label';
-import GameSettingsBar from '../common/components/game-settings';
+import { Games } from '@/const/games';
+
 import BettingControls from './components/BettingControls';
 import KenoTile from './components/KenoTile';
 import {
@@ -16,6 +17,7 @@ import {
   useSelectedTiles,
 } from './store/kenoSelectors';
 import useKenoStore from './store/kenoStore';
+import GameSettingsBar from '../common/components/game-settings';
 
 export function Keno(): JSX.Element {
   const selectedTiles = useSelectedTiles();

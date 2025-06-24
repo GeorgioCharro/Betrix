@@ -1,0 +1,204 @@
+import { gql } from 'apollo-server-express';
+
+export const typeDefs = gql`
+  enum DiceCondition {
+    above
+    below
+  }
+
+  type DiceResultState {
+    target: Int!
+    condition: DiceCondition!
+    result: Int!
+  }
+
+  type DicePlaceBetResponse {
+    id: ID!
+    state: DiceResultState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+  }
+
+  enum KenoRisk {
+    low
+    medium
+    high
+    classic
+  }
+
+  type KenoState {
+    risk: KenoRisk!
+    selectedTiles: [Int!]!
+    drawnNumbers: [Int!]!
+  }
+
+  type KenoResponse {
+    id: ID!
+    state: KenoState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+  }
+
+  type MinesRound {
+    selectedTileIndex: Int!
+    payoutMultiplier: Float!
+  }
+
+  type MinesHiddenState {
+    mines: [Int]
+    minesCount: Int!
+    rounds: [MinesRound!]!
+  }
+
+  type MinesRevealedState {
+    mines: [Int!]!
+    minesCount: Int!
+    rounds: [MinesRound!]!
+  }
+
+  type MinesPlayRoundResponse {
+    id: ID!
+    state: MinesHiddenState!
+    active: Boolean!
+    betAmount: Float!
+  }
+
+  type MinesGameOverResponse {
+    id: ID!
+    state: MinesRevealedState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+    active: Boolean!
+  }
+
+  input RouletteBetInput {
+    betType: String!
+    selection: [Int!]!
+    amount: Float!
+  }
+
+  type RouletteBet {
+    betType: String!
+    selection: [Int!]!
+    amount: Float!
+  }
+
+  type RouletteBetState {
+    bets: [RouletteBet!]!
+    winningNumber: String!
+  }
+
+  type RoulettePlaceBetResponse {
+    id: ID!
+    state: RouletteBetState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+  }
+
+  type BlackjackCard {
+    suit: String!
+    rank: String!
+  }
+
+  type BlackjackPlayerState {
+    actions: [String!]!
+    value: Int!
+    cards: [BlackjackCard!]!
+  }
+
+  type BlackjackDealerState {
+    actions: [String!]!
+    value: Int!
+    cards: [BlackjackCard!]!
+  }
+
+  type BlackjackGameState {
+    player: [BlackjackPlayerState!]!
+    dealer: BlackjackDealerState!
+  }
+
+  type BlackjackPlayRoundResponse {
+    id: ID!
+    state: BlackjackGameState!
+    active: Boolean!
+    betAmount: Float!
+    amountMultiplier: Float!
+  }
+
+  type PlinkooResult {
+    point: Int!
+    multiplier: Float!
+    pattern: [String!]!
+  }
+
+  type User {
+    id: ID!
+    email: String!
+    name: String!
+    picture: String
+    balance: Float
+  }
+
+  type ProvablyFairState {
+    clientSeed: String!
+    hashedServerSeed: String!
+    hashedNextServerSeed: String!
+    nonce: Int!
+  }
+
+  type RevealedServerSeed {
+    serverSeed: String
+  }
+
+  type PaginatedBetData {
+    betId: String!
+    game: String!
+    date: String!
+    betAmount: Float!
+    payoutMultiplier: Float!
+    payout: Float!
+    id: ID!
+  }
+
+  type Pagination {
+    page: Int!
+    pageSize: Int!
+    totalCount: Int!
+    totalPages: Int!
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+  }
+
+  type PaginatedBetsResponse {
+    bets: [PaginatedBetData!]!
+    pagination: Pagination!
+  }
+
+  type Query {
+    currentUser: User
+    balance: Float
+    activeMines: MinesPlayRoundResponse
+    blackjackActive: BlackjackPlayRoundResponse
+    provablyFairState: ProvablyFairState
+    revealedServerSeed(hashedServerSeed: String!): RevealedServerSeed
+    userBetHistory(page: Int!, pageSize: Int!): PaginatedBetsResponse
+  }
+
+  type Mutation {
+    placeDiceBet(target: Int!, condition: DiceCondition!, betAmount: Float!): DicePlaceBetResponse!
+    placeKenoBet(betAmount: Float!, selectedTiles: [Int!]!, risk: String!): KenoResponse!
+    startMines(betAmount: Float!, minesCount: Int!): MinesPlayRoundResponse!
+    playMinesRound(selectedTileIndex: Int!): MinesPlayRoundResponse!
+    cashOutMines: MinesGameOverResponse!
+    placeRouletteBet(bets: [RouletteBetInput!]!): RoulettePlaceBetResponse!
+    blackjackBet(betAmount: Float!): BlackjackPlayRoundResponse!
+    blackjackNext(action: String!): BlackjackPlayRoundResponse!
+    plinkooOutcome(clientSeed: String): PlinkooResult!
+    playLimbo(clientSeed: String): Float!
+    rotateSeed(clientSeed: String!): ProvablyFairState!
+  }
+`;

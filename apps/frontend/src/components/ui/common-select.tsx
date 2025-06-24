@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
+
+import { Label } from './label';
 import {
   Select,
   SelectContent,
@@ -7,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from './select';
-import { Label } from './label';
 
 interface CommonSelectProps {
   label: ReactNode;

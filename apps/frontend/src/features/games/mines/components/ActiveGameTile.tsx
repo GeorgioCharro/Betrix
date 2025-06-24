@@ -1,5 +1,7 @@
 import { motion } from 'motion/react';
+
 import { cn } from '@/lib/utils';
+
 import { useSelectedTiles } from '../store/minesSelectors';
 
 function ActiveGameTile({

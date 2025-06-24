@@ -1,5 +1,6 @@
 import type { MinesRound } from '@repo/common/game-utils/mines/types.js';
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 
 interface InactiveGameTileProps {

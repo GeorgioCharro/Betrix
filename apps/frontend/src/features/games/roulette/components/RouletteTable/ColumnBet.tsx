@@ -1,16 +1,18 @@
-import { sum } from 'lodash';
-import { useMemo } from 'react';
-import { motion } from 'motion/react';
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
+import { sum } from 'lodash';
+import { motion } from 'motion/react';
+import { useMemo } from 'react';
+
 import { cn } from '@/lib/utils';
+
+import { useRouletteContext } from '../../context/RouletteContext';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
-import Chip from '../Chip';
 import {
   useWinningNumber,
   useBetKey,
 } from '../../store/rouletteStoreSelectors';
-import { useRouletteContext } from '../../context/RouletteContext';
+import Chip from '../Chip';
 
 function ColumnBet({ column }: { column: number }): JSX.Element {
   const { setHoverId } = useRouletteBoardHoverStore();

@@ -1,4 +1,4 @@
-import InputWithIcon from '@/common/forms/components/InputWithIcon';
+import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Label } from '@/components/ui/label';
 import {
   Tooltip,
@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
 import type {
   GameControl,
   NumericControl,

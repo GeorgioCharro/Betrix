@@ -1,7 +1,9 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { motion, useAnimation } from 'motion/react';
 import { useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+
 import { cn } from '@/lib/utils';
+
 import useRouletteStore from '../store/rouletteStore';
 
 const normalizeAngle = (angle: number): number => ((angle % 360) + 360) % 360;

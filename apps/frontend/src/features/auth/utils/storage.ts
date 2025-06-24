@@ -1,4 +1,5 @@
 import type { IUser } from '@repo/common/types';
+
 import { key } from '../const/immutableConst';
 
 export const getStoredUser = (): IUser | null => {

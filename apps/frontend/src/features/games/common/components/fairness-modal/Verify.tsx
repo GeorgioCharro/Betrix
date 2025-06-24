@@ -1,8 +1,10 @@
 import { useState } from 'react';
+
 import CommonSelect from '@/components/ui/common-select';
 import { GAMES_DROPDOWN_OPTIONS, type Game } from '@/const/games';
-import VerificationResult from './VerificationResult';
+
 import VerificationInputs from './VerificationInputs';
+import VerificationResult from './VerificationResult';
 
 function Verify({ game }: { game: Game }): JSX.Element {
   const [outcome, setOutcome] = useState<string | number[] | null>(null);

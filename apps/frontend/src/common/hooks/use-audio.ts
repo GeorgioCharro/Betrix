@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
 import throttle from 'lodash/throttle';
+import { useCallback, useRef, useState } from 'react';
 
 const useAudio = (
   audioSrc: string,

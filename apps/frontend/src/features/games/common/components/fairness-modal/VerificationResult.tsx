@@ -1,11 +1,12 @@
-import { HashLoader } from 'react-spinners';
-import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
 import { NO_OF_TILES_KENO } from '@repo/common/game-utils/keno/constants.js';
-import DiceResultPreview from '@/features/games/dice/components/DiceResultPreview';
+import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
+import { HashLoader } from 'react-spinners';
+
 import { Games, type Game } from '@/const/games';
-import RouletteWheel from '@/features/games/roulette/components/RouletteWheel';
-import InactiveGameTile from '@/features/games/mines/components/InactiveGameTile';
+import DiceResultPreview from '@/features/games/dice/components/DiceResultPreview';
 import VerificationResultKenoTile from '@/features/games/keno/components/VerificationResultKenoTile';
+import InactiveGameTile from '@/features/games/mines/components/InactiveGameTile';
+import RouletteWheel from '@/features/games/roulette/components/RouletteWheel';
 
 function VerificationResult({
   game,
