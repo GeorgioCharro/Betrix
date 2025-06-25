@@ -8,7 +8,7 @@ import type { ApiResponse } from '@repo/common/types';
 import { graphqlClient } from '../graphql/client';
 
 const PLACE_BET = gql`
-  mutation PlaceDiceBet($target: Int!, $condition: DiceCondition!, $betAmount: Float!) {
+  mutation PlaceDiceBet($target: Float!, $condition: DiceCondition!, $betAmount: Float!) {
     placeDiceBet(target: $target, condition: $condition, betAmount: $betAmount) {
       id
       state { target condition result }

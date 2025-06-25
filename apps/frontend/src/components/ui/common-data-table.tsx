@@ -37,6 +37,8 @@ declare module '@tanstack/react-table' {
   //Used to add custom properties to the column definition
   interface ColumnMeta<TData, TValue> {
     alignment?: 'left' | 'right' | 'center';
+    TData?: TData;
+    TValue?: TValue;
   }
 }
 

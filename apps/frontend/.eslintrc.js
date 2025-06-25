@@ -5,7 +5,7 @@ module.exports = {
   parserOptions: {
     project: true,
   },
-  ignorePatterns: ['tailwind.config.js', '../../api/**/*'],
+  ignorePatterns: ['tailwind.config.js', '../api/**/*'],
   rules: {
     'import/order': [
       'warn',
