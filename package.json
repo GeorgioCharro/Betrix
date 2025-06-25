@@ -24,9 +24,12 @@
   },
   "name": "simcasino",
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
+    "**/!(*.eslintrc).{js,jsx,ts,tsx}": [
       "pnpm lint",
       "pnpm format"
+    ],
+    "**/.eslintrc.js": [
+      "prettier --write"
     ],
     "**/*.{json,css,md}": [
       "prettier --write"
