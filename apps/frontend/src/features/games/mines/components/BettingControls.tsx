@@ -33,6 +33,7 @@ function BettingControls(): JSX.Element {
     mutationFn: cashOut,
     onSuccess: ({ data }) => {
       setGameState(data);
+      queryClient.setQueryData(['balance'], () => data.balance);
     },
   });
 
@@ -51,12 +52,7 @@ function BettingControls(): JSX.Element {
   const isGameActive = useIsGameActive();
   const lastRound = useLastRound();
   useEffect(() => {
-    if (isError) {
-      setGameState(null);
-      setBetAmount(0);
-      return;
-    }
-    if (activeGame) {
+    if (!isError && activeGame) {
       setGameState(activeGame.data || null);
       setBetAmount(Number(activeGame.data?.betAmount || 0));
     }

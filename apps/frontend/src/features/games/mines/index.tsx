@@ -1,5 +1,5 @@
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BadgeDollarSignIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,11 +25,15 @@ import GameSettingsBar from '../common/components/game-settings';
 export function Mines(): JSX.Element {
   const { setGameState, gameState } = useMinesStore();
   const [loadingTiles, setLoadingTiles] = useState<Set<number>>(new Set());
+  const queryClient = useQueryClient();
   const { mutate: play } = useMutation({
     mutationKey: ['mines-play-round'],
     mutationFn: (selectedTileIndex: number) => playRound(selectedTileIndex),
     onSuccess: ({ data }) => {
       setGameState(data);
+      if ('balance' in data) {
+        queryClient.setQueryData(['balance'], () => data.balance);
+      }
       setLoadingTiles(prev => {
         const newSet = new Set(prev);
         data.state.rounds.forEach(round => {

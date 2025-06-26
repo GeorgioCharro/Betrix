@@ -63,7 +63,7 @@ export const startGame = async (
       id: bet.id,
       active: true,
       state: { mines: null, minesCount, rounds: [] },
-      betAmount: betAmountInCents,
+      betAmount,
     })
   );
 };

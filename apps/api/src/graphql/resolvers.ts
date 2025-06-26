@@ -6,10 +6,8 @@ import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.j
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
-import { userManager , getUserBets } from '../features/user/user.service';
-import {
-  getResult as getDiceResult,
-} from '../features/games/dice/dice.service';
+import { userManager, getUserBets } from '../features/user/user.service';
+import { getResult as getDiceResult } from '../features/games/dice/dice.service';
 import { getResult as getLimboResult } from '../features/games/limbo/limbo.service';
 import {
   calculateOutcome,
@@ -17,7 +15,10 @@ import {
 } from '../features/games/plinkoo/plinkoo.service';
 import { getResult as getKenoResult } from '../features/games/keno/keno.service';
 import { minesManager } from '../features/games/mines/mines.service';
-import { spinWheel, calculatePayout } from '../features/games/roulette/roulette.service';
+import {
+  spinWheel,
+  calculatePayout,
+} from '../features/games/roulette/roulette.service';
 import { blackjackManager } from '../features/games/blackjack/blackjack.service';
 import { BadRequestError } from '../errors';
 
@@ -137,7 +138,9 @@ export const resolvers = {
       const result = getDiceResult({ userInstance, target, condition });
       const { payoutMultiplier } = result;
       const payoutInCents =
-        payoutMultiplier > 0 ? Math.round(betAmountInCents * payoutMultiplier) : 0;
+        payoutMultiplier > 0
+          ? Math.round(betAmountInCents * payoutMultiplier)
+          : 0;
       const balanceChangeInCents = payoutInCents - betAmountInCents;
 
       const { balance, id } = await db.$transaction(async tx => {
@@ -156,7 +159,9 @@ export const resolvers = {
 
         await userInstance.updateNonce(tx);
 
-        const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+        const newBalance = (
+          userBalanceInCents + balanceChangeInCents
+        ).toString();
         const userWithNewBalance = await tx.user.update({
           where: { id: user.id },
           data: {
@@ -219,7 +224,9 @@ export const resolvers = {
 
         await userInstance.updateNonce(tx);
 
-        const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+        const newBalance = (
+          userBalanceInCents + balanceChangeInCents
+        ).toString();
         const userWithNewBalance = await tx.user.update({
           where: { id: user.id },
           data: {
@@ -270,7 +277,7 @@ export const resolvers = {
         id: bet.id,
         active: true,
         state: { mines: null, minesCount: args.minesCount, rounds: [] },
-        betAmount: bet.betAmount,
+        betAmount: bet.betAmount / 100,
       };
     },
 
@@ -440,11 +447,7 @@ export const resolvers = {
       return result;
     },
 
-    playLimbo: (
-      _: unknown,
-      args: { clientSeed?: string },
-      __: Context
-    ) => {
+    playLimbo: (_: unknown, args: { clientSeed?: string }, __: Context) => {
       return getLimboResult(args.clientSeed || '');
     },
     rotateSeed: async (
