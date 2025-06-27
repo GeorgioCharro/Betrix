@@ -1,40 +1,77 @@
-# Turborepo kitchen sink starter
+# SimCasino
 
-This is an official starter Turborepo with multiple meta-frameworks all working in harmony and sharing packages.
+SimCasino is a full-stack web application that demonstrates a casino style betting platform. The project is organised as a monorepo managed by **Turborepo** and **pnpm**. Both the API and the frontend are written entirely in **TypeScript** and share internal packages for linting, TypeScript configuration, database access and common game utilities.
 
-This example also shows how to use [Workspace Configurations](https://turbo.build/repo/docs/core-concepts/monorepos/configuring-workspaces).
+## Monorepo structure
 
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest -e kitchen-sink
+```
+apps/
+  api/       – Express + Apollo GraphQL server
+  frontend/  – Vite/React client
+packages/
+  common/            – shared game logic and types
+  db/                – Prisma client and schema
+  config-eslint/     – shared ESLint rules
+  config-typescript/ – shared tsconfig files
+  jest-presets/      – Jest configuration
 ```
 
-## What's inside?
+Each workspace uses the shared tooling and can be developed or built through `turbo` commands.
 
-This Turborepo includes the following packages and apps:
+The API exposes both REST endpoints and an Apollo **GraphQL** server. GraphQL type definitions and resolvers live under `apps/api/src/graphql`.
 
-### Apps and Packages
+Game logic is organised using a controller/service pattern in `apps/api/src/features/games`. Each game has its own controller handling HTTP requests and delegating to a service for the core mechanics.
 
-- `api`: an [Express](https://expressjs.com/) server
-- `storefront`: a [Next.js](https://nextjs.org/) app
-- `admin`: a [Vite](https://vitejs.dev/) single page app
-- `blog`: a [Remix](https://remix.run/) blog
-- `@repo/eslint-config`: ESLint configurations used throughout the monorepo
-- `@repo/jest-presets`: Jest configurations
-- `@repo/logger`: isomorphic logger (a small wrapper around console.log)
-- `@repo/ui`: a dummy React UI library (which contains `<CounterButton>` and `<Link>` components)
-- `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
+## Technologies Used
 
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Express** with **Apollo Server** for a GraphQL API
+- **Prisma** ORM with a PostgreSQL database
+- **Passport** for local and Google authentication
+- **React** powered by **Vite** and **Tailwind CSS**
+- **Apollo Client** and **TanStack Router** on the frontend
+- **Turborepo** for task orchestration and **pnpm** workspaces
 
-### Utilities
+## Games
 
-This Turborepo has some additional tools already setup for you:
+The platform currently includes the following provably fair games:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Jest](https://jestjs.io) test runner for all things JavaScript
-- [Prettier](https://prettier.io) for code formatting
+- Dice
+- Roulette
+- Mines
+- Limbo
+- Keno
+- Plinkoo
+- Blackjack
+
+Game state and results can be queried via GraphQL or through the REST controllers.
+
+## Getting Started
+
+1. Install [pnpm](https://pnpm.io/) and [Node.js](https://nodejs.org/) (v18 or newer).
+2. Create environment files from the provided `.env.example` files inside `apps/api` and `packages/db`.
+3. Install dependencies:
+   ```sh
+   pnpm install
+   ```
+4. Run database migrations and generate the Prisma client:
+   ```sh
+   pnpm db:migrate
+   pnpm db:generate
+   ```
+5. Start the development servers:
+   ```sh
+   pnpm dev
+   ```
+   This launches the API on port `5000` and the Vite frontend on port `3000`.
+
+## Scripts
+
+- `pnpm dev` – start all apps in development mode
+- `pnpm build` – build all packages and apps
+- `pnpm lint` – run ESLint across workspaces
+- `pnpm test` – run tests (Jest)
+- `pnpm typecheck` – run TypeScript type checking
+
+## License
+
+This project is provided without any explicit license. Use at your own discretion.
