@@ -3,6 +3,10 @@ import type { User } from '@prisma/client';
 import db from '@repo/db';
 import type { MinesHiddenState } from '@repo/common/game-utils/mines/types.js';
 import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
+import {
+  BetsSchema,
+  validateBets,
+} from '@repo/common/game-utils/roulette/index.js';
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
@@ -333,10 +337,21 @@ export const resolvers = {
       }
 
       const { bets } = args;
+
+      const validationResult = BetsSchema.safeParse({ bets });
+      if (!validationResult.success) {
+        throw new BadRequestError('Invalid request for bets');
+      }
+
+      const validBets = validateBets(validationResult.data.bets);
+      if (validBets.length === 0) {
+        throw new BadRequestError('No valid bets placed');
+      }
+
       const userInstance = await userManager.getUser((req.user as User).id);
       const user = userInstance.getUser();
       const totalBetAmountInCents = Math.round(
-        bets.reduce((sum, b) => sum + b.amount, 0) * 100
+        validBets.reduce((sum, b) => sum + b.amount, 0) * 100
       );
 
       const userBalanceInCents = userInstance.getBalanceAsNumber();
@@ -346,10 +361,10 @@ export const resolvers = {
       }
 
       const winningNumber = await spinWheel(user.id);
-      const payout = calculatePayout(args.bets, winningNumber);
+      const payout = calculatePayout(validBets, winningNumber);
 
       const gameState = {
-        bets,
+        bets: validBets,
         winningNumber: String(winningNumber),
       };
 

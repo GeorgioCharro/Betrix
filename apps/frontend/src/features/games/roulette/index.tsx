@@ -64,7 +64,9 @@ export function Roulette({
       const totalBetAmount = sum(amounts) / 100;
       return {
         betType,
-        ...(selection === null ? {} : { selection }),
+        ...(selection === null
+          ? {}
+          : { selection: Array.isArray(selection) ? selection : [selection] }),
         amount: totalBetAmount,
       } as RouletteBet;
     });

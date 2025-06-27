@@ -23,10 +23,15 @@ export enum RouletteBetTypes {
 }
 
 const amountSchema = z.number().min(0.01, 'Bet amount must be at least 0.01');
+const singleNumber = (min: number, max: number) =>
+  z.preprocess(
+    val => (Array.isArray(val) ? val[0] : val),
+    z.number().int().min(min).max(max)
+  );
 
 const straightBetSchema = z.object({
   betType: z.literal(RouletteBetTypes.STRAIGHT),
-  selection: z.number().int().min(0).max(36),
+  selection: singleNumber(0, 36),
   amount: amountSchema,
 });
 
@@ -103,13 +108,13 @@ const sixLineBetSchema = z.object({
 
 const dozenBetSchema = z.object({
   betType: z.literal(RouletteBetTypes.DOZEN),
-  selection: z.number().int().min(1).max(3),
+  selection: singleNumber(1, 3),
   amount: amountSchema,
 });
 
 const columnBetSchema = z.object({
   betType: z.literal(RouletteBetTypes.COLUMN),
-  selection: z.number().int().min(1).max(3),
+  selection: singleNumber(1, 3),
   amount: amountSchema,
 });
 
@@ -146,35 +151,14 @@ const BetsSchema = z.object({
 });
 
 const validateBets = (bets: RouletteBet[]) => {
-  return bets.filter(bet => {
-    switch (bet.betType) {
-      case RouletteBetTypes.STRAIGHT:
-        return straightBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.SPLIT:
-        return splitBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.CORNER:
-        return cornerBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.STREET:
-        return streetBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.SIXLINE:
-        return sixLineBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.DOZEN:
-        return dozenBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.COLUMN:
-        return columnBetSchema.safeParse(bet).success;
-      case RouletteBetTypes.BLACK:
-      case RouletteBetTypes.RED:
-      case RouletteBetTypes.EVEN:
-      case RouletteBetTypes.ODD:
-      case RouletteBetTypes.HIGH:
-      case RouletteBetTypes.LOW: {
-        return equalPayoutBets.safeParse(bet).success;
-      }
-
-      default:
-        return false;
+  const validBets: RouletteBet[] = [];
+  for (const bet of bets) {
+    const result = RouletteBetSchema.safeParse(bet);
+    if (result.success) {
+      validBets.push(result.data);
     }
-  });
+  }
+  return validBets;
 };
 
 export { BetsSchema, validateBets };

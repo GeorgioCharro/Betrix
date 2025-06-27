@@ -78,13 +78,13 @@ export const typeDefs = gql`
 
   input RouletteBetInput {
     betType: String!
-    selection: [Int!]!
+    selection: [Int!]
     amount: Float!
   }
 
   type RouletteBet {
     betType: String!
-    selection: [Int!]!
+    selection: [Int!]
     amount: Float!
   }
 
