@@ -1,12 +1,9 @@
 import type { Request } from 'express';
-import type { User } from '@prisma/client';
 import db from '@repo/db';
 import type { MinesHiddenState } from '@repo/common/game-utils/mines/types.js';
-import type { RouletteBet } from '@repo/common/game-utils/roulette/validations.js';
-import {
-  BetsSchema,
-  validateBets,
-} from '@repo/common/game-utils/roulette/index.js';
+import { RouletteBetTypes, BetsSchema, validateBets } from '@repo/common/game-utils/roulette/index.js';
+import type { RouletteBet, RouletteFormattedBet, RoulettePlaceBetResponse } from '@repo/common/game-utils/roulette/index.js';
+import type { Prisma, User } from '@prisma/client';
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
@@ -363,8 +360,40 @@ export const resolvers = {
       const winningNumber = await spinWheel(user.id);
       const payout = calculatePayout(validBets, winningNumber);
 
-      const gameState = {
-        bets: validBets,
+      const formattedBets: RouletteFormattedBet[] = validBets.map(bet => {
+        switch (bet.betType) {
+          case RouletteBetTypes.STRAIGHT:
+          case RouletteBetTypes.DOZEN:
+          case RouletteBetTypes.COLUMN:
+            // Always wrap as an array, even for single-number selection
+            return {
+              ...bet,
+              selection: Array.isArray(bet.selection) ? bet.selection : [bet.selection],
+            } as RouletteFormattedBet;
+
+          case RouletteBetTypes.SPLIT:
+          case RouletteBetTypes.CORNER:
+          case RouletteBetTypes.STREET:
+          case RouletteBetTypes.SIXLINE:
+            // These are already arrays by definition, just pass through
+            return { ...bet } as RouletteFormattedBet;
+
+          // The following have NO selection property at all
+          case RouletteBetTypes.BLACK:
+          case RouletteBetTypes.RED:
+          case RouletteBetTypes.EVEN:
+          case RouletteBetTypes.ODD:
+          case RouletteBetTypes.HIGH:
+          case RouletteBetTypes.LOW:
+            return bet as RouletteFormattedBet;
+
+          default:
+            return bet as RouletteFormattedBet;
+        }
+      });
+
+      const gameState: Prisma.JsonObject = {
+        bets: formattedBets as unknown as Prisma.JsonArray,
         winningNumber: String(winningNumber),
       };
 
@@ -382,7 +411,7 @@ export const resolvers = {
             game: 'roulette',
             payoutAmount: payoutInCents,
             provablyFairStateId: userInstance.getProvablyFairStateId(),
-            state: gameState,
+            state: gameState as Prisma.InputJsonValue,
             userId: user.id,
           },
         });
@@ -406,7 +435,7 @@ export const resolvers = {
 
       return {
         id,
-        state: gameState,
+        state: gameState as unknown as RoulettePlaceBetResponse['state'],
         payoutMultiplier: payoutInCents / totalBetAmountInCents,
         payout: payoutInCents / 100,
         balance: userInstance.getBalanceAsNumber() / 100,

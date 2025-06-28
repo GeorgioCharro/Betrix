@@ -1,7 +1,13 @@
-import type { RouletteBet } from './validations';
+import type { RouletteBetTypes } from './validations';
+
+export interface RouletteFormattedBet {
+  betType: RouletteBetTypes;
+  selection: number[] | null;
+  amount: number;
+}
 
 export interface RouletterPlaceBetState {
-  bets: RouletteBet[];
+  bets: RouletteFormattedBet[];
   winningNumber: string;
 }
 

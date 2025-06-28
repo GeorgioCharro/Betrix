@@ -11,7 +11,7 @@ import { isNumberInRange } from '../../../utils/numbers';
 const spinWheel = async (userId: string) => {
   const user = await userManager.getUser(userId);
   const [float] = user.generateFloats(1);
-  return Math.floor(float * 37); // Generates a number between 0 and 36
+  return Math.floor(float * 37);
 };
 
 const calculatePayout = (bets: RouletteBet[], winningNumber: number) => {
