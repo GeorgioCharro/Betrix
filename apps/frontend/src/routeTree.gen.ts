@@ -1,5 +1,4 @@
-/* eslint-disable -- generated file */
-//This comment is to disable the linter for this file
+/* eslint-disable */
 
 // @ts-nocheck
 

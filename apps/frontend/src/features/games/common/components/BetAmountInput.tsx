@@ -26,28 +26,39 @@ export function BetAmountInput({
             icon={<BadgeDollarSign className="text-gray-500" />}
             min={0}
             onChange={e => {
-              onBetAmountChange?.(Number(e.target.value));
+              if (!isInputDisabled) {
+                onBetAmountChange?.(Number(e.target.value));
+              }
             }}
+            placeholder="0"
             step={1}
             type="number"
-            value={betAmount}
+            value={betAmount === 0 && !isInputDisabled ? '' : betAmount}
             wrapperClassName="h-10 rounded-r-none rounded-none rounded-l"
           />
         </div>
         <BetAmountButton
-          disabled={betAmount ? betAmount === 0 || betAmount / 2 < 0.01 : true}
+          disabled={
+            isInputDisabled ||
+            (betAmount ? betAmount === 0 || betAmount / 2 < 0.01 : true)
+          }
           label="½"
           onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0, 0.5);
+            if (!isInputDisabled) {
+              onBetAmountChange?.(betAmount ?? 0, 0.5);
+            }
           }}
         />
         <BetAmountButton
           disabled={
-            betAmount ? betAmount === 0 || 2 * betAmount > balance : true
+            isInputDisabled ||
+            (betAmount ? betAmount === 0 || 2 * betAmount > balance : true)
           }
           label="2×"
           onClick={() => {
-            onBetAmountChange?.(betAmount ?? 0, 2);
+            if (!isInputDisabled) {
+              onBetAmountChange?.(betAmount ?? 0, 2);
+            }
           }}
         />
       </div>

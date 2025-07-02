@@ -67,8 +67,11 @@ function BettingControls({
       <div className="flex flex-col gap-2">
         <BetAmountInput
           betAmount={betAmount}
+          isInputDisabled={isGameActive}
           onBetAmountChange={(amount, multiplier = 1) => {
-            setBetAmount(amount * multiplier);
+            if (!isGameActive) {
+              setBetAmount(amount * multiplier);
+            }
           }}
         />
         {isGameActive ? (
