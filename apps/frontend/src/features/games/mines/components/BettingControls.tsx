@@ -14,7 +14,11 @@ import { BetButton } from '../../common/components/BettingControls';
 import { useIsGameActive, useLastRound } from '../store/minesSelectors';
 import useMinesStore from '../store/minesStore';
 
-function BettingControls(): JSX.Element {
+function BettingControls({
+  className = '',
+}: {
+  className?: string;
+}): JSX.Element {
   const { betAmount, setBetAmount, minesCount, setMinesCount, setGameState } =
     useMinesStore();
 
@@ -59,7 +63,7 @@ function BettingControls(): JSX.Element {
   }, [activeGame, isError, setGameState, setBetAmount]);
 
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className={cn('bg-brand-weak flex flex-col gap-4 p-3', className)}>
       <div className="flex flex-col gap-2">
         <BetAmountInput
           betAmount={betAmount}

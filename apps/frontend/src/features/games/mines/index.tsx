@@ -55,9 +55,9 @@ export function Mines(): JSX.Element {
   const payout = useTotalPayout();
   return (
     <>
-      <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
-        <BettingControls />
-        <div className="flex-1 bg-brand-stronger p-3 px-24 flex justify-center relative">
+      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+        <BettingControls className="w-full lg:w-1/4" />
+        <div className="flex-1 bg-brand-stronger p-3 lg:px-24 px-4 flex justify-center relative">
           <div className="inline-grid grid-cols-5 mx-auto justify-items-center gap-2.5">
             {Array.from({ length: NO_OF_TILES }, (_, i) => i).map(number =>
               isGameActive || !gameState ? (

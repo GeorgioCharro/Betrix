@@ -81,7 +81,7 @@ export function Roulette({
       <RouletteProvider
         isPreview={isSpinning || isPreview || Boolean(latestResult)}
       >
-        <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md select-none">
+        <div className="flex flex-col lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md select-none">
           <BettingControls
             betButtonText={latestResult ? 'Spin Again' : 'Spin'}
             icon={latestResult ? <RefreshCcwIcon className="size-4" /> : null}
@@ -96,7 +96,7 @@ export function Roulette({
             isPending={isSpinning ? true : !isRouletteWheelStopped}
             onBet={onBet}
           />
-          <div className="flex-1 bg-brand-stronger p-3 relative">
+          <div className="flex-1 bg-brand-stronger p-3 relative order-first lg:order-none">
             <div className="absolute left-1/2 -translate-x-1/2 -translate-y-[60%]">
               <RouletteWheel
                 isSpinning={isSpinning}

@@ -60,7 +60,7 @@ function BottomColorBets({
           : {}
       }
       className={cn(
-        'cursor-pointer relative col-span-2 w-full h-10 rounded-sm',
+        'cursor-pointer relative col-span-2 w-full h-12 lg:h-10 rounded-sm',
         action === RouletteBetTypes.RED
           ? 'bg-roulette-red hover:bg-roulette-red-hover'
           : 'bg-roulette-black hover:bg-roulette-black-hover'

@@ -46,7 +46,7 @@ function DozenBet({ dozen }: { dozen: number }): JSX.Element {
           : {}
       }
       className={cn(
-        'cursor-pointer relative select-none rounded-sm flex items-center justify-center h-10 w-full text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]'
+        'cursor-pointer relative select-none rounded-sm flex items-center justify-center  h-12 lg:h-10 w-full text-base lg:text-sm font-semibold bg-brand-stronger hover:bg-roulette-black-hover shadow-[inset_0_0_0_.15em_#2f4553] hover:shadow-[inset_0_0_0_.15em_#4b6e84]'
       )}
       key={betKey}
       onClick={e => {

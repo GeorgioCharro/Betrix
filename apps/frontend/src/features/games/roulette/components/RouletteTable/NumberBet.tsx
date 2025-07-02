@@ -2,11 +2,9 @@ import { redNumbers } from '@repo/common/game-utils/roulette/constants.js';
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/index.js';
 import { sum } from 'lodash';
 import { motion } from 'motion/react';
-import { useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import DroppableArea from './DroppableArea';
 import { useRouletteContext } from '../../context/RouletteContext';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
@@ -15,13 +13,6 @@ import {
   useBetKey,
 } from '../../store/rouletteStoreSelectors';
 import { getIsNumberHover } from '../../utils/hover';
-import {
-  shouldRenderBottom,
-  shouldRenderCornerBet,
-  shouldRenderRight,
-  shouldRenderSixLineBet,
-  shouldRenderTop,
-} from '../../utils/shouldRender';
 import Chip from '../Chip';
 
 function NumberBet({ number }: { number: number }): JSX.Element {
@@ -29,7 +20,6 @@ function NumberBet({ number }: { number: number }): JSX.Element {
   const winningNumber = useWinningNumber();
   const betKey = useBetKey();
   const { isPreview } = useRouletteContext();
-  const referenceDiv = useRef<HTMLDivElement | null>(null);
 
   const isRedNumber = redNumbers.includes(number.toString());
   const isNumberHover = !isPreview && getIsNumberHover({ number, hoverId });
@@ -53,7 +43,7 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           : {}
       }
       className={cn(
-        'cursor-pointer rounded-sm flex items-center justify-center size-10 text-sm font-semibold relative',
+        'cursor-pointer rounded-sm flex items-center justify-center aspect-square max-xs:size-5 size-8 lg:size-10 text-base lg:text-sm font-semibold relative',
         isRedNumber
           ? 'bg-roulette-red hover:bg-roulette-red-hover'
           : 'bg-roulette-black hover:bg-roulette-black-hover',
@@ -71,9 +61,6 @@ function NumberBet({ number }: { number: number }): JSX.Element {
       }}
       onKeyDown={event => {
         return event;
-      }}
-      ref={el => {
-        referenceDiv.current = el;
       }}
       role="button"
       tabIndex={0}
@@ -95,84 +82,6 @@ function NumberBet({ number }: { number: number }): JSX.Element {
           <Chip id={betId} size={6} value={betAmount} />
         </div>
       ) : null}
-
-      {shouldRenderCornerBet(number) && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.CORNER,
-            selection: [number, number + 1, number + 3, number + 4],
-          }}
-          position="TR"
-          reference={referenceDiv}
-        />
-      )}
-      {number === 1 && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.STREET,
-            selection: [0, 1, 2],
-          }}
-          position="TL"
-          reference={referenceDiv}
-        />
-      )}
-      {number === 2 && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.STREET,
-            selection: [0, 2, 3],
-          }}
-          position="TL"
-          reference={referenceDiv}
-        />
-      )}
-      {shouldRenderTop(number) && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.SPLIT,
-            selection: [number, number + 1],
-          }}
-          position="TC"
-          reference={referenceDiv}
-        />
-      )}
-      {shouldRenderRight(number) && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.SPLIT,
-            selection: [number, number + 3],
-          }}
-          position="CR"
-          reference={referenceDiv}
-        />
-      )}
-      {shouldRenderBottom(number) && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.STREET,
-            selection: [number, number + 1, number + 2],
-          }}
-          position="BC"
-          reference={referenceDiv}
-        />
-      )}
-      {shouldRenderSixLineBet(number) && (
-        <DroppableArea
-          betTypeData={{
-            betType: RouletteBetTypes.SIXLINE,
-            selection: [
-              number,
-              number + 1,
-              number + 2,
-              number + 3,
-              number + 4,
-              number + 5,
-            ],
-          }}
-          position="BR"
-          reference={referenceDiv}
-        />
-      )}
     </motion.div>
   );
 }

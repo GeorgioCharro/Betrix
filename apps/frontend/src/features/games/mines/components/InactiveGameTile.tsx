@@ -106,7 +106,7 @@ function InactiveGameTile({
   return (
     <div
       className={cn(
-        'size-24 bg-brand-strongest rounded-md cursor-pointer flex items-center justify-center relative',
+        'size-16 lg:size-24 bg-brand-strongest rounded-md cursor-pointer flex items-center justify-center relative',
         className
       )}
       key={index}

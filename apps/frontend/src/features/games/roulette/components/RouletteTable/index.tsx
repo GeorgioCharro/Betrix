@@ -6,7 +6,7 @@ import ZeroBet from './ZeroBet';
 
 function RouletteTable(): JSX.Element {
   return (
-    <div className="grid w-fit grid-cols-14 mx-auto gap-1">
+    <div className="grid w-full lg:w-fit grid-cols-14 mx-auto gap-1">
       <div className="flex items-stretch justify-center gap-1 col-span-full">
         <ZeroBet />
         {Array.from({ length: 12 }, (_, index) => index).map(colNum => (

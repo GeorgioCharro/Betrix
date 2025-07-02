@@ -102,7 +102,7 @@ function RouletteWheel({
   ]);
 
   return (
-    <div className="relative w-96 h-96">
+    <div className="relative w-96 h-96 scale-[0.8] lg:scale-100">
       {/* The fixed arrow that doesn't rotate with the wheel */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[20%] z-50 rotate-90">
         <img

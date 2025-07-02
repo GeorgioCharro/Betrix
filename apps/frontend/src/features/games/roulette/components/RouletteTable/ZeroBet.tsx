@@ -1,11 +1,9 @@
 import { RouletteBetTypes } from '@repo/common/game-utils/roulette/validations.js';
 import { sum } from 'lodash';
 import { motion } from 'motion/react';
-import { useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import DroppableArea from './DroppableArea';
 import { useRouletteContext } from '../../context/RouletteContext';
 import { useRouletteBoardHoverStore } from '../../store/rouletteBoardHoverStore';
 import useRouletteStore from '../../store/rouletteStore';
@@ -18,7 +16,6 @@ import Chip from '../Chip';
 
 function ZeroBet(): JSX.Element {
   const { hoverId } = useRouletteBoardHoverStore();
-  const referenceDiv = useRef<HTMLDivElement | null>(null);
 
   const { isPreview } = useRouletteContext();
 
@@ -43,7 +40,7 @@ function ZeroBet(): JSX.Element {
           : {}
       }
       className={cn(
-        'cursor-pointer select-none relative rounded-sm flex items-center justify-center w-10 text-sm font-semibold bg-roulette-green hover:bg-roulette-green-hover',
+        'cursor-pointer select-none relative rounded-sm max-xs:size-5 flex items-center justify-center aspect-square size-8  lg:w-10 lg:h-10 text-base lg:text-sm font-semibold bg-roulette-green hover:bg-roulette-green-hover',
         {
           'bg-roulette-green-hover': isNumberHover,
         }
@@ -57,9 +54,6 @@ function ZeroBet(): JSX.Element {
       }}
       onKeyDown={event => {
         return event;
-      }}
-      ref={el => {
-        referenceDiv.current = el;
       }}
       role="button"
       tabIndex={0}
@@ -81,38 +75,6 @@ function ZeroBet(): JSX.Element {
           <Chip id={betId} size={6} value={betAmount} />
         </div>
       ) : null}
-      <DroppableArea
-        betTypeData={{
-          betType: RouletteBetTypes.SPLIT,
-          selection: [0, 1],
-        }}
-        position="0-1"
-        reference={referenceDiv}
-      />
-      <DroppableArea
-        betTypeData={{
-          betType: RouletteBetTypes.SPLIT,
-          selection: [0, 2],
-        }}
-        position="CR"
-        reference={referenceDiv}
-      />
-      <DroppableArea
-        betTypeData={{
-          betType: RouletteBetTypes.SPLIT,
-          selection: [0, 3],
-        }}
-        position="0-3"
-        reference={referenceDiv}
-      />
-      <DroppableArea
-        betTypeData={{
-          betType: RouletteBetTypes.CORNER,
-          selection: [0, 1, 2, 3],
-        }}
-        position="BR"
-        reference={referenceDiv}
-      />
     </motion.div>
   );
 }

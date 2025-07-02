@@ -33,6 +33,10 @@ module.exports = {
       },
     },
     extend: {
+      screens: {
+        xs: '503px',
+        'max-xs': { max: '503px' },
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: {
