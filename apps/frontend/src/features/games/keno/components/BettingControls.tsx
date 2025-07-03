@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { placeBet } from '@/api/games/keno';
 import { Button } from '@/components/ui/button';
 import CommonSelect from '@/components/ui/common-select';
+import { cn } from '@/lib/utils';
 
 import { BetAmountInput } from '../../common/components/BetAmountInput';
 import { BetButton } from '../../common/components/BettingControls';
@@ -12,7 +13,11 @@ import { KenoRiskDropdown } from '../const';
 import { useSelectedTiles } from '../store/kenoSelectors';
 import useKenoStore from '../store/kenoStore';
 
-function BettingControls(): JSX.Element {
+function BettingControls({
+  className = 'w-1/4',
+}: {
+  className?: string;
+}): JSX.Element {
   const {
     betAmount,
     setBetAmount,
@@ -25,6 +30,8 @@ function BettingControls(): JSX.Element {
 
   const selectedTiles = useSelectedTiles();
 
+  const queryClient = useQueryClient();
+
   const { mutate: placeBetMutation, isPending } = useMutation({
     mutationKey: ['keno-start-game'],
     mutationFn: () =>
@@ -34,6 +41,7 @@ function BettingControls(): JSX.Element {
         risk: kenoRisk,
       }),
     onSuccess: async ({ data }): Promise<void> => {
+      queryClient.setQueryData(['balance'], () => data.balance);
       const drawnNumbers = data.state.drawnNumbers;
 
       const updatePromises = Array.from(drawnNumbers.keys()).map(index =>
@@ -51,7 +59,6 @@ function BettingControls(): JSX.Element {
       await Promise.all(updatePromises);
     },
   });
-  const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled =
     betAmount > (balance ?? 0) || betAmount <= 0 || selectedTiles.size === 0;
@@ -82,7 +89,7 @@ function BettingControls(): JSX.Element {
   };
 
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className={cn('bg-brand-weak flex flex-col gap-4 p-3', className)}>
       <div className="flex flex-col gap-2">
         <BetAmountInput
           betAmount={betAmount}
