@@ -1,8 +1,16 @@
 import type { Request } from 'express';
 import db from '@repo/db';
 import type { MinesHiddenState } from '@repo/common/game-utils/mines/types.js';
-import { RouletteBetTypes, BetsSchema, validateBets } from '@repo/common/game-utils/roulette/index.js';
-import type { RouletteBet, RouletteFormattedBet, RoulettePlaceBetResponse } from '@repo/common/game-utils/roulette/index.js';
+import {
+  RouletteBetTypes,
+  BetsSchema,
+  validateBets,
+} from '@repo/common/game-utils/roulette/index.js';
+import type {
+  RouletteBet,
+  RouletteFormattedBet,
+  RoulettePlaceBetResponse,
+} from '@repo/common/game-utils/roulette/index.js';
 import type { Prisma, User } from '@prisma/client';
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
@@ -22,6 +30,7 @@ import {
 } from '../features/games/roulette/roulette.service';
 import { blackjackManager } from '../features/games/blackjack/blackjack.service';
 import { BadRequestError } from '../errors';
+import type { Risk } from '../features/games/plinkoo/plinkoo.constants';
 
 interface Context {
   req: Request;
@@ -368,7 +377,9 @@ export const resolvers = {
             // Always wrap as an array, even for single-number selection
             return {
               ...bet,
-              selection: Array.isArray(bet.selection) ? bet.selection : [bet.selection],
+              selection: Array.isArray(bet.selection)
+                ? bet.selection
+                : [bet.selection],
             } as RouletteFormattedBet;
 
           case RouletteBetTypes.SPLIT:
@@ -492,10 +503,14 @@ export const resolvers = {
 
     plinkooOutcome: (
       _: unknown,
-      _args: { clientSeed?: string },
+      args: { clientSeed: string; rows?: number; risk?: Risk },
       __: Context
     ): PlinkooOutcome => {
-      const result = calculateOutcome();
+      const result = calculateOutcome(
+        args.clientSeed,
+        args.rows ?? 16,
+        args.risk
+      );
       return result;
     },
 

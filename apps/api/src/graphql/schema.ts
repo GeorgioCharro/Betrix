@@ -28,6 +28,12 @@ export const typeDefs = gql`
     classic
   }
 
+  enum PlinkooRisk {
+    Low
+    Medium
+    High
+  }
+
   type KenoState {
     risk: KenoRisk!
     selectedTiles: [Int!]!
@@ -207,7 +213,12 @@ export const typeDefs = gql`
     placeRouletteBet(bets: [RouletteBetInput!]!): RoulettePlaceBetResponse!
     blackjackBet(betAmount: Float!): BlackjackPlayRoundResponse!
     blackjackNext(action: String!): BlackjackPlayRoundResponse!
-    plinkooOutcome(clientSeed: String): PlinkooResult!
+    plinkooOutcome(
+      clientSeed: String
+      betamount: Float!
+      rows: Int!
+      risk: PlinkooRisk!
+    ): PlinkooResult!
     playLimbo(clientSeed: String): Float!
     rotateSeed(clientSeed: String!): ProvablyFairState!
   }
