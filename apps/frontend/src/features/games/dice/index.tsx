@@ -35,9 +35,10 @@ export function DiceGame(): JSX.Element {
 
   return (
     <>
-      <div className="flex w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <BettingControls
           betAmount={betAmount}
+          className="w-full lg:w-1/4"
           isPending={isPending}
           onBet={handleBet}
           onBetAmountChange={(amount, multiplier = 1) => {

@@ -4,6 +4,7 @@ import { BadgeDollarSign } from 'lucide-react';
 import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 import { BetAmountInput } from './BetAmountInput';
 
@@ -15,6 +16,7 @@ export interface BettingControlsProps {
   onBet?: () => Promise<void>;
   betButtonText?: string;
   icon?: React.ReactNode;
+  className?: string;
 }
 
 function ProfitDisplay({
@@ -81,6 +83,7 @@ export function BettingControls({
   onBet,
   betButtonText,
   icon,
+  className = 'w-1/4',
 }: BettingControlsProps): JSX.Element {
   const queryClient = useQueryClient();
   const balance = queryClient.getQueryData<number>(['balance']);
@@ -88,7 +91,7 @@ export function BettingControls({
     (betAmount ?? 0) > (balance ?? 0) || (betAmount ?? 0) <= 0 || isPending;
 
   return (
-    <div className="w-1/4 bg-brand-weak flex flex-col gap-4 p-3">
+    <div className={cn('bg-brand-weak flex flex-col gap-4 p-3', className)}>
       <BetAmountInput
         betAmount={betAmount}
         onBetAmountChange={onBetAmountChange}
