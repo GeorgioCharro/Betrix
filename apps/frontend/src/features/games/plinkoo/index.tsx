@@ -1,7 +1,6 @@
 import { BallManager } from '@repo/common/game-utils/plinkoo/classes/ball-manager.js';
 import type { Risk } from '@repo/common/game-utils/plinkoo/objects.js';
 import { outcomesByRows } from '@repo/common/game-utils/plinkoo/outcomes.js';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 
 import type { PlinkooResult } from '@/api/games/plinkoo';
@@ -16,9 +15,6 @@ export function Plinkoo(): JSX.Element {
   const [risk, setRisk] = useState<Risk>('Low');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [ballManager, setBallManager] = useState<BallManager | null>(null);
-
-  const _queryClient = useQueryClient(); // Balance updates are not returned by API currently
-
   useEffect(() => {
     if (!canvasRef.current) return;
 

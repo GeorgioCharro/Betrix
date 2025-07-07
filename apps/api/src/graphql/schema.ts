@@ -142,7 +142,13 @@ export const typeDefs = gql`
     multiplier: Float!
     pattern: [String!]!
   }
-
+  type PlinkooBetResponse {
+    id: ID!
+    state: PlinkooResult!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+  }
   type User {
     id: ID!
     email: String!
@@ -218,7 +224,7 @@ export const typeDefs = gql`
       betamount: Float!
       rows: Int!
       risk: PlinkooRisk!
-    ): PlinkooResult!
+    ): PlinkooBetResponse!
     playLimbo(clientSeed: String): Float!
     rotateSeed(clientSeed: String!): ProvablyFairState!
   }

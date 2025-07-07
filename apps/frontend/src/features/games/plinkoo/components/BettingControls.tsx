@@ -1,8 +1,10 @@
 import type { Risk } from '@repo/common/game-utils/plinkoo/objects.js';
 import { RISK_OPTIONS } from '@repo/common/game-utils/plinkoo/objects.js';
-import { useMutation } from '@tanstack/react-query';
+import type { ApiResponse } from '@repo/common/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { playPlinkoo, type PlinkooResult } from '@/api/games/plinkoo';
+import type { PlinkooBetResponse, PlinkooResult } from '@/api/games/plinkoo';
+import { playPlinkoo } from '@/api/games/plinkoo';
 import CommonSelect from '@/components/ui/common-select';
 import { cn } from '@/lib/utils';
 
@@ -32,14 +34,17 @@ function BettingControls({
   onRiskChange,
   onResult,
 }: BettingControlsProps): JSX.Element {
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: playPlinkoo,
-    onSuccess: resp => {
-      onResult(resp.data);
+    onSuccess: (resp: ApiResponse<PlinkooBetResponse>) => {
+      onResult(resp.data.state);
+      queryClient.setQueryData(['balance'], () => resp.data.balance);
     },
   });
 
-  const isDisabled = betAmount <= 0;
+  const balance = queryClient.getQueryData<number>(['balance']);
+  const isDisabled = betAmount <= 0 || betAmount > (balance ?? 0);
 
   return (
     <div className={cn('bg-brand-weak flex flex-col gap-4 p-3', className)}>

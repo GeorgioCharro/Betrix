@@ -1,5 +1,6 @@
 import type { Request } from 'express';
 import db from '@repo/db';
+import type { Prisma, User } from '@prisma/client';
 import type { MinesHiddenState } from '@repo/common/game-utils/mines/types.js';
 import {
   RouletteBetTypes,
@@ -11,17 +12,13 @@ import type {
   RouletteFormattedBet,
   RoulettePlaceBetResponse,
 } from '@repo/common/game-utils/roulette/index.js';
-import type { Prisma, User } from '@prisma/client';
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
 import { userManager, getUserBets } from '../features/user/user.service';
 import { getResult as getDiceResult } from '../features/games/dice/dice.service';
 import { getResult as getLimboResult } from '../features/games/limbo/limbo.service';
-import {
-  calculateOutcome,
-  type PlinkooOutcome,
-} from '../features/games/plinkoo/plinkoo.service';
+import { calculateOutcome } from '../features/games/plinkoo/plinkoo.service';
 import { getResult as getKenoResult } from '../features/games/keno/keno.service';
 import { minesManager } from '../features/games/mines/mines.service';
 import {
@@ -501,17 +498,80 @@ export const resolvers = {
       return game.getPlayRoundResponse();
     },
 
-    plinkooOutcome: (
+    plinkooOutcome: async (
       _: unknown,
-      args: { clientSeed: string; rows?: number; risk?: Risk },
-      __: Context
-    ): PlinkooOutcome => {
-      const result = calculateOutcome(
-        args.clientSeed,
-        args.rows ?? 16,
-        args.risk
-      );
-      return result;
+      args: {
+        clientSeed?: string;
+        betamount: number;
+        rows?: number;
+        risk?: Risk;
+      },
+      { req }: Context
+    ) => {
+      if (!req.isAuthenticated()) {
+        throw new Error('Unauthorized');
+      }
+
+      const { clientSeed = '', betamount, rows = 16, risk } = args;
+
+      if (betamount <= 0) {
+        throw new BadRequestError('Bet amount must be greater than 0');
+      }
+
+      const user = req.user as User;
+      const userInstance = await userManager.getUser(user.id);
+      const betAmountInCents = Math.round(betamount * 100);
+      const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+      if (userBalanceInCents < betAmountInCents) {
+        throw new BadRequestError('Insufficient balance');
+      }
+
+      const result = calculateOutcome(clientSeed, rows, risk);
+      const payoutMultiplier = result.multiplier;
+      const payoutInCents =
+        payoutMultiplier > 0
+          ? Math.round(betAmountInCents * payoutMultiplier)
+          : 0;
+      const balanceChangeInCents = payoutInCents - betAmountInCents;
+
+      const { balance, id } = await db.$transaction(async tx => {
+        const bet = await tx.bet.create({
+          data: {
+            active: false,
+            betAmount: betAmountInCents,
+            betNonce: userInstance.getNonce(),
+            game: 'plinkoo',
+            payoutAmount: payoutInCents,
+            provablyFairStateId: userInstance.getProvablyFairStateId(),
+            state: result as unknown as Prisma.InputJsonValue,
+            userId: user.id,
+          },
+        });
+
+        await userInstance.updateNonce(tx);
+
+        const newBalance = (
+          userBalanceInCents + balanceChangeInCents
+        ).toString();
+
+        const userWithNewBalance = await tx.user.update({
+          where: { id: user.id },
+          data: { balance: newBalance },
+        });
+
+        return { balance: userWithNewBalance.balance, id: bet.id };
+      });
+
+      userInstance.setBalance(balance);
+
+      return {
+        id,
+        state: result,
+        payoutMultiplier,
+        payout: payoutInCents / 100,
+        balance: userInstance.getBalanceAsNumber() / 100,
+      };
     },
 
     playLimbo: (_: unknown, args: { clientSeed?: string }, __: Context) => {

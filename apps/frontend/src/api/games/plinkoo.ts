@@ -17,9 +17,15 @@ const PLINKOO_OUTCOME = gql`
       rows: $rows
       risk: $risk
     ) {
-      point
-      multiplier
-      pattern
+      id
+      state {
+        point
+        multiplier
+        pattern
+      }
+      payoutMultiplier
+      payout
+      balance
     }
   }
 `;
@@ -28,6 +34,14 @@ export interface PlinkooResult {
   point: number;
   multiplier: number;
   pattern: string[];
+}
+
+export interface PlinkooBetResponse {
+  id: string;
+  state: PlinkooResult;
+  payoutMultiplier: number;
+  payout: number;
+  balance: number;
 }
 
 export const playPlinkoo = async ({
@@ -40,9 +54,9 @@ export const playPlinkoo = async ({
   rows: number;
   risk: Risk;
   clientSeed?: string;
-}): Promise<ApiResponse<PlinkooResult>> => {
+}): Promise<ApiResponse<PlinkooBetResponse>> => {
   const { data } = await graphqlClient.mutate<{
-    plinkooOutcome: PlinkooResult;
+    plinkooOutcome: PlinkooBetResponse;
   }>({
     mutation: PLINKOO_OUTCOME,
     variables: { clientSeed, betamount: betAmount, rows, risk },
