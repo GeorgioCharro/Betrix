@@ -18,7 +18,7 @@ export const calculateOutcome = (
   risk: Risk = 'Low'
 ): PlinkooOutcome => {
   // Number of pegs (drops) is rows - 1
-  const drops = Math.max(1, rows - 1);
+  const drops = Math.max(1, rows);
 
   // Get multipliers for this board
   const multipliers = getMultipliers(drops, risk);

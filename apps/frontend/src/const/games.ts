@@ -6,6 +6,7 @@ export enum Games {
   MINES = 'mines',
   KENO = 'keno',
   BLACKJACK = 'blackjack',
+  PLINKOO = 'plinkoo',
 }
 
 export type Game = (typeof Games)[keyof typeof Games];
@@ -27,6 +28,11 @@ export const GAME_VALUES_MAPPING = {
     // icon: DicesIcon,
     path: '/casino/games/keno',
   },
+  [Games.PLINKOO]: {
+    label: 'Plinkoo',
+    // icon: DicesIcon,
+    path: '/casino/games/plinkoo',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [
@@ -45,5 +51,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.KENO].label,
     value: Games.KENO,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.PLINKOO].label,
+    value: Games.PLINKOO,
   },
 ];
