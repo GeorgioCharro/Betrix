@@ -1,0 +1,8 @@
+[build]
+  base = "apps/frontend"
+  publish = "dist"
+  command = "pnpm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "9.9.0"
