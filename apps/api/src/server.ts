@@ -33,6 +33,7 @@ export const createServer = async (): Promise<Express> => {
         cookie: {
           secure: process.env.NODE_ENV === 'production' ? true : 'auto',
           httpOnly: true,
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           maxAge: 2 * 24 * 60 * 60 * 1000,
         },
         resave: false,
