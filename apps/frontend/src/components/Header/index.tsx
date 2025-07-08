@@ -1,4 +1,4 @@
-import { Balance } from './balance';
+import { Balance } from './Balance';
 
 export function Header(): JSX.Element {
   return (
