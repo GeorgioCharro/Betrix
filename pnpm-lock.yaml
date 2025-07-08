@@ -71,6 +71,9 @@ importers:
       passport-local:
         specifier: ^1.0.0
         version: 1.0.0
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
       winston:
         specifier: ^3.17.0
         version: 3.17.0
