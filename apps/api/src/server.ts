@@ -16,6 +16,7 @@ import { errorHandlerMiddleware } from './middlewares/error-handler';
 
 export const createServer = async (): Promise<Express> => {
   const app = express();
+  app.set('trust proxy', 1);
   app
     .disable('x-powered-by')
     .use(morgan('dev'))
