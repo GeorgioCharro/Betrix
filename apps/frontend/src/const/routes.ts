@@ -1,1 +1,1 @@
-export const BASE_API_URL = process.env.REACT_API_URL;
+export const BASE_API_URL = 'https://simcasino-production.up.railway.app';
