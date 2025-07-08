@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ['nodejs_18', 'corepack']
+
+[phases.install]
+cmds = [
+  'corepack enable',
+  'corepack prepare pnpm@9.9.0 --activate',
+  'pnpm install'
+]
+
+[phases.build]
+cmds = ['pnpm run build']
+
+[start]
+cmd = 'pnpm run start'
