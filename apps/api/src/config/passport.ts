@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: '/api/v1/auth/google/callback',
+      callbackURL: process.env.CALLBACK_URL || '/api/v1/auth/google/callback',
     },
     async (_, __, profile, done) => {
       const profileInfo = {
