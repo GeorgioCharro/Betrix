@@ -8,7 +8,7 @@
     "lint": "turbo run lint -- --max-warnings=1",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "prepare": "husky install",
+    "prepare": "test -d .git && husky install || echo 'Skipping husky in CI'",
     "db:generate": "cd packages/db && npx prisma generate && cd ../..",
     "db:migrate": "cd packages/db && npx prisma migrate dev && cd ../.."
   },
