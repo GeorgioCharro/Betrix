@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import type { IUser, ApiResponse } from '@repo/common/types';
 
+import { fetchGet } from './_utils/fetch';
 import { graphqlClient } from './graphql/client';
 
 const CURRENT_USER = gql`
@@ -26,4 +27,8 @@ export const getUserDetails = async (): Promise<ApiResponse<IUser>> => {
     message: 'Success',
     success: true,
   };
+};
+
+export const logout = async (): Promise<void> => {
+  await fetchGet('/api/v1/auth/logout');
 };

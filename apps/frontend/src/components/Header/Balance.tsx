@@ -18,7 +18,7 @@ export function Balance(): JSX.Element {
       disabled
       icon={<BadgeDollarSign className="text-gray-500" />}
       value={balance?.toFixed(2)}
-      wrapperClassName="shadow-md w-60"
+      wrapperClassName="shadow-md w-60 max-xs:w-32"
     />
   );
 }

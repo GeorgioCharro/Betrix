@@ -1,5 +1,4 @@
-/* eslint-disable */
-//This comment is to disable the linter for this file
+/* eslint-disable */ //This comment is to disable the linter for this file
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols
@@ -13,6 +12,7 @@
 import { Route as rootRoute } from './routes/__root';
 import { Route as PublicImport } from './routes/_public';
 import { Route as ProtectedImport } from './routes/_protected';
+import { Route as IndexImport } from './routes/index';
 import { Route as PublicProvablyFairImport } from './routes/_public/provably-fair';
 import { Route as PublicLoginImport } from './routes/_public/login';
 import { Route as ProtectedCasinoImport } from './routes/_protected/casino';
@@ -32,6 +32,12 @@ const PublicRoute = PublicImport.update({
 
 const ProtectedRoute = ProtectedImport.update({
   id: '/_protected',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const IndexRoute = IndexImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRoute,
 } as any);
 
@@ -97,6 +103,13 @@ const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_protected': {
       id: '/_protected';
       path: '';
@@ -246,6 +259,7 @@ const PublicRouteWithChildren =
   PublicRoute._addFileChildren(PublicRouteChildren);
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute;
   '': typeof PublicRouteWithChildren;
   '/casino': typeof ProtectedCasinoRouteWithChildren;
   '/login': typeof PublicLoginRoute;
@@ -259,6 +273,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute;
   '': typeof PublicRouteWithChildren;
   '/casino': typeof ProtectedCasinoRouteWithChildren;
   '/login': typeof PublicLoginRoute;
@@ -273,6 +288,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
+  '/': typeof IndexRoute;
   '/_protected': typeof ProtectedRouteWithChildren;
   '/_public': typeof PublicRouteWithChildren;
   '/_protected/casino': typeof ProtectedCasinoRouteWithChildren;
@@ -289,6 +305,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
+    | '/'
     | ''
     | '/casino'
     | '/login'
@@ -301,6 +318,7 @@ export interface FileRouteTypes {
     | '/casino/games/$gameId';
   fileRoutesByTo: FileRoutesByTo;
   to:
+    | '/'
     | ''
     | '/casino'
     | '/login'
@@ -313,6 +331,7 @@ export interface FileRouteTypes {
     | '/casino/games/$gameId';
   id:
     | '__root__'
+    | '/'
     | '/_protected'
     | '/_public'
     | '/_protected/casino'
@@ -328,11 +347,13 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute;
   ProtectedRoute: typeof ProtectedRouteWithChildren;
   PublicRoute: typeof PublicRouteWithChildren;
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
 };
@@ -347,9 +368,13 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/",
         "/_protected",
         "/_public"
       ]
+    },
+    "/": {
+      "filePath": "index.tsx"
     },
     "/_protected": {
       "filePath": "_protected.tsx",
