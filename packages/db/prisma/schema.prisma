@@ -29,7 +29,7 @@ model User {
   name               String?
   password           String?
   picture            String?
-  balance            String              @default("30000") // Amount in cents (multiply by 100, default 10000.00)
+  balance            String              @default("20000") // Amount in cents (multiply by 100, default 10000.00)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   provablyFairStates ProvablyFairState[]
