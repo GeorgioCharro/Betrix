@@ -157,7 +157,7 @@ function BettingControls({
           animate="animate-pulse"
           betButtonText="Cashout"
           disabled={
-            !lastRound?.selectedTileIndex ||
+            lastRound?.selectedTileIndex === undefined ||
             isDisabled ||
             isFetchingActiveGame ||
             isStartingGame ||
