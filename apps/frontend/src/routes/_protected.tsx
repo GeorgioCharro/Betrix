@@ -1,8 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { useState } from 'react';
 
 import { getUserDetails } from '@/api/auth';
+import { BottomNavigation } from '@/components/BottomNavigation';
 import { Header } from '@/components/Header';
+import { SideMenu } from '@/components/SideMenu';
 import { getAuthState } from '@/features/auth/store/authStore';
 
 export const Route = createFileRoute('/_protected')({
@@ -30,10 +33,20 @@ export const Route = createFileRoute('/_protected')({
 });
 
 function ProtectedLayout(): JSX.Element {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = (): void => {
+    setIsMenuOpen(open => !open);
+  };
+
   return (
-    <div className="min-h-screen">
-      <Header />
-      <Outlet />
+    <div className="flex min-h-screen">
+      <SideMenu isOpen={isMenuOpen} onToggle={toggleMenu} />
+      <div className="flex flex-1 flex-col">
+        <Header />
+        <Outlet />
+      </div>
+      <BottomNavigation />
     </div>
   );
 }

@@ -18,12 +18,12 @@ export function Header(): JSX.Element {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-brand-default px-4 py-2.5 shadow-lg">
+    <header className="sticky top-0 z-50 w-full bg-brand-default px-4 shadow-lg">
       <div className="container relative mx-auto flex h-12 items-center justify-between">
         <Link to="/">
           <img
             alt="Betrix Logo"
-            className="h-8 max-xs:h-12 md:h-16"
+            className="h-16 sm:h-18 md:h-20"
             src="/logo.png"
           />
         </Link>
