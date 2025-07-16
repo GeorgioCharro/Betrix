@@ -2,14 +2,8 @@ import { Link } from '@tanstack/react-router';
 
 import { NAV_ITEMS } from '@/const/navigation';
 
-interface NavItem {
-  label: string;
-  path: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
 export function BottomNavigation(): JSX.Element {
-  const items = NAV_ITEMS as NavItem[];
+  const items = NAV_ITEMS;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around bg-brand-default py-2 shadow md:hidden">

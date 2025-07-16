@@ -10,13 +10,9 @@ export interface SideMenuProps {
   onToggle: () => void;
 }
 
-interface NavItem {
-  label: string;
-  path: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const items = NAV_ITEMS as NavItem[];
+const items = NAV_ITEMS;
+const generalItems = items.filter(item => item.type === 'general');
+const gameItems = items.filter(item => item.type === 'games');
 
 export function SideMenu({ isOpen, onToggle }: SideMenuProps): JSX.Element {
   const showNav = useMemo(
@@ -44,7 +40,7 @@ export function SideMenu({ isOpen, onToggle }: SideMenuProps): JSX.Element {
     <aside
       className={cn(
         'hidden h-screen flex-col bg-brand-strong shadow-lg transition-all duration-300 md:flex',
-        isOpen ? 'w-56' : 'w-12'
+        isOpen ? 'w-36' : 'w-12'
       )}
     >
       <div className="bg-brand-stronger p-3 shadow-lg">
@@ -54,17 +50,35 @@ export function SideMenu({ isOpen, onToggle }: SideMenuProps): JSX.Element {
       </div>
 
       <nav className="mt-4 flex flex-col space-y-2 px-2">
-        {items.map(item => (
-          <Link
-            className="flex items-center gap-2 rounded px-3 py-2 hover:bg-brand-weaker"
-            key={item.path}
-            onClick={onToggle}
-            to={item.path}
-          >
-            <item.icon className="h-5 w-5" />
-            <span>{item.label}</span>
-          </Link>
-        ))}
+        <div className="flex flex-col space-y-2 rounded bg-brand-weak p-2">
+          {generalItems.map(item => (
+            <Link
+              className="flex items-center gap-2 rounded px-3 py-2 hover:bg-brand-weaker"
+              key={item.path}
+              onClick={onToggle}
+              to={item.path}
+            >
+              <item.icon className="h-4 w-4" />
+              <span className="text-sm">{item.label}</span>
+            </Link>
+          ))}
+
+          {gameItems.length > 0 && (
+            <hr className="my-2 border-brand-stronger" />
+          )}
+
+          {gameItems.map(item => (
+            <Link
+              className="flex items-center gap-2 rounded px-3 py-2 hover:bg-brand-weaker"
+              key={item.path}
+              onClick={onToggle}
+              to={item.path}
+            >
+              <item.icon className="h-5 w-5" />
+              <span className="text-sm">{item.label}</span>
+            </Link>
+          ))}
+        </div>
       </nav>
     </aside>
   );

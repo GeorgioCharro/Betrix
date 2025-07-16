@@ -1,4 +1,11 @@
-import { DicesIcon, ShipWheelIcon } from 'lucide-react';
+import {
+  DicesIcon,
+  ShipWheelIcon,
+  BombIcon,
+  GemIcon,
+  JoystickIcon,
+  ClubIcon,
+} from 'lucide-react';
 
 export enum Games {
   DICE = 'dice',
@@ -20,17 +27,22 @@ export const GAME_VALUES_MAPPING = {
   },
   [Games.MINES]: {
     label: 'Mines',
-    // icon: DicesIcon,
+    icon: BombIcon,
     path: '/casino/games/mines',
   },
   [Games.KENO]: {
     label: 'Keno',
-    // icon: DicesIcon,
+    icon: GemIcon,
     path: '/casino/games/keno',
+  },
+  [Games.BLACKJACK]: {
+    label: 'Blackjack',
+    icon: ClubIcon,
+    path: '/casino/games/blackjack',
   },
   [Games.PLINKOO]: {
     label: 'Plinkoo',
-    // icon: DicesIcon,
+    icon: JoystickIcon,
     path: '/casino/games/plinkoo',
   },
 };
@@ -55,5 +67,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.PLINKOO].label,
     value: Games.PLINKOO,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.BLACKJACK].label,
+    value: Games.BLACKJACK,
   },
 ];
