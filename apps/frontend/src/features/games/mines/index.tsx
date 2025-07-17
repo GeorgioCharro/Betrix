@@ -25,10 +25,14 @@ import GameSettingsBar from '../common/components/game-settings';
 export function Mines(): JSX.Element {
   const { setGameState, gameState } = useMinesStore();
   const [loadingTiles, setLoadingTiles] = useState<Set<number>>(new Set());
+  const [isPlayingRound, setIsPlayingRound] = useState(false);
   const queryClient = useQueryClient();
   const { mutate: play } = useMutation({
     mutationKey: ['mines-play-round'],
     mutationFn: (selectedTileIndex: number) => playRound(selectedTileIndex),
+    onMutate: () => {
+      setIsPlayingRound(true);
+    },
     onSuccess: ({ data }) => {
       setGameState(data);
       if ('balance' in data) {
@@ -41,6 +45,9 @@ export function Mines(): JSX.Element {
         });
         return newSet;
       });
+    },
+    onSettled: () => {
+      setIsPlayingRound(false);
     },
   });
 
@@ -66,7 +73,7 @@ export function Mines(): JSX.Element {
                   isLoading={loadingTiles.has(number)}
                   key={number}
                   onClick={() => {
-                    if (isGameActive) {
+                    if (isGameActive && !isPlayingRound) {
                       setLoadingTiles(prev => {
                         const newSet = new Set(prev);
                         newSet.add(number);
