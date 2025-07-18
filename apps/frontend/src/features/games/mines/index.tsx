@@ -1,7 +1,7 @@
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BadgeDollarSignIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { playRound } from '@/api/games/mines';
 import { Games } from '@/const/games';
@@ -26,8 +26,9 @@ export function Mines(): JSX.Element {
   const { setGameState, gameState } = useMinesStore();
   const [loadingTiles, setLoadingTiles] = useState<Set<number>>(new Set());
   const [isPlayingRound, setIsPlayingRound] = useState(false);
+  const [pendingTiles, setPendingTiles] = useState<number[]>([]);
   const queryClient = useQueryClient();
-  const { mutate: play } = useMutation({
+  const { mutate: playRoundMutate } = useMutation({
     mutationKey: ['mines-play-round'],
     mutationFn: (selectedTileIndex: number) => playRound(selectedTileIndex),
     onMutate: () => {
@@ -45,11 +46,34 @@ export function Mines(): JSX.Element {
         });
         return newSet;
       });
+      if (!data.active) {
+        setPendingTiles([]);
+        setLoadingTiles(new Set());
+      }
+    },
+    onError: () => {
+      setPendingTiles([]);
+      setLoadingTiles(new Set());
     },
     onSettled: () => {
       setIsPlayingRound(false);
     },
   });
+
+  useEffect(() => {
+    if (!isPlayingRound && gameState?.active && pendingTiles.length > 0) {
+      const [next, ...rest] = pendingTiles;
+      setPendingTiles(rest);
+      playRoundMutate(next);
+    }
+  }, [isPlayingRound, pendingTiles, playRoundMutate, gameState]);
+
+  useEffect(() => {
+    if (!gameState?.active) {
+      setPendingTiles([]);
+      setLoadingTiles(new Set());
+    }
+  }, [gameState]);
 
   const isGameActive = useIsGameActive();
 
@@ -73,14 +97,20 @@ export function Mines(): JSX.Element {
                   isLoading={loadingTiles.has(number)}
                   key={number}
                   onClick={() => {
-                    if (isGameActive && !isPlayingRound) {
-                      setLoadingTiles(prev => {
-                        const newSet = new Set(prev);
-                        newSet.add(number);
-                        return newSet;
-                      });
-                      play(number);
+                    if (!isGameActive) return;
+                    if (
+                      loadingTiles.has(number) ||
+                      pendingTiles.includes(number) ||
+                      selectedTiles?.has(number)
+                    ) {
+                      return;
                     }
+                    setLoadingTiles(prev => {
+                      const newSet = new Set(prev);
+                      newSet.add(number);
+                      return newSet;
+                    });
+                    setPendingTiles(prev => [...prev, number]);
                   }}
                 />
               ) : (
