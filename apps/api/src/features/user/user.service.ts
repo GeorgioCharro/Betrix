@@ -25,6 +25,13 @@ export class UserInstance {
   }
 
   async rotateSeed(clientSeed: string): Promise<ProvablyFairStateResponse> {
+    const activeBet = await db.bet.findFirst({
+      where: { userId: this.user.id, active: true },
+    });
+
+    if (activeBet) {
+      throw new BadRequestError('Cannot rotate seeds while a game is active');
+    }
     const newServerSeed = this.generateNextServerSeed();
     const hashedServerSeed = getHashedSeed(newServerSeed);
 
