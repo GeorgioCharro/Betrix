@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
+import { BASE_API_URL } from '@/const/routes';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface BalanceUpdateMessage {
@@ -26,8 +27,10 @@ export function useBalanceWebSocket(): void {
   useEffect(() => {
     if (!user) return;
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const port = import.meta.env.DEV ? ':5000' : '';
-    const url = `${protocol}://${window.location.hostname}${port}`;
+    const host = import.meta.env.DEV
+      ? `${window.location.hostname}:5000`
+      : new URL(BASE_API_URL).host;
+    const url = `${protocol}://${host}`;
     const ws = new WebSocket(url);
 
     const handleMessage = (event: MessageEvent): void => {
