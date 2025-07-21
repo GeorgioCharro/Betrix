@@ -8,7 +8,7 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import { StatusCodes } from 'http-status-codes';
-import { authRouter, gameRouter } from './routes';
+import { authRouter, gameRouter, adminRouter } from './routes';
 import { initGraphQL } from './graphql';
 import './config/passport';
 import notFoundMiddleware from './middlewares/not-found';
@@ -51,7 +51,8 @@ export const createServer = async (): Promise<Express> => {
       return res.status(StatusCodes.OK).json({ ok: true });
     })
     .use('/api/v1/auth', authRouter)
-    .use('/api/v1/games', gameRouter);
+    .use('/api/v1/games', gameRouter)
+    .use('/api/v1/admin', adminRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);
