@@ -26,7 +26,8 @@ export function useBalanceWebSocket(): void {
   useEffect(() => {
     if (!user) return;
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const url = `${protocol}://${window.location.hostname}:5000`;
+    const port = import.meta.env.DEV ? ':5000' : '';
+    const url = `${protocol}://${window.location.hostname}${port}`;
     const ws = new WebSocket(url);
 
     const handleMessage = (event: MessageEvent): void => {
