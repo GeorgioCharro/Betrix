@@ -1,8 +1,8 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { BadgeDollarSign } from 'lucide-react';
 
 import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Label } from '@/components/ui/label';
+import { useBalance } from '@/hooks/useBalance';
 
 import { BetAmountButton } from './BetAmountButton';
 import type { BettingControlsProps } from './BettingControls';
@@ -14,8 +14,7 @@ export function BetAmountInput({
 }: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
   isInputDisabled?: boolean;
 }): JSX.Element {
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']) || 0;
+  const balance = useBalance() ?? 0;
   return (
     <div>
       <Label className="pl-px text-xs font-semibold">Bet Amount</Label>

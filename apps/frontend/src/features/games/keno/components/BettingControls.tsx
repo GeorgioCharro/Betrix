@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { placeBet } from '@/api/games/keno';
 import { Button } from '@/components/ui/button';
 import CommonSelect from '@/components/ui/common-select';
+import { useBalance } from '@/hooks/useBalance';
 import { cn } from '@/lib/utils';
 
 import { BetAmountInput } from '../../common/components/BetAmountInput';
@@ -31,7 +32,7 @@ function BettingControls({
   const selectedTiles = useSelectedTiles();
 
   const queryClient = useQueryClient();
-
+  const balance = useBalance();
   const { mutate: placeBetMutation, isPending } = useMutation({
     mutationKey: ['keno-start-game'],
     mutationFn: () =>
@@ -59,7 +60,7 @@ function BettingControls({
       await Promise.all(updatePromises);
     },
   });
-  const balance = queryClient.getQueryData<number>(['balance']);
+
   const isDisabled =
     betAmount > (balance ?? 0) || betAmount <= 0 || selectedTiles.size === 0;
 

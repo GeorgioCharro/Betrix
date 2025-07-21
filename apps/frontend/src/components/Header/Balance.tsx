@@ -3,8 +3,10 @@ import { BadgeDollarSign } from 'lucide-react';
 
 import { getBalance } from '@/api/balance';
 import InputWithIcon from '@/common/forms/components/input-with-icon';
+import { useBalanceWebSocket } from '@/hooks/useBalanceWebSocket';
 
 export function Balance(): JSX.Element {
+  useBalanceWebSocket();
   const { data: balance } = useQuery({
     queryKey: ['balance'],
     queryFn: getBalance,

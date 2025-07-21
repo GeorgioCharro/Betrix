@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import db from '@repo/db';
 import { ApiResponse } from '@repo/common/types';
 import { BadRequestError } from '../../errors';
+import { broadcastBalanceUpdate } from '../../websocket';
 
 export const depositBalance = async (req: Request, res: Response) => {
   const { userId, amount } = req.body as { userId: string; amount: number };
@@ -23,9 +24,12 @@ export const depositBalance = async (req: Request, res: Response) => {
     data: { balance: newBalance },
   });
 
+  const balanceValue = parseInt(updated.balance, 10) / 100;
+  broadcastBalanceUpdate(userId, balanceValue);
+
   return res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
-      balance: parseInt(updated.balance, 10) / 100,
+      balance: balanceValue,
     })
   );
 };
@@ -54,9 +58,12 @@ export const withdrawBalance = async (req: Request, res: Response) => {
     data: { balance: newBalance },
   });
 
+  const balanceValue = parseInt(updated.balance, 10) / 100;
+  broadcastBalanceUpdate(userId, balanceValue);
+
   return res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
-      balance: parseInt(updated.balance, 10) / 100,
+      balance: balanceValue,
     })
   );
 };

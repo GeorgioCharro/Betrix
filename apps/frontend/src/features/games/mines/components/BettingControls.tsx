@@ -1,12 +1,13 @@
 import { NO_OF_TILES } from '@repo/common/game-utils/mines/constants.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { startGame, getActiveGame, cashOut } from '@/api/games/mines';
 import InputWithIcon from '@/common/forms/components/input-with-icon';
 import { Button } from '@/components/ui/button';
 import CommonSelect from '@/components/ui/common-select';
 import { Label } from '@/components/ui/label';
+import { useBalance } from '@/hooks/useBalance';
 import { cn } from '@/lib/utils';
 
 import { BetAmountInput } from '../../common/components/BetAmountInput';
@@ -50,7 +51,7 @@ function BettingControls({
     },
   });
   const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']);
+  const balance = useBalance();
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 
   const isGameActive = useIsGameActive();

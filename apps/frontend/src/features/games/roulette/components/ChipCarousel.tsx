@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useRef, useEffect } from 'react';
 
 import { Label } from '@/components/ui/label';
+import { useBalance } from '@/hooks/useBalance';
 
 import Chip from './Chip';
 import ScrollNextButton from './ScrollNextButton';
@@ -10,8 +10,7 @@ import useRouletteStore from '../store/rouletteStore';
 
 function ChipCarousel(): JSX.Element {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']) || 0;
+  const balance = useBalance() ?? 0;
 
   const { betAmount, selectedChip, setSelectedChip } = useRouletteStore();
   const scrollLeft = (): void => {

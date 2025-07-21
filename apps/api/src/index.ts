@@ -1,15 +1,19 @@
+import http from 'node:http';
 import { createLogger, transports } from 'winston';
 import { createServer } from './server';
+import { initWebSocketServer } from './websocket';
 
 const logger = createLogger({
-  transports: [new transports.Console()]
+  transports: [new transports.Console()],
 });
 
 const port = process.env.PORT || 5000;
 
 createServer()
   .then(app => {
-    app.listen(port, () => {
+    const server = http.createServer(app);
+    initWebSocketServer(server);
+    server.listen(port, () => {
       logger.info(`Server listening on port ${port}`);
     });
   })

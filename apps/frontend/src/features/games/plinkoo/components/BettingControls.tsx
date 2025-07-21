@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { PlinkooBetResponse, PlinkooResult } from '@/api/games/plinkoo';
 import { playPlinkoo } from '@/api/games/plinkoo';
 import CommonSelect from '@/components/ui/common-select';
+import { useBalance } from '@/hooks/useBalance';
 import { cn } from '@/lib/utils';
 
 import { BetAmountInput } from '../../common/components/BetAmountInput';
@@ -35,6 +36,7 @@ function BettingControls({
   onResult,
 }: BettingControlsProps): JSX.Element {
   const queryClient = useQueryClient();
+  const balance = useBalance();
   const { mutate, isPending } = useMutation({
     mutationFn: playPlinkoo,
     onSuccess: (resp: ApiResponse<PlinkooBetResponse>) => {
@@ -43,7 +45,6 @@ function BettingControls({
     },
   });
 
-  const balance = queryClient.getQueryData<number>(['balance']);
   const isDisabled = betAmount <= 0 || betAmount > (balance ?? 0);
 
   return (

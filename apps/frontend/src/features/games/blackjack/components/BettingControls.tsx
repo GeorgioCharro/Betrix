@@ -1,16 +1,15 @@
 import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import { getValidActionsFromState } from '@repo/common/game-utils/blackjack/utils.js';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import  { useEffect } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import { blackjackBet, getActiveGame, playRound } from '@/api/games/blackjack';
 import { Button } from '@/components/ui/button';
+import { useBalance } from '@/hooks/useBalance';
 
 import { BetAmountInput } from '../../common/components/BetAmountInput';
 import { BetButton } from '../../common/components/BettingControls';
 import useBlackjackStore from '../store/blackjackStore';
-
-
 
 const BlackjackActionButtons = [
   {
@@ -63,8 +62,7 @@ function BettingControls(): JSX.Element {
     mutationFn: (action: BlackjackActions) => playRound(action),
   });
 
-  const queryClient = useQueryClient();
-  const balance = queryClient.getQueryData<number>(['balance']);
+  const balance = useBalance();
   const isDisabled = betAmount > (balance ?? 0) || betAmount <= 0;
 
   const validActions = getValidActionsFromState(gameState?.state || null);
