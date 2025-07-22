@@ -18,11 +18,15 @@ export interface ProvablyFairStateResponse {
 export interface PaginatedBetData {
   betId: string;
   game: string;
-  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
   betAmount: number;
   payoutMultiplier: number;
   payout: number;
   id: string;
+  betNonce: number;
+  provablyFairStateId: string;
+  state: string;
 }
 
 export interface PaginatedBetsResponse {

@@ -1,4 +1,5 @@
-/* eslint-disable */ //This comment is to disable the linter for this file
+/* eslint-disable */
+
 // @ts-nocheck
 
 // noinspection JSUnusedGlobalSymbols

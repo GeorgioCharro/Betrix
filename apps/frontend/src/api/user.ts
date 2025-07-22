@@ -18,12 +18,21 @@ const ACTIVE_SEEDS = gql`
   }
 `;
 
-export const fetchActiveSeeds = async (): Promise<ApiResponse<ProvablyFairStateResponse>> => {
-  const { data } = await graphqlClient.query<{ provablyFairState: ProvablyFairStateResponse }>({
+export const fetchActiveSeeds = async (): Promise<
+  ApiResponse<ProvablyFairStateResponse>
+> => {
+  const { data } = await graphqlClient.query<{
+    provablyFairState: ProvablyFairStateResponse;
+  }>({
     query: ACTIVE_SEEDS,
     fetchPolicy: 'no-cache',
   });
-  return { data: data.provablyFairState, statusCode: 200, message: 'Success', success: true };
+  return {
+    data: data.provablyFairState,
+    statusCode: 200,
+    message: 'Success',
+    success: true,
+  };
 };
 
 const ROTATE_SEED = gql`
@@ -40,14 +49,21 @@ const ROTATE_SEED = gql`
 export const fetchRotateSeedPair = async (
   clientSeed: string
 ): Promise<ApiResponse<ProvablyFairStateResponse>> => {
-  const { data } = await graphqlClient.mutate<{ rotateSeed: ProvablyFairStateResponse }>({
+  const { data } = await graphqlClient.mutate<{
+    rotateSeed: ProvablyFairStateResponse;
+  }>({
     mutation: ROTATE_SEED,
     variables: { clientSeed },
   });
   if (!data) {
     throw new Error('Failed to rotate seed');
   }
-  return { data: data.rotateSeed, statusCode: 200, message: 'Success', success: true };
+  return {
+    data: data.rotateSeed,
+    statusCode: 200,
+    message: 'Success',
+    success: true,
+  };
 };
 
 const REVEALED_SERVER_SEED = gql`
@@ -61,12 +77,19 @@ const REVEALED_SERVER_SEED = gql`
 export const fetchRevealedServerSeed = async (
   hashedServerSeed: string
 ): Promise<ApiResponse<{ serverSeed: string | null }>> => {
-  const { data } = await graphqlClient.query<{ revealedServerSeed: { serverSeed: string | null } }>({
+  const { data } = await graphqlClient.query<{
+    revealedServerSeed: { serverSeed: string | null };
+  }>({
     query: REVEALED_SERVER_SEED,
     variables: { hashedServerSeed },
     fetchPolicy: 'no-cache',
   });
-  return { data: data.revealedServerSeed, statusCode: 200, message: 'Success', success: true };
+  return {
+    data: data.revealedServerSeed,
+    statusCode: 200,
+    message: 'Success',
+    success: true,
+  };
 };
 
 const USER_BET_HISTORY = gql`
@@ -75,11 +98,15 @@ const USER_BET_HISTORY = gql`
       bets {
         betId
         game
-        date
+        createdAt
+        updatedAt
         betAmount
         payoutMultiplier
         payout
         id
+        betNonce
+        provablyFairStateId
+        state
       }
       pagination {
         page
@@ -100,10 +127,17 @@ export const fetchUserBetHistory = async ({
   page?: number;
   pageSize?: number;
 }): Promise<ApiResponse<PaginatedBetsResponse>> => {
-  const { data } = await graphqlClient.query<{ userBetHistory: PaginatedBetsResponse }>({
+  const { data } = await graphqlClient.query<{
+    userBetHistory: PaginatedBetsResponse;
+  }>({
     query: USER_BET_HISTORY,
     variables: { page, pageSize },
     fetchPolicy: 'no-cache',
   });
-  return { data: data.userBetHistory, statusCode: 200, message: 'Success', success: true };
+  return {
+    data: data.userBetHistory,
+    statusCode: 200,
+    message: 'Success',
+    success: true,
+  };
 };

@@ -95,11 +95,15 @@ export const getAllBets = async (
   const formatted = bets.map(bet => ({
     betId: bet.betId.toString().padStart(12, '0'),
     game: bet.game,
-    date: bet.createdAt,
+    createdAt: bet.createdAt,
+    updatedAt: bet.updatedAt,
     betAmount: bet.betAmount / 100,
     payoutMultiplier: bet.payoutAmount / bet.betAmount,
     payout: bet.payoutAmount / 100,
     id: bet.id,
+    betNonce: bet.betNonce,
+    provablyFairStateId: bet.provablyFairStateId,
+    state: JSON.stringify(bet.state),
   }));
 
   const totalPages = Math.ceil(totalCount / pageSize);

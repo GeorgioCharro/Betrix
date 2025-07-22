@@ -44,13 +44,13 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
 
   {
     header: 'Date',
-    accessorKey: 'date',
+    accessorKey: 'createdAt',
     cell: ({ row }) => {
       // Format the date using date-fns
-      const date = new Date(row.original.date);
+      const date = new Date(row.original.createdAt);
       const formattedDate = isValid(date)
         ? format(date, 'h:mm a M/d/yyyy')
-        : String(row.original.date);
+        : String(row.original.createdAt);
 
       return (
         <div className="text-neutral-weak font-medium">{formattedDate}</div>

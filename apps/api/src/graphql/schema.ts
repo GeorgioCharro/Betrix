@@ -171,11 +171,15 @@ export const typeDefs = gql`
   type PaginatedBetData {
     betId: String!
     game: String!
-    date: String!
+    createdAt: String!
+    updatedAt: String!
     betAmount: Float!
     payoutMultiplier: Float!
     payout: Float!
     id: ID!
+    betNonce: Int!
+    provablyFairStateId: ID!
+    state: String!
   }
 
   type Pagination {
