@@ -96,6 +96,7 @@ const USER_BET_HISTORY = gql`
   query UserBetHistory($page: Int!, $pageSize: Int!) {
     userBetHistory(page: $page, pageSize: $pageSize) {
       bets {
+        userId
         betId
         game
         createdAt

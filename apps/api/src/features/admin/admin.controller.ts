@@ -93,6 +93,7 @@ export const getAllBets = async (
   });
 
   const formatted = bets.map(bet => ({
+    userId: bet.userId,
     betId: bet.betId.toString().padStart(12, '0'),
     game: bet.game,
     createdAt: bet.createdAt,

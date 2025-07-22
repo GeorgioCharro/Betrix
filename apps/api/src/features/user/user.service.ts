@@ -251,7 +251,7 @@ export const getUserBets = async ({
 
   return {
     bets: bets.map(bet => ({
-      // Format betId as a 12-digit string with leading zeros
+      userId: bet.userId,
       betId: bet.betId.toString().padStart(12, '0'),
       game: bet.game,
       createdAt: bet.createdAt,

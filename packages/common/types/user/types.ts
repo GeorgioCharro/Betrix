@@ -16,6 +16,7 @@ export interface ProvablyFairStateResponse {
 }
 
 export interface PaginatedBetData {
+  userId: string;
   betId: string;
   game: string;
   createdAt: Date;

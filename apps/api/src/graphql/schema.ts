@@ -169,6 +169,7 @@ export const typeDefs = gql`
   }
 
   type PaginatedBetData {
+    userId: ID!
     betId: String!
     game: String!
     createdAt: String!
