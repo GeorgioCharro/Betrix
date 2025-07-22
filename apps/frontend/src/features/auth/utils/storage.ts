@@ -1,13 +1,13 @@
-import type { IUser } from '@repo/common/types';
+import type { User } from '@repo/common/types';
 
 import { key } from '../const/immutableConst';
 
-export const getStoredUser = (): IUser | null => {
+export const getStoredUser = (): User | null => {
   const user = localStorage.getItem(key);
-  return user ? (JSON.parse(user) as IUser) : null;
+  return user ? (JSON.parse(user) as User) : null;
 };
 
-export const setStoredUser = (user: IUser | null): void => {
+export const setStoredUser = (user: User | null): void => {
   if (user) {
     localStorage.setItem(key, JSON.stringify(user));
   } else {

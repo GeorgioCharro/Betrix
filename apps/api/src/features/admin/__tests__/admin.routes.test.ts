@@ -7,9 +7,11 @@ jest.mock('@repo/db', () => ({
     findUnique: jest.fn(),
     update: jest.fn(),
     findMany: jest.fn(),
+    count: jest.fn(),
   },
   bet: {
     findMany: jest.fn(),
+    count: jest.fn(),
   },
 }));
 
@@ -42,5 +44,50 @@ describe('Admin routes', () => {
       .expect(200);
 
     expect(db.user.update).toHaveBeenCalled();
+  });
+
+  it('returns paginated bets', async () => {
+    (db.bet.findMany as jest.Mock).mockResolvedValue([]);
+    (db.bet.count as jest.Mock).mockResolvedValue(10);
+
+    const app = await createServer();
+    await supertest(app)
+      .get('/api/v1/admin/bets?page=2&pageSize=5')
+      .set('x-api-key', 'testkey')
+      .expect(200);
+
+    expect(db.bet.findMany).toHaveBeenCalledWith({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { id: true, name: true } } },
+      skip: 5,
+      take: 5,
+    });
+    expect(db.bet.count).toHaveBeenCalled();
+  });
+
+  it('returns paginated users', async () => {
+    (db.user.findMany as jest.Mock).mockResolvedValue([]);
+    (db.user.count as jest.Mock).mockResolvedValue(20);
+
+    const app = await createServer();
+    await supertest(app)
+      .get('/api/v1/admin/users?page=3&pageSize=10')
+      .set('x-api-key', 'testkey')
+      .expect(200);
+
+    expect(db.user.findMany).toHaveBeenCalledWith({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        balance: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: 20,
+      take: 10,
+    });
+    expect(db.user.count).toHaveBeenCalled();
   });
 });

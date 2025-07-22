@@ -1,4 +1,4 @@
-export interface IUser {
+export interface User {
   createdAt: string;
   email: string;
   googleId: string | null;
@@ -27,6 +27,25 @@ export interface PaginatedBetData {
 
 export interface PaginatedBetsResponse {
   bets: PaginatedBetData[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface PaginatedUsersResponse {
+  users: {
+    id: string;
+    email: string;
+    name: string | null;
+    balance: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
   pagination: {
     page: number;
     pageSize: number;

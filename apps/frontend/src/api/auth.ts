@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import type { IUser, ApiResponse } from '@repo/common/types';
+import type { User, ApiResponse } from '@repo/common/types';
 
 import { fetchGet } from './_utils/fetch';
 import { graphqlClient } from './graphql/client';
@@ -16,8 +16,8 @@ const CURRENT_USER = gql`
   }
 `;
 
-export const getUserDetails = async (): Promise<ApiResponse<IUser>> => {
-  const { data } = await graphqlClient.query<{ currentUser: IUser }>({
+export const getUserDetails = async (): Promise<ApiResponse<User>> => {
+  const { data } = await graphqlClient.query<{ currentUser: User }>({
     query: CURRENT_USER,
     fetchPolicy: 'no-cache',
   });

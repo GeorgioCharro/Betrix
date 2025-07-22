@@ -1,12 +1,12 @@
-import type { IUser } from '@repo/common/types';
+import type { User } from '@repo/common/types';
 import { create } from 'zustand';
 
 import { getStoredUser, setStoredUser } from '../utils/storage';
 
 export interface AuthState {
-  user: IUser | null;
+  user: User | null;
   isModalOpen: boolean;
-  setUser: (user: IUser | null) => void;
+  setUser: (user: User | null) => void;
   showLoginModal: () => void;
   hideLoginModal: () => void;
 }
