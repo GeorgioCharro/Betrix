@@ -24,7 +24,10 @@ export const createServer = async (): Promise<Express> => {
     .use(json())
     .use(
       cors({
-        origin: process.env.REACT_ORIGINS_URL || 'http://localhost:3000', // Use env variable with fallback
+        origin: process.env.REACT_ORIGINS_URL?.split(',') || [
+          'http://localhost:3000',
+          'http://localhost:5173',
+        ], // Use env variable with fallback
         credentials: true, // Allow cookies and other credentials
       })
     )

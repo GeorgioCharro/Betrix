@@ -62,7 +62,7 @@ Game state and results can be queried via GraphQL or through the REST controller
    ```sh
    pnpm dev
    ```
-   This launches the API on port `5000` and the Vite frontend on port `3000`.
+   This launches the API on port `5000` and the Vite frontend on port `3000` (or `5173` if using the default Vite port).
 
 ## Scripts
 
