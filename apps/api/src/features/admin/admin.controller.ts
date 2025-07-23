@@ -10,7 +10,12 @@ import { BadRequestError } from '../../errors';
 import { broadcastBalanceUpdate } from '../../websocket';
 
 export const depositBalance = async (req: Request, res: Response) => {
-  const { userId, amount } = req.body as { userId: string; amount: number };
+  const { userId, amount, depositAddress, status } = req.body as {
+    userId: string;
+    amount: number;
+    depositAddress?: string;
+    status?: string;
+  };
 
   if (!userId || typeof amount !== 'number' || amount <= 0) {
     throw new BadRequestError('Invalid parameters');
@@ -27,6 +32,14 @@ export const depositBalance = async (req: Request, res: Response) => {
     where: { id: userId },
     data: { balance: newBalance },
   });
+  await db.deposit.create({
+    data: {
+      userId,
+      amount: cents,
+      status: status ?? 'completed',
+      depositAddress: depositAddress ?? '',
+    },
+  });
 
   const balanceValue = parseInt(updated.balance, 10) / 100;
   broadcastBalanceUpdate(userId, balanceValue);
@@ -39,8 +52,12 @@ export const depositBalance = async (req: Request, res: Response) => {
 };
 
 export const withdrawBalance = async (req: Request, res: Response) => {
-  const { userId, amount } = req.body as { userId: string; amount: number };
-
+  const { userId, amount, withdrawAddress, status } = req.body as {
+    userId: string;
+    amount: number;
+    withdrawAddress?: string;
+    status?: string;
+  };
   if (!userId || typeof amount !== 'number' || amount <= 0) {
     throw new BadRequestError('Invalid parameters');
   }
@@ -60,6 +77,15 @@ export const withdrawBalance = async (req: Request, res: Response) => {
   const updated = await db.user.update({
     where: { id: userId },
     data: { balance: newBalance },
+  });
+
+  await db.withdraw.create({
+    data: {
+      userId,
+      amount: cents,
+      status: status ?? 'completed',
+      withdrawAddress: withdrawAddress ?? '',
+    },
   });
 
   const balanceValue = parseInt(updated.balance, 10) / 100;

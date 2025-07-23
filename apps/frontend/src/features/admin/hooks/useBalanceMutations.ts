@@ -11,6 +11,9 @@ interface AdminBalanceRequest {
   userId: string;
   amount: number;
   apiKey: string;
+  depositAddress?: string;
+  withdrawAddress?: string;
+  status?: string;
 }
 
 interface BalanceResponse {

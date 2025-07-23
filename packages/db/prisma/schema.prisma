@@ -34,7 +34,8 @@ model User {
   updatedAt          DateTime            @updatedAt
   provablyFairStates ProvablyFairState[]
   bets               Bet[]
-
+  deposits           Deposit[]
+  withdraws          Withdraw[]
   @@map("users")
 }
 
@@ -75,4 +76,32 @@ model Bet {
   @@index([provablyFairStateId])
   @@index([game])
   @@map("bets")
+}
+
+model Deposit {
+  id             String   @id @default(cuid())
+  depositId      BigInt   @unique @default(autoincrement())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  amount         Int
+  status         String
+  depositAddress String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("deposits")
+}
+
+model Withdraw {
+  id              String   @id @default(cuid())
+  withdrawId      BigInt   @unique @default(autoincrement())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  amount          Int
+  status          String
+  withdrawAddress String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("withdraws")
 }

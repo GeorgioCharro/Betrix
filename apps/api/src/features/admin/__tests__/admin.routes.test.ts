@@ -9,6 +9,12 @@ jest.mock('@repo/db', () => ({
     findMany: jest.fn(),
     count: jest.fn(),
   },
+  deposit: {
+    create: jest.fn(),
+  },
+  withdraw: {
+    create: jest.fn(),
+  },
   bet: {
     findMany: jest.fn(),
     count: jest.fn(),
@@ -35,6 +41,7 @@ describe('Admin routes', () => {
       id: '1',
       balance: '200',
     });
+    (db.deposit.create as jest.Mock).mockResolvedValue({});
 
     const app = await createServer();
     await supertest(app)
@@ -44,6 +51,29 @@ describe('Admin routes', () => {
       .expect(200);
 
     expect(db.user.update).toHaveBeenCalled();
+    expect(db.deposit.create).toHaveBeenCalled();
+  });
+
+  it('allows withdraw with valid api key', async () => {
+    (db.user.findUnique as jest.Mock).mockResolvedValue({
+      id: '1',
+      balance: '200',
+    });
+    (db.user.update as jest.Mock).mockResolvedValue({
+      id: '1',
+      balance: '100',
+    });
+    (db.withdraw.create as jest.Mock).mockResolvedValue({});
+
+    const app = await createServer();
+    await supertest(app)
+      .post('/api/v1/admin/withdraw')
+      .set('x-api-key', 'testkey')
+      .send({ userId: '1', amount: 1 })
+      .expect(200);
+
+    expect(db.user.update).toHaveBeenCalled();
+    expect(db.withdraw.create).toHaveBeenCalled();
   });
 
   it('returns paginated bets', async () => {
