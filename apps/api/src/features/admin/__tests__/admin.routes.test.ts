@@ -163,3 +163,171 @@ describe('Admin routes', () => {
     expect(db.user.count).toHaveBeenCalled();
   });
 });
+
+it('filters bets by user', async () => {
+  (db.bet.findMany as jest.Mock).mockResolvedValue([]);
+  (db.bet.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/bets/user/1')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.bet.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({ where: { userId: '1' } })
+  );
+  expect(db.bet.count).toHaveBeenCalledWith({ where: { userId: '1' } });
+});
+
+it('filters deposits by user', async () => {
+  (db.deposit.findMany as jest.Mock).mockResolvedValue([]);
+  (db.deposit.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/deposits/user/1')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.deposit.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({ where: { userId: '1' } })
+  );
+  expect(db.deposit.count).toHaveBeenCalledWith({ where: { userId: '1' } });
+});
+
+it('filters withdraws by user', async () => {
+  (db.withdraw.findMany as jest.Mock).mockResolvedValue([]);
+  (db.withdraw.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/withdraws/user/1')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.withdraw.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({ where: { userId: '1' } })
+  );
+  expect(db.withdraw.count).toHaveBeenCalledWith({ where: { userId: '1' } });
+});
+
+it('filters bets by time', async () => {
+  (db.bet.findMany as jest.Mock).mockResolvedValue([]);
+  (db.bet.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/bets/time?start=2024-01-01&end=2024-01-31')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.bet.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: {
+        createdAt: {
+          gte: expect.any(Date) as unknown as Date,
+          lte: expect.any(Date) as unknown as Date,
+        },
+      },
+    })
+  );
+  expect(db.bet.count).toHaveBeenCalledWith({
+    where: {
+      createdAt: {
+        gte: expect.any(Date) as unknown as Date,
+        lte: expect.any(Date) as unknown as Date,
+      },
+    },
+  });
+});
+
+it('filters deposits by time', async () => {
+  (db.deposit.findMany as jest.Mock).mockResolvedValue([]);
+  (db.deposit.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/deposits/time?start=2024-01-01&end=2024-01-31')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.deposit.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: {
+        createdAt: {
+          gte: expect.any(Date) as unknown as Date,
+          lte: expect.any(Date) as unknown as Date,
+        },
+      },
+    })
+  );
+  expect(db.deposit.count).toHaveBeenCalledWith({
+    where: {
+      createdAt: {
+        gte: expect.any(Date) as unknown as Date,
+        lte: expect.any(Date) as unknown as Date,
+      },
+    },
+  });
+});
+
+it('filters withdraws by time', async () => {
+  (db.withdraw.findMany as jest.Mock).mockResolvedValue([]);
+  (db.withdraw.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/withdraws/time?start=2024-01-01&end=2024-01-31')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.withdraw.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: {
+        createdAt: {
+          gte: expect.any(Date) as unknown as Date,
+          lte: expect.any(Date) as unknown as Date,
+        },
+      },
+    })
+  );
+  expect(db.withdraw.count).toHaveBeenCalledWith({
+    where: {
+      createdAt: {
+        gte: expect.any(Date) as unknown as Date,
+        lte: expect.any(Date) as unknown as Date,
+      },
+    },
+  });
+});
+
+it('filters users by time', async () => {
+  (db.user.findMany as jest.Mock).mockResolvedValue([]);
+  (db.user.count as jest.Mock).mockResolvedValue(0);
+
+  const app = await createServer();
+  await supertest(app)
+    .get('/api/v1/admin/users/time?start=2024-01-01&end=2024-01-31')
+    .set('x-api-key', 'testkey')
+    .expect(200);
+
+  expect(db.user.findMany).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: {
+        createdAt: {
+          gte: expect.any(Date) as unknown as Date,
+          lte: expect.any(Date) as unknown as Date,
+        },
+      },
+    })
+  );
+  expect(db.user.count).toHaveBeenCalledWith({
+    where: {
+      createdAt: {
+        gte: expect.any(Date) as unknown as Date,
+        lte: expect.any(Date) as unknown as Date,
+      },
+    },
+  });
+});
