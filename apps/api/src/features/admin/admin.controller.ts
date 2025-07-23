@@ -6,6 +6,7 @@ import {
   type PaginatedBetsResponse,
   type PaginatedUsersResponse,
   type PaginatedWithdrawsResponse,
+  type PaginatedDepositsResponse,
 } from '@repo/common/types';
 import { BadRequestError } from '../../errors';
 import { broadcastBalanceUpdate } from '../../websocket';
@@ -190,6 +191,52 @@ export const getAllUsers = async (
   return res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       users: formatted,
+      pagination: {
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    })
+  );
+};
+
+export const getAllDeposits = async (
+  req: Request,
+  res: Response<ApiResponse<PaginatedDepositsResponse>>
+) => {
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const pageSize = Math.min(
+    100,
+    Math.max(1, parseInt(req.query.pageSize as string) || 10)
+  );
+
+  const totalCount = await db.deposit.count();
+  const deposits = await db.deposit.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { user: { select: { id: true, name: true } } },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  const formatted = deposits.map(d => ({
+    userId: d.userId,
+    depositId: d.depositId.toString().padStart(12, '0'),
+    amount: d.amount / 100,
+    status: d.status,
+    depositAddress: d.depositAddress,
+    createdAt: d.createdAt,
+    updatedAt: d.updatedAt,
+    id: d.id,
+  }));
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  return res.status(StatusCodes.OK).json(
+    new ApiResponse(StatusCodes.OK, {
+      deposits: formatted,
       pagination: {
         page,
         pageSize,

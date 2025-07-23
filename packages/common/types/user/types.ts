@@ -83,3 +83,26 @@ export interface PaginatedWithdrawsResponse {
     hasPreviousPage: boolean;
   };
 }
+
+export interface PaginatedDepositData {
+  userId: string;
+  depositId: string;
+  amount: number;
+  status: string;
+  depositAddress: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+}
+
+export interface PaginatedDepositsResponse {
+  deposits: PaginatedDepositData[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}

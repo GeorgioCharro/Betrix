@@ -4,6 +4,7 @@ import {
   depositBalance,
   withdrawBalance,
   getAllBets,
+  getAllDeposits,
   getAllWithdraws,
   getAllUsers,
 } from './admin.controller';
@@ -13,6 +14,7 @@ const router: Router = Router();
 router.post('/deposit', requireApiKey, depositBalance);
 router.post('/withdraw', requireApiKey, withdrawBalance);
 router.get('/bets', requireApiKey, getAllBets);
+router.get('/deposits', requireApiKey, getAllDeposits);
 router.get('/withdraws', requireApiKey, getAllWithdraws);
 router.get('/users', requireApiKey, getAllUsers);
 
