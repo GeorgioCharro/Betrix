@@ -60,3 +60,26 @@ export interface PaginatedUsersResponse {
     hasPreviousPage: boolean;
   };
 }
+
+export interface PaginatedWithdrawData {
+  userId: string;
+  withdrawId: string;
+  amount: number;
+  status: string;
+  withdrawAddress: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+}
+
+export interface PaginatedWithdrawsResponse {
+  withdraws: PaginatedWithdrawData[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}

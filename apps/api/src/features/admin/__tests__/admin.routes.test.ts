@@ -14,6 +14,8 @@ jest.mock('@repo/db', () => ({
   },
   withdraw: {
     create: jest.fn(),
+    findMany: jest.fn(),
+    count: jest.fn(),
   },
   bet: {
     findMany: jest.fn(),
@@ -93,6 +95,25 @@ describe('Admin routes', () => {
       take: 5,
     });
     expect(db.bet.count).toHaveBeenCalled();
+  });
+
+  it('returns paginated withdraws', async () => {
+    (db.withdraw.findMany as jest.Mock).mockResolvedValue([]);
+    (db.withdraw.count as jest.Mock).mockResolvedValue(8);
+
+    const app = await createServer();
+    await supertest(app)
+      .get('/api/v1/admin/withdraws?page=2&pageSize=5')
+      .set('x-api-key', 'testkey')
+      .expect(200);
+
+    expect(db.withdraw.findMany).toHaveBeenCalledWith({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { id: true, name: true } } },
+      skip: 5,
+      take: 5,
+    });
+    expect(db.withdraw.count).toHaveBeenCalled();
   });
 
   it('returns paginated users', async () => {
