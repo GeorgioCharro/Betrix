@@ -8,7 +8,7 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import { StatusCodes } from 'http-status-codes';
-import { authRouter, gameRouter, adminRouter } from './routes';
+import { authRouter, gameRouter } from './routes';
 import { initGraphQL } from './graphql';
 import './config/passport';
 import notFoundMiddleware from './middlewares/not-found';
@@ -27,6 +27,7 @@ export const createServer = async (): Promise<Express> => {
         origin: process.env.REACT_ORIGINS_URL?.split(',') || [
           'http://localhost:3000',
           'http://localhost:5173',
+          'https://studio.apollographql.com/',
         ], // Use env variable with fallback
         credentials: true, // Allow cookies and other credentials
       })
@@ -54,8 +55,7 @@ export const createServer = async (): Promise<Express> => {
       return res.status(StatusCodes.OK).json({ ok: true });
     })
     .use('/api/v1/auth', authRouter)
-    .use('/api/v1/games', gameRouter)
-    .use('/api/v1/admin', adminRouter);
+    .use('/api/v1/games', gameRouter);
 
   app.use(notFoundMiddleware);
   app.use(errorHandlerMiddleware);

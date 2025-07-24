@@ -197,6 +197,56 @@ export const typeDefs = gql`
     pagination: Pagination!
   }
 
+  type PaginatedWithdrawData {
+    userId: ID!
+    withdrawId: String!
+    amount: Float!
+    status: String!
+    withdrawAddress: String!
+    createdAt: String!
+    updatedAt: String!
+    id: ID!
+  }
+
+  type PaginatedWithdrawsResponse {
+    withdraws: [PaginatedWithdrawData!]!
+    pagination: Pagination!
+  }
+
+  type PaginatedDepositData {
+    userId: ID!
+    depositId: String!
+    amount: Float!
+    status: String!
+    depositAddress: String!
+    createdAt: String!
+    updatedAt: String!
+    id: ID!
+  }
+
+  type PaginatedDepositsResponse {
+    deposits: [PaginatedDepositData!]!
+    pagination: Pagination!
+  }
+
+  type AdminUser {
+    id: ID!
+    email: String!
+    name: String
+    balance: Float!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type PaginatedUsersResponse {
+    users: [AdminUser!]!
+    pagination: Pagination!
+  }
+
+  type BalanceResponse {
+    balance: Float!
+  }
+
   type Query {
     currentUser: User
     balance: Float
@@ -205,6 +255,45 @@ export const typeDefs = gql`
     provablyFairState: ProvablyFairState
     revealedServerSeed(hashedServerSeed: String!): RevealedServerSeed
     userBetHistory(page: Int!, pageSize: Int!): PaginatedBetsResponse
+    allBets(page: Int!, pageSize: Int!): PaginatedBetsResponse
+    betsByUser(userId: ID!, page: Int!, pageSize: Int!): PaginatedBetsResponse
+    betsByTime(
+      start: String!
+      end: String!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedBetsResponse
+    allWithdraws(page: Int!, pageSize: Int!): PaginatedWithdrawsResponse
+    withdrawsByUser(
+      userId: ID!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedWithdrawsResponse
+    withdrawsByTime(
+      start: String!
+      end: String!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedWithdrawsResponse
+    allDeposits(page: Int!, pageSize: Int!): PaginatedDepositsResponse
+    depositsByUser(
+      userId: ID!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedDepositsResponse
+    depositsByTime(
+      start: String!
+      end: String!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedDepositsResponse
+    allUsers(page: Int!, pageSize: Int!): PaginatedUsersResponse
+    usersByTime(
+      start: String!
+      end: String!
+      page: Int!
+      pageSize: Int!
+    ): PaginatedUsersResponse
   }
 
   type Mutation {
@@ -232,5 +321,17 @@ export const typeDefs = gql`
     ): PlinkooBetResponse!
     playLimbo(clientSeed: String): Float!
     rotateSeed(clientSeed: String!): ProvablyFairState!
+    depositBalance(
+      userId: ID!
+      amount: Float!
+      depositAddress: String
+      status: String
+    ): BalanceResponse!
+    withdrawBalance(
+      userId: ID!
+      amount: Float!
+      withdrawAddress: String
+      status: String
+    ): BalanceResponse!
   }
 `;

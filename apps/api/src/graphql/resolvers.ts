@@ -28,10 +28,17 @@ import {
 import { blackjackManager } from '../features/games/blackjack/blackjack.service';
 import { BadRequestError } from '../errors';
 import type { Risk } from '../features/games/plinkoo/plinkoo.constants';
+import { broadcastBalanceUpdate } from '../websocket';
 
 interface Context {
   req: Request;
 }
+const verifyApiKey = (req: Request) => {
+  const apiKey = req.header('x-api-key');
+  if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+    throw new Error('Unauthorized');
+  }
+};
 
 export const resolvers = {
   Query: {
@@ -116,6 +123,544 @@ export const resolvers = {
         pageSize: args.pageSize,
       });
       return result;
+    },
+    allBets: async (
+      _: unknown,
+      args: { page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.bet.count();
+      const bets = await db.bet.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = bets.map(bet => ({
+        userId: bet.userId,
+        betId: bet.betId.toString().padStart(12, '0'),
+        game: bet.game,
+        createdAt: bet.createdAt,
+        updatedAt: bet.updatedAt,
+        betAmount: bet.betAmount / 100,
+        payoutMultiplier: bet.payoutAmount / bet.betAmount,
+        payout: bet.payoutAmount / 100,
+        id: bet.id,
+        betNonce: bet.betNonce,
+        provablyFairStateId: bet.provablyFairStateId,
+        state: JSON.stringify(bet.state),
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        bets: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    betsByUser: async (
+      _: unknown,
+      args: { userId: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const { userId } = args;
+      if (!userId) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.bet.count({ where: { userId } });
+      const bets = await db.bet.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = bets.map(bet => ({
+        userId: bet.userId,
+        betId: bet.betId.toString().padStart(12, '0'),
+        game: bet.game,
+        createdAt: bet.createdAt,
+        updatedAt: bet.updatedAt,
+        betAmount: bet.betAmount / 100,
+        payoutMultiplier: bet.payoutAmount / bet.betAmount,
+        payout: bet.payoutAmount / 100,
+        id: bet.id,
+        betNonce: bet.betNonce,
+        provablyFairStateId: bet.provablyFairStateId,
+        state: JSON.stringify(bet.state),
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        bets: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    betsByTime: async (
+      _: unknown,
+      args: { start: string; end: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const startDate = new Date(args.start);
+      const endDate = new Date(args.end);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.bet.count({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+      });
+      const bets = await db.bet.findMany({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = bets.map(bet => ({
+        userId: bet.userId,
+        betId: bet.betId.toString().padStart(12, '0'),
+        game: bet.game,
+        createdAt: bet.createdAt,
+        updatedAt: bet.updatedAt,
+        betAmount: bet.betAmount / 100,
+        payoutMultiplier: bet.payoutAmount / bet.betAmount,
+        payout: bet.payoutAmount / 100,
+        id: bet.id,
+        betNonce: bet.betNonce,
+        provablyFairStateId: bet.provablyFairStateId,
+        state: JSON.stringify(bet.state),
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        bets: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    allWithdraws: async (
+      _: unknown,
+      args: { page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.withdraw.count();
+      const withdraws = await db.withdraw.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = withdraws.map(w => ({
+        userId: w.userId,
+        withdrawId: w.withdrawId.toString().padStart(12, '0'),
+        amount: w.amount / 100,
+        status: w.status,
+        withdrawAddress: w.withdrawAddress,
+        createdAt: w.createdAt,
+        updatedAt: w.updatedAt,
+        id: w.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        withdraws: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    withdrawsByUser: async (
+      _: unknown,
+      args: { userId: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const { userId } = args;
+      if (!userId) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.withdraw.count({ where: { userId } });
+      const withdraws = await db.withdraw.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = withdraws.map(w => ({
+        userId: w.userId,
+        withdrawId: w.withdrawId.toString().padStart(12, '0'),
+        amount: w.amount / 100,
+        status: w.status,
+        withdrawAddress: w.withdrawAddress,
+        createdAt: w.createdAt,
+        updatedAt: w.updatedAt,
+        id: w.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        withdraws: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    withdrawsByTime: async (
+      _: unknown,
+      args: { start: string; end: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const startDate = new Date(args.start);
+      const endDate = new Date(args.end);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.withdraw.count({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+      });
+      const withdraws = await db.withdraw.findMany({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = withdraws.map(w => ({
+        userId: w.userId,
+        withdrawId: w.withdrawId.toString().padStart(12, '0'),
+        amount: w.amount / 100,
+        status: w.status,
+        withdrawAddress: w.withdrawAddress,
+        createdAt: w.createdAt,
+        updatedAt: w.updatedAt,
+        id: w.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        withdraws: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    allDeposits: async (
+      _: unknown,
+      args: { page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.deposit.count();
+      const deposits = await db.deposit.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = deposits.map(d => ({
+        userId: d.userId,
+        depositId: d.depositId.toString().padStart(12, '0'),
+        amount: d.amount / 100,
+        status: d.status,
+        depositAddress: d.depositAddress,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+        id: d.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        deposits: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    depositsByUser: async (
+      _: unknown,
+      args: { userId: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const { userId } = args;
+      if (!userId) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.deposit.count({ where: { userId } });
+      const deposits = await db.deposit.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = deposits.map(d => ({
+        userId: d.userId,
+        depositId: d.depositId.toString().padStart(12, '0'),
+        amount: d.amount / 100,
+        status: d.status,
+        depositAddress: d.depositAddress,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+        id: d.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        deposits: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    depositsByTime: async (
+      _: unknown,
+      args: { start: string; end: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const startDate = new Date(args.start);
+      const endDate = new Date(args.end);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.deposit.count({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+      });
+      const deposits = await db.deposit.findMany({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true } } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = deposits.map(d => ({
+        userId: d.userId,
+        depositId: d.depositId.toString().padStart(12, '0'),
+        amount: d.amount / 100,
+        status: d.status,
+        depositAddress: d.depositAddress,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+        id: d.id,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        deposits: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    allUsers: async (
+      _: unknown,
+      args: { page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.user.count();
+      const users = await db.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          balance: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = users.map(u => ({
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        balance: parseInt(u.balance, 10) / 100,
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        users: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    usersByTime: async (
+      _: unknown,
+      args: { start: string; end: string; page: number; pageSize: number },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const startDate = new Date(args.start);
+      const endDate = new Date(args.end);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.user.count({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+      });
+      const users = await db.user.findMany({
+        where: { createdAt: { gte: startDate, lte: endDate } },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          balance: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = users.map(u => ({
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        balance: parseInt(u.balance, 10) / 100,
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        users: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
     },
   },
   MinesRoundResponse: {
@@ -588,6 +1133,94 @@ export const resolvers = {
       const userInstance = await userManager.getUser((req.user as User).id);
       const seed = await userInstance.rotateSeed(args.clientSeed);
       return seed;
+    },
+    depositBalance: async (
+      _: unknown,
+      args: {
+        userId: string;
+        amount: number;
+        depositAddress?: string;
+        status?: string;
+      },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const { userId, amount, depositAddress, status } = args;
+      if (!userId || typeof amount !== 'number' || amount <= 0) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const user = await db.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new BadRequestError('User not found');
+      }
+
+      const cents = Math.round(amount * 100);
+      const newBalance = (parseInt(user.balance, 10) + cents).toString();
+      const updated = await db.user.update({
+        where: { id: userId },
+        data: { balance: newBalance },
+      });
+      await db.deposit.create({
+        data: {
+          userId,
+          amount: cents,
+          status: status ?? 'completed',
+          depositAddress: depositAddress ?? '',
+        },
+      });
+
+      const balanceValue = parseInt(updated.balance, 10) / 100;
+      broadcastBalanceUpdate(userId, balanceValue);
+
+      return { balance: balanceValue };
+    },
+    withdrawBalance: async (
+      _: unknown,
+      args: {
+        userId: string;
+        amount: number;
+        withdrawAddress?: string;
+        status?: string;
+      },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const { userId, amount, withdrawAddress, status } = args;
+      if (!userId || typeof amount !== 'number' || amount <= 0) {
+        throw new BadRequestError('Invalid parameters');
+      }
+
+      const user = await db.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new BadRequestError('User not found');
+      }
+
+      const cents = Math.round(amount * 100);
+      const current = parseInt(user.balance, 10);
+      if (current < cents) {
+        throw new BadRequestError('Insufficient balance');
+      }
+
+      const newBalance = (current - cents).toString();
+      const updated = await db.user.update({
+        where: { id: userId },
+        data: { balance: newBalance },
+      });
+
+      await db.withdraw.create({
+        data: {
+          userId,
+          amount: cents,
+          status: status ?? 'completed',
+          withdrawAddress: withdrawAddress ?? '',
+        },
+      });
+
+      const balanceValue = parseInt(updated.balance, 10) / 100;
+      broadcastBalanceUpdate(userId, balanceValue);
+
+      return { balance: balanceValue };
     },
   },
 };
