@@ -24,10 +24,10 @@ export const betsTypeDefs = gql`
   extend type Query {
     userBetHistory(page: Int!, pageSize: Int!): PaginatedBetsResponse
     allBets(page: Int!, pageSize: Int!): PaginatedBetsResponse
-    betsByUser(userId: ID!, page: Int!, pageSize: Int!): PaginatedBetsResponse
-    betsByTime(
-      start: String!
-      end: String!
+    bets(
+      userId: ID
+      start: String
+      end: String
       page: Int!
       pageSize: Int!
     ): PaginatedBetsResponse

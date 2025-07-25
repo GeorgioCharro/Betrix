@@ -44,9 +44,11 @@ export const usersTypeDefs = gql`
     provablyFairState: ProvablyFairState
     revealedServerSeed(hashedServerSeed: String!): RevealedServerSeed
     allUsers(page: Int!, pageSize: Int!): PaginatedUsersResponse
-    usersByTime(
-      start: String!
-      end: String!
+
+    users(
+      userId: ID
+      start: String
+      end: String
       page: Int!
       pageSize: Int!
     ): PaginatedUsersResponse

@@ -7,7 +7,7 @@ export const usersResolvers = {
     provablyFairState: main.Query.provablyFairState,
     revealedServerSeed: main.Query.revealedServerSeed,
     allUsers: main.Query.allUsers,
-    usersByTime: main.Query.usersByTime,
+    users: main.Query.users,
   },
   Mutation: {
     rotateSeed: main.Mutation.rotateSeed,

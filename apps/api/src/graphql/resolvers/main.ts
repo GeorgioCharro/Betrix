@@ -30,7 +30,7 @@ import { BadRequestError } from '../../errors';
 import type { Risk } from '../../features/games/plinkoo/plinkoo.constants';
 import { broadcastBalanceUpdate } from '../../websocket';
 
-interface Context {
+export interface Context {
   req: Request;
 }
 const verifyApiKey = (req: Request) => {
@@ -170,78 +170,41 @@ export const resolvers = {
         },
       };
     },
-    betsByUser: async (
+
+    bets: async (
       _: unknown,
-      args: { userId: string; page: number; pageSize: number },
+      args: {
+        userId?: string;
+        start?: string;
+        end?: string;
+        page: number;
+        pageSize: number;
+      },
       { req }: Context
     ) => {
       verifyApiKey(req);
-      const { userId } = args;
-      if (!userId) {
-        throw new BadRequestError('Invalid parameters');
+      const where: Prisma.BetWhereInput = {};
+      if (args.userId) {
+        where.userId = args.userId;
+      }
+      if (args.start || args.end) {
+        if (!args.start || !args.end) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        const startDate = new Date(args.start);
+        const endDate = new Date(args.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        where.createdAt = { gte: startDate, lte: endDate };
       }
 
       const page = Math.max(1, args.page || 1);
       const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
-      const totalCount = await db.bet.count({ where: { userId } });
+      const totalCount = await db.bet.count({ where });
       const bets = await db.bet.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true } } },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      });
-
-      const formatted = bets.map(bet => ({
-        userId: bet.userId,
-        betId: bet.betId.toString().padStart(12, '0'),
-        game: bet.game,
-        createdAt: bet.createdAt,
-        updatedAt: bet.updatedAt,
-        betAmount: bet.betAmount / 100,
-        payoutMultiplier: bet.payoutAmount / bet.betAmount,
-        payout: bet.payoutAmount / 100,
-        id: bet.id,
-        betNonce: bet.betNonce,
-        provablyFairStateId: bet.provablyFairStateId,
-        state: JSON.stringify(bet.state),
-      }));
-
-      const totalPages = Math.ceil(totalCount / pageSize);
-
-      return {
-        bets: formatted,
-        pagination: {
-          page,
-          pageSize,
-          totalCount,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1,
-        },
-      };
-    },
-    betsByTime: async (
-      _: unknown,
-      args: { start: string; end: string; page: number; pageSize: number },
-      { req }: Context
-    ) => {
-      verifyApiKey(req);
-      const startDate = new Date(args.start);
-      const endDate = new Date(args.end);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new BadRequestError('Invalid parameters');
-      }
-
-      const page = Math.max(1, args.page || 1);
-      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
-
-      const totalCount = await db.bet.count({
-        where: { createdAt: { gte: startDate, lte: endDate } },
-      });
-      const bets = await db.bet.findMany({
-        where: { createdAt: { gte: startDate, lte: endDate } },
+        where,
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { id: true, name: true } } },
         skip: (page - 1) * pageSize,
@@ -319,74 +282,41 @@ export const resolvers = {
         },
       };
     },
-    withdrawsByUser: async (
+
+    withdraws: async (
       _: unknown,
-      args: { userId: string; page: number; pageSize: number },
+      args: {
+        userId?: string;
+        start?: string;
+        end?: string;
+        page: number;
+        pageSize: number;
+      },
       { req }: Context
     ) => {
       verifyApiKey(req);
-      const { userId } = args;
-      if (!userId) {
-        throw new BadRequestError('Invalid parameters');
+      const where: Prisma.WithdrawWhereInput = {};
+      if (args.userId) {
+        where.userId = args.userId;
+      }
+      if (args.start || args.end) {
+        if (!args.start || !args.end) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        const startDate = new Date(args.start);
+        const endDate = new Date(args.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        where.createdAt = { gte: startDate, lte: endDate };
       }
 
       const page = Math.max(1, args.page || 1);
       const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
-      const totalCount = await db.withdraw.count({ where: { userId } });
+      const totalCount = await db.withdraw.count({ where });
       const withdraws = await db.withdraw.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true } } },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      });
-
-      const formatted = withdraws.map(w => ({
-        userId: w.userId,
-        withdrawId: w.withdrawId.toString().padStart(12, '0'),
-        amount: w.amount / 100,
-        status: w.status,
-        withdrawAddress: w.withdrawAddress,
-        createdAt: w.createdAt,
-        updatedAt: w.updatedAt,
-        id: w.id,
-      }));
-
-      const totalPages = Math.ceil(totalCount / pageSize);
-
-      return {
-        withdraws: formatted,
-        pagination: {
-          page,
-          pageSize,
-          totalCount,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1,
-        },
-      };
-    },
-    withdrawsByTime: async (
-      _: unknown,
-      args: { start: string; end: string; page: number; pageSize: number },
-      { req }: Context
-    ) => {
-      verifyApiKey(req);
-      const startDate = new Date(args.start);
-      const endDate = new Date(args.end);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new BadRequestError('Invalid parameters');
-      }
-
-      const page = Math.max(1, args.page || 1);
-      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
-
-      const totalCount = await db.withdraw.count({
-        where: { createdAt: { gte: startDate, lte: endDate } },
-      });
-      const withdraws = await db.withdraw.findMany({
-        where: { createdAt: { gte: startDate, lte: endDate } },
+        where,
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { id: true, name: true } } },
         skip: (page - 1) * pageSize,
@@ -460,74 +390,41 @@ export const resolvers = {
         },
       };
     },
-    depositsByUser: async (
+
+    deposits: async (
       _: unknown,
-      args: { userId: string; page: number; pageSize: number },
+      args: {
+        userId?: string;
+        start?: string;
+        end?: string;
+        page: number;
+        pageSize: number;
+      },
       { req }: Context
     ) => {
       verifyApiKey(req);
-      const { userId } = args;
-      if (!userId) {
-        throw new BadRequestError('Invalid parameters');
+      const where: Prisma.DepositWhereInput = {};
+      if (args.userId) {
+        where.userId = args.userId;
+      }
+      if (args.start || args.end) {
+        if (!args.start || !args.end) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        const startDate = new Date(args.start);
+        const endDate = new Date(args.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        where.createdAt = { gte: startDate, lte: endDate };
       }
 
       const page = Math.max(1, args.page || 1);
       const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
-      const totalCount = await db.deposit.count({ where: { userId } });
+      const totalCount = await db.deposit.count({ where });
       const deposits = await db.deposit.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { id: true, name: true } } },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      });
-
-      const formatted = deposits.map(d => ({
-        userId: d.userId,
-        depositId: d.depositId.toString().padStart(12, '0'),
-        amount: d.amount / 100,
-        status: d.status,
-        depositAddress: d.depositAddress,
-        createdAt: d.createdAt,
-        updatedAt: d.updatedAt,
-        id: d.id,
-      }));
-
-      const totalPages = Math.ceil(totalCount / pageSize);
-
-      return {
-        deposits: formatted,
-        pagination: {
-          page,
-          pageSize,
-          totalCount,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1,
-        },
-      };
-    },
-    depositsByTime: async (
-      _: unknown,
-      args: { start: string; end: string; page: number; pageSize: number },
-      { req }: Context
-    ) => {
-      verifyApiKey(req);
-      const startDate = new Date(args.start);
-      const endDate = new Date(args.end);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new BadRequestError('Invalid parameters');
-      }
-
-      const page = Math.max(1, args.page || 1);
-      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
-
-      const totalCount = await db.deposit.count({
-        where: { createdAt: { gte: startDate, lte: endDate } },
-      });
-      const deposits = await db.deposit.findMany({
-        where: { createdAt: { gte: startDate, lte: endDate } },
+        where,
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { id: true, name: true } } },
         skip: (page - 1) * pageSize,
@@ -626,6 +523,75 @@ export const resolvers = {
       });
       const users = await db.user.findMany({
         where: { createdAt: { gte: startDate, lte: endDate } },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          balance: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      });
+
+      const formatted = users.map(u => ({
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        balance: parseInt(u.balance, 10) / 100,
+        createdAt: u.createdAt,
+        updatedAt: u.updatedAt,
+      }));
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+      return {
+        users: formatted,
+        pagination: {
+          page,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      };
+    },
+    users: async (
+      _: unknown,
+      args: {
+        userId?: string;
+        start?: string;
+        end?: string;
+        page: number;
+        pageSize: number;
+      },
+      { req }: Context
+    ) => {
+      verifyApiKey(req);
+      const where: Prisma.UserWhereInput = {};
+      if (args.userId) {
+        where.id = args.userId;
+      }
+      if (args.start || args.end) {
+        if (!args.start || !args.end) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        const startDate = new Date(args.start);
+        const endDate = new Date(args.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          throw new BadRequestError('Invalid parameters');
+        }
+        where.createdAt = { gte: startDate, lte: endDate };
+      }
+
+      const page = Math.max(1, args.page || 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
+
+      const totalCount = await db.user.count({ where });
+      const users = await db.user.findMany({
+        where,
         select: {
           id: true,
           email: true,
@@ -1171,6 +1137,8 @@ export const resolvers = {
       });
 
       const balanceValue = parseInt(updated.balance, 10) / 100;
+      const instance = await userManager.getUser(userId);
+      instance.setBalance(updated.balance);
       broadcastBalanceUpdate(userId, balanceValue);
 
       return { balance: balanceValue };

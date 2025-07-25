@@ -19,14 +19,11 @@ export const withdrawsTypeDefs = gql`
 
   extend type Query {
     allWithdraws(page: Int!, pageSize: Int!): PaginatedWithdrawsResponse
-    withdrawsByUser(
-      userId: ID!
-      page: Int!
-      pageSize: Int!
-    ): PaginatedWithdrawsResponse
-    withdrawsByTime(
-      start: String!
-      end: String!
+
+    withdraws(
+      userId: ID
+      start: String
+      end: String
       page: Int!
       pageSize: Int!
     ): PaginatedWithdrawsResponse

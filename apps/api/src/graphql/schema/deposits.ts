@@ -19,14 +19,11 @@ export const depositsTypeDefs = gql`
 
   extend type Query {
     allDeposits(page: Int!, pageSize: Int!): PaginatedDepositsResponse
-    depositsByUser(
-      userId: ID!
-      page: Int!
-      pageSize: Int!
-    ): PaginatedDepositsResponse
-    depositsByTime(
-      start: String!
-      end: String!
+
+    deposits(
+      userId: ID
+      start: String
+      end: String
       page: Int!
       pageSize: Int!
     ): PaginatedDepositsResponse
