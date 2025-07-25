@@ -9,4 +9,11 @@ export const commonTypeDefs = gql`
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
   }
+  type Query {
+    _empty: String
+  }
+
+  type Mutation {
+    _empty: String
+  }
 `;
