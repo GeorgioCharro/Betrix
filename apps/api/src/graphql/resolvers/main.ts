@@ -15,20 +15,20 @@ import type {
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
-import { userManager, getUserBets } from '../features/user/user.service';
-import { getResult as getDiceResult } from '../features/games/dice/dice.service';
-import { getResult as getLimboResult } from '../features/games/limbo/limbo.service';
-import { calculateOutcome } from '../features/games/plinkoo/plinkoo.service';
-import { getResult as getKenoResult } from '../features/games/keno/keno.service';
-import { minesManager } from '../features/games/mines/mines.service';
+import { userManager, getUserBets } from '../../features/user/user.service';
+import { getResult as getDiceResult } from '../../features/games/dice/dice.service';
+import { getResult as getLimboResult } from '../../features/games/limbo/limbo.service';
+import { calculateOutcome } from '../../features/games/plinkoo/plinkoo.service';
+import { getResult as getKenoResult } from '../../features/games/keno/keno.service';
+import { minesManager } from '../../features/games/mines/mines.service';
 import {
   spinWheel,
   calculatePayout,
-} from '../features/games/roulette/roulette.service';
-import { blackjackManager } from '../features/games/blackjack/blackjack.service';
-import { BadRequestError } from '../errors';
-import type { Risk } from '../features/games/plinkoo/plinkoo.constants';
-import { broadcastBalanceUpdate } from '../websocket';
+} from '../../features/games/roulette/roulette.service';
+import { blackjackManager } from '../../features/games/blackjack/blackjack.service';
+import { BadRequestError } from '../../errors';
+import type { Risk } from '../../features/games/plinkoo/plinkoo.constants';
+import { broadcastBalanceUpdate } from '../../websocket';
 
 interface Context {
   req: Request;
@@ -61,7 +61,7 @@ export const resolvers = {
       }
       const userId = (req.user as User).id;
       const game = await minesManager.getGame(userId);
-      if (!game || !game.getBet().active) return null;
+      if (!game?.getBet().active) return null;
       const bet = game.getBet();
       return {
         id: bet.id,
@@ -80,7 +80,7 @@ export const resolvers = {
       }
       const userId = (req.user as User).id;
       const game = await blackjackManager.getGame(userId);
-      if (!game || !game.getBet().active) return null;
+      if (!game?.getBet().active) return null;
       return game.getPlayRoundResponse();
     },
     provablyFairState: async (_: unknown, __: unknown, { req }: Context) => {
