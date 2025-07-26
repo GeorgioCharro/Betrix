@@ -1,9 +1,9 @@
-import { resolvers as main } from './main';
+import * as queries from './modules/bets/queries';
 
 export const betsResolvers = {
   Query: {
-    userBetHistory: main.Query.userBetHistory,
-    allBets: main.Query.allBets,
-    bets: main.Query.bets,
+    userBetHistory: queries.userBetHistory,
+    allBets: queries.allBets,
+    bets: queries.bets,
   },
 };

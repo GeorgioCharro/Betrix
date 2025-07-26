@@ -1,21 +1,23 @@
-import { resolvers as main } from './main';
+import * as queries from './modules/games/queries';
+import * as mutations from './modules/games/mutations';
+import { MinesRoundResponse } from './modules/games/mines-round-response';
 
 export const gamesResolvers = {
   Query: {
-    activeMines: main.Query.activeMines,
-    blackjackActive: main.Query.blackjackActive,
+    activeMines: queries.activeMines,
+    blackjackActive: queries.blackjackActive,
   },
-  MinesRoundResponse: main.MinesRoundResponse,
+  MinesRoundResponse,
   Mutation: {
-    placeDiceBet: main.Mutation.placeDiceBet,
-    placeKenoBet: main.Mutation.placeKenoBet,
-    startMines: main.Mutation.startMines,
-    playMinesRound: main.Mutation.playMinesRound,
-    cashOutMines: main.Mutation.cashOutMines,
-    placeRouletteBet: main.Mutation.placeRouletteBet,
-    blackjackBet: main.Mutation.blackjackBet,
-    blackjackNext: main.Mutation.blackjackNext,
-    plinkooOutcome: main.Mutation.plinkooOutcome,
-    playLimbo: main.Mutation.playLimbo,
+    placeDiceBet: mutations.placeDiceBet,
+    placeKenoBet: mutations.placeKenoBet,
+    startMines: mutations.startMines,
+    playMinesRound: mutations.playMinesRound,
+    cashOutMines: mutations.cashOutMines,
+    placeRouletteBet: mutations.placeRouletteBet,
+    blackjackBet: mutations.blackjackBet,
+    blackjackNext: mutations.blackjackNext,
+    plinkooOutcome: mutations.plinkooOutcome,
+    playLimbo: mutations.playLimbo,
   },
 };
