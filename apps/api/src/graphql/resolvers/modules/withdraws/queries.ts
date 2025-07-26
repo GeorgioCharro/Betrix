@@ -1,8 +1,8 @@
 import db from '@repo/db';
 import type { Prisma } from '@prisma/client';
-import { BadRequestError } from '../../../errors';
-import { verifyApiKey } from '../common';
-import type { Context } from '../common';
+import { BadRequestError } from '../../../../errors';
+import { verifyApiKey } from '../../common';
+import type { Context } from '../../common';
 
 export const allWithdraws = async (
   _: unknown,
@@ -79,7 +79,7 @@ export const withdraws = async (
   const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
   const totalCount = await db.withdraw.count({ where });
-  const withdraws = await db.withdraw.findMany({
+  const withdrawsRecords = await db.withdraw.findMany({
     where,
     orderBy: { createdAt: 'desc' },
     include: { user: { select: { id: true, name: true } } },
@@ -87,7 +87,7 @@ export const withdraws = async (
     take: pageSize,
   });
 
-  const formatted = withdraws.map(w => ({
+  const formatted = withdrawsRecords.map(w => ({
     userId: w.userId,
     withdrawId: w.withdrawId.toString().padStart(12, '0'),
     amount: w.amount / 100,

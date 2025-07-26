@@ -1,16 +1,5 @@
-import type { User } from '@prisma/client';
+import type { User, Prisma } from '@prisma/client';
 import db from '@repo/db';
-import { userManager } from '../../../features/user/user.service';
-import { minesManager } from '../../../features/games/mines/mines.service';
-import { blackjackManager } from '../../../features/games/blackjack/blackjack.service';
-import { getResult as getDiceResult } from '../../../features/games/dice/dice.service';
-import { getResult as getLimboResult } from '../../../features/games/limbo/limbo.service';
-import { calculateOutcome } from '../../../features/games/plinkoo/plinkoo.service';
-import { getResult as getKenoResult } from '../../../features/games/keno/keno.service';
-import {
-  spinWheel,
-  calculatePayout,
-} from '../../../features/games/roulette/roulette.service';
 import {
   RouletteBetTypes,
   BetsSchema,
@@ -24,10 +13,20 @@ import type {
 import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
-import type { Risk } from '../../../features/games/plinkoo/plinkoo.constants';
-import type { Prisma } from '@prisma/client';
-import { BadRequestError } from '../../../errors';
-import type { Context } from '../common';
+import { userManager } from '../../../../features/user/user.service';
+import { minesManager } from '../../../../features/games/mines/mines.service';
+import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
+import { getResult as getDiceResult } from '../../../../features/games/dice/dice.service';
+import { getResult as getLimboResult } from '../../../../features/games/limbo/limbo.service';
+import { calculateOutcome } from '../../../../features/games/plinkoo/plinkoo.service';
+import { getResult as getKenoResult } from '../../../../features/games/keno/keno.service';
+import {
+  spinWheel,
+  calculatePayout,
+} from '../../../../features/games/roulette/roulette.service';
+import type { Risk } from '../../../../features/games/plinkoo/plinkoo.constants';
+import { BadRequestError } from '../../../../errors';
+import type { Context } from '../../common';
 
 export const placeDiceBet = async (
   _: unknown,
@@ -212,7 +211,11 @@ export const playMinesRound = async (
   return state;
 };
 
-export const cashOutMines = async (_: unknown, __: unknown, { req }: Context) => {
+export const cashOutMines = async (
+  _: unknown,
+  __: unknown,
+  { req }: Context
+) => {
   if (!req.isAuthenticated()) {
     throw new Error('Unauthorized');
   }

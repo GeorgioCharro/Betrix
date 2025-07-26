@@ -1,6 +1,6 @@
 import type { User } from '@prisma/client';
-import { userManager } from '../../../features/user/user.service';
-import type { Context } from '../common';
+import { userManager } from '../../../../features/user/user.service';
+import type { Context } from '../../common';
 
 export const rotateSeed = async (
   _: unknown,

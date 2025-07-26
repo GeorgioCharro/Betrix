@@ -9,7 +9,6 @@ export const usersResolvers = {
     revealedServerSeed: queries.revealedServerSeed,
     allUsers: queries.allUsers,
     users: queries.users,
-    usersByTime: queries.usersByTime,
   },
   Mutation: {
     rotateSeed: mutations.rotateSeed,

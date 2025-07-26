@@ -1,8 +1,8 @@
 import db from '@repo/db';
 import type { Prisma } from '@prisma/client';
-import { BadRequestError } from '../../../errors';
-import { verifyApiKey } from '../common';
-import type { Context } from '../common';
+import { BadRequestError } from '../../../../errors';
+import { verifyApiKey } from '../../common';
+import type { Context } from '../../common';
 
 export const allDeposits = async (
   _: unknown,
@@ -79,7 +79,7 @@ export const deposits = async (
   const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
   const totalCount = await db.deposit.count({ where });
-  const deposits = await db.deposit.findMany({
+  const depositsRecords = await db.deposit.findMany({
     where,
     orderBy: { createdAt: 'desc' },
     include: { user: { select: { id: true, name: true } } },
@@ -87,7 +87,7 @@ export const deposits = async (
     take: pageSize,
   });
 
-  const formatted = deposits.map(d => ({
+  const formatted = depositsRecords.map(d => ({
     userId: d.userId,
     depositId: d.depositId.toString().padStart(12, '0'),
     amount: d.amount / 100,

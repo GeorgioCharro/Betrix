@@ -1,10 +1,9 @@
-import type { Prisma } from '@prisma/client';
-import type { User } from '@prisma/client';
+import type { Prisma, User } from '@prisma/client';
 import db from '@repo/db';
-import { userManager } from '../../../features/user/user.service';
-import { BadRequestError } from '../../../errors';
-import { verifyApiKey } from '../common';
-import type { Context } from '../common';
+import { userManager } from '../../../../features/user/user.service';
+import { BadRequestError } from '../../../../errors';
+import { verifyApiKey } from '../../common';
+import type { Context } from '../../common';
 
 export const currentUser = (_: unknown, __: unknown, { req }: Context) => {
   const user = req.user as User | undefined;
@@ -100,62 +99,6 @@ export const allUsers = async (
   };
 };
 
-export const usersByTime = async (
-  _: unknown,
-  args: { start: string; end: string; page: number; pageSize: number },
-  { req }: Context
-) => {
-  verifyApiKey(req);
-  const startDate = new Date(args.start);
-  const endDate = new Date(args.end);
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    throw new BadRequestError('Invalid parameters');
-  }
-
-  const page = Math.max(1, args.page || 1);
-  const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
-
-  const totalCount = await db.user.count({
-    where: { createdAt: { gte: startDate, lte: endDate } },
-  });
-  const users = await db.user.findMany({
-    where: { createdAt: { gte: startDate, lte: endDate } },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      balance: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-  });
-
-  const formatted = users.map(u => ({
-    id: u.id,
-    email: u.email,
-    name: u.name,
-    balance: parseInt(u.balance, 10) / 100,
-    createdAt: u.createdAt,
-    updatedAt: u.updatedAt,
-  }));
-
-  const totalPages = Math.ceil(totalCount / pageSize);
-  return {
-    users: formatted,
-    pagination: {
-      page,
-      pageSize,
-      totalCount,
-      totalPages,
-      hasNextPage: page < totalPages,
-      hasPreviousPage: page > 1,
-    },
-  };
-};
-
 export const users = async (
   _: unknown,
   args: {
@@ -188,7 +131,7 @@ export const users = async (
   const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
   const totalCount = await db.user.count({ where });
-  const users = await db.user.findMany({
+  const usersRecords = await db.user.findMany({
     where,
     select: {
       id: true,
@@ -203,7 +146,7 @@ export const users = async (
     take: pageSize,
   });
 
-  const formatted = users.map(u => ({
+  const formatted = usersRecords.map(u => ({
     id: u.id,
     email: u.email,
     name: u.name,

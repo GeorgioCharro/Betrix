@@ -1,10 +1,9 @@
 import db from '@repo/db';
-import type { Prisma } from '@prisma/client';
-import { BadRequestError } from '../../../errors';
-import { verifyApiKey } from '../common';
-import type { Context } from '../common';
-import { getUserBets } from '../../../features/user/user.service';
-import type { User } from '@prisma/client';
+import type { Prisma, User } from '@prisma/client';
+import { BadRequestError } from '../../../../errors';
+import { verifyApiKey } from '../../common';
+import type { Context } from '../../common';
+import { getUserBets } from '../../../../features/user/user.service';
 
 export const userBetHistory = async (
   _: unknown,
@@ -101,7 +100,7 @@ export const bets = async (
   const pageSize = Math.min(100, Math.max(1, args.pageSize || 10));
 
   const totalCount = await db.bet.count({ where });
-  const bets = await db.bet.findMany({
+  const betRecords = await db.bet.findMany({
     where,
     orderBy: { createdAt: 'desc' },
     include: { user: { select: { id: true, name: true } } },
@@ -109,7 +108,7 @@ export const bets = async (
     take: pageSize,
   });
 
-  const formatted = bets.map(bet => ({
+  const formatted = betRecords.map(bet => ({
     userId: bet.userId,
     betId: bet.betId.toString().padStart(12, '0'),
     game: bet.game,

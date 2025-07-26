@@ -1,8 +1,8 @@
 import db from '@repo/db';
-import { broadcastBalanceUpdate } from '../../../websocket';
-import { verifyApiKey } from '../common';
-import { BadRequestError } from '../../../errors';
-import type { Context } from '../common';
+import { broadcastBalanceUpdate } from '../../../../websocket';
+import { verifyApiKey } from '../../common';
+import { BadRequestError } from '../../../../errors';
+import type { Context } from '../../common';
 
 export const withdrawBalance = async (
   _: unknown,

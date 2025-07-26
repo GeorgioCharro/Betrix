@@ -7,7 +7,7 @@ import * as withdrawQueries from './modules/withdraws/queries';
 import * as withdrawMutations from './modules/withdraws/mutations';
 import * as gameQueries from './modules/games/queries';
 import * as gameMutations from './modules/games/mutations';
-import { MinesRoundResponse } from './modules/games/minesRoundResponse';
+import { MinesRoundResponse } from './modules/games/mines-round-response';
 
 export const resolvers = {
   Query: {

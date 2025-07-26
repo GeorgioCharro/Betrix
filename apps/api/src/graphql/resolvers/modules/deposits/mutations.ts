@@ -1,9 +1,9 @@
 import db from '@repo/db';
-import { broadcastBalanceUpdate } from '../../../websocket';
-import { userManager } from '../../../features/user/user.service';
-import { verifyApiKey } from '../common';
-import { BadRequestError } from '../../../errors';
-import type { Context } from '../common';
+import { broadcastBalanceUpdate } from '../../../../websocket';
+import { userManager } from '../../../../features/user/user.service';
+import { verifyApiKey } from '../../common';
+import { BadRequestError } from '../../../../errors';
+import type { Context } from '../../common';
 
 export const depositBalance = async (
   _: unknown,

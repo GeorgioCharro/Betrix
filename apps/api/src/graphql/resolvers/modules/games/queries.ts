@@ -1,8 +1,8 @@
 import type { User } from '@prisma/client';
-import { minesManager } from '../../../features/games/mines/mines.service';
-import { blackjackManager } from '../../../features/games/blackjack/blackjack.service';
 import type { MinesHiddenState } from '@repo/common/game-utils/mines/types.js';
-import type { Context } from '../common';
+import { minesManager } from '../../../../features/games/mines/mines.service';
+import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
+import type { Context } from '../../common';
 
 export const activeMines = async (
   _: unknown,

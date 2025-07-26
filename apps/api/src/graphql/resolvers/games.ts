@@ -1,6 +1,6 @@
 import * as queries from './modules/games/queries';
 import * as mutations from './modules/games/mutations';
-import { MinesRoundResponse } from './modules/games/minesRoundResponse';
+import { MinesRoundResponse } from './modules/games/mines-round-response';
 
 export const gamesResolvers = {
   Query: {
