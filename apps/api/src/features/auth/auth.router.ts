@@ -11,8 +11,18 @@ import { isAuthenticated } from '../../middlewares/auth.middleware';
 
 interface RegisterRequestBody {
   email: string;
+  username: string;
   password: string;
-  name: string;
+  dateOfBirth: string;
+  code?: string;
+}
+
+interface CreateUserData {
+  email: string;
+  username: string;
+  password: string;
+  dateOfBirth: Date;
+  code?: string | null;
 }
 
 const router: Router = Router();
@@ -56,26 +66,41 @@ router.post(
 );
 
 router.post('/register', async (req, res) => {
-  const { email, password, name } = req.body as RegisterRequestBody;
+  const { email, username, password, dateOfBirth, code } =
+    req.body as RegisterRequestBody;
+
+  if (!email || !username || !password || !dateOfBirth) {
+    throw new BadRequestError('Missing required fields');
+  }
+
+  const existingEmail = await db.user.findUnique({ where: { email } });
+  if (existingEmail) {
+    throw new BadRequestError('Email already exists');
+  }
+
+  const existingUsername = await db.user.findFirst({ where: { username } });
+  if (existingUsername) {
+    throw new BadRequestError('Username already exists');
+  }
 
   const hashedPassword = await hash(password, 10);
-  const user = await db.user.upsert({
-    where: { email },
-    update: {
-      password: hashedPassword,
-      name,
-    },
-    create: {
+
+  const user = await db.user.create({
+    data: {
       email,
+      username,
       password: hashedPassword,
-      name,
-    },
+      dateOfBirth: new Date(dateOfBirth),
+      code,
+    } as CreateUserData,
   });
 
-  req.login(user, err => {
-    if (err) throw new BadRequestError('Error logging in');
-    res.redirect(`${process.env.CLIENT_URL}`);
-  });
+  type UserWithPassword = Record<string, unknown> & { password?: string };
+  const { password: _p, ...userWithoutPassword } = user as UserWithPassword;
+
+  res
+    .status(StatusCodes.CREATED)
+    .json(new ApiResponse(StatusCodes.CREATED, userWithoutPassword));
 });
 
 router.get('/logout', (req, res, next) => {

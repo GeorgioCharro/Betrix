@@ -26,7 +26,10 @@ model User {
   id                 String              @id @default(cuid())
   googleId           String?             @unique
   email              String              @unique
+  username           String?             @unique
   name               String?
+  code               String?
+  dateOfBirth        DateTime?
   password           String?
   picture            String?
   balance            String              @default("126000") // Amount in cents (multiply by 100, default 10000.00)
