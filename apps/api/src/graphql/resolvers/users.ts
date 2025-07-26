@@ -1,15 +1,16 @@
-import { resolvers as main } from './main';
+import * as queries from './modules/users/queries';
+import * as mutations from './modules/users/mutations';
 
 export const usersResolvers = {
   Query: {
-    currentUser: main.Query.currentUser,
-    balance: main.Query.balance,
-    provablyFairState: main.Query.provablyFairState,
-    revealedServerSeed: main.Query.revealedServerSeed,
-    allUsers: main.Query.allUsers,
-    users: main.Query.users,
+    currentUser: queries.currentUser,
+    balance: queries.balance,
+    provablyFairState: queries.provablyFairState,
+    revealedServerSeed: queries.revealedServerSeed,
+    allUsers: queries.allUsers,
+    users: queries.users,
   },
   Mutation: {
-    rotateSeed: main.Mutation.rotateSeed,
+    rotateSeed: mutations.rotateSeed,
   },
 };

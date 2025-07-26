@@ -1,11 +1,12 @@
-import { resolvers as main } from './main';
+import * as queries from './modules/deposits/queries';
+import * as mutations from './modules/deposits/mutations';
 
 export const depositsResolvers = {
   Query: {
-    allDeposits: main.Query.allDeposits,
-    deposits: main.Query.deposits,
+    allDeposits: queries.allDeposits,
+    deposits: queries.deposits,
   },
   Mutation: {
-    depositBalance: main.Mutation.depositBalance,
+    depositBalance: mutations.depositBalance,
   },
 };

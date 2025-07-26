@@ -1,11 +1,12 @@
-import { resolvers as main } from './main';
+import * as queries from './modules/withdraws/queries';
+import * as mutations from './modules/withdraws/mutations';
 
 export const withdrawsResolvers = {
   Query: {
-    allWithdraws: main.Query.allWithdraws,
-    withdraws: main.Query.withdraws,
+    allWithdraws: queries.allWithdraws,
+    withdraws: queries.withdraws,
   },
   Mutation: {
-    withdrawBalance: main.Mutation.withdrawBalance,
+    withdrawBalance: mutations.withdrawBalance,
   },
 };
