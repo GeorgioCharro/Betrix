@@ -16,7 +16,7 @@
     "@repo/typescript-config": "workspace:*",
     "crypto-browserify": "^3.12.0",
     "lodash": "^4.17.21",
-    "zod": "^3.23.8"
+    "zod": "^4.0.10"
   },
   "exports": {
     "./types": "./types/index.ts",
