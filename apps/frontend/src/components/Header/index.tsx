@@ -7,7 +7,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { Balance } from './Balance';
 
 export function Header(): JSX.Element {
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, showLoginModal } = useAuthStore();
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -41,9 +41,9 @@ export function Header(): JSX.Element {
             Logout
           </Button>
         ) : (
-          <Link to="/login">
-            <Button variant="outline">Login</Button>
-          </Link>
+          <Button onClick={showLoginModal} variant="outline">
+            Login
+          </Button>
         )}
       </div>
     </header>

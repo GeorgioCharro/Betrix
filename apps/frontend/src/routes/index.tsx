@@ -44,7 +44,6 @@ function HomePage(): JSX.Element {
               />
             </div>
           )}{' '}
-          --\
         </Hero>
       </div>
     </div>

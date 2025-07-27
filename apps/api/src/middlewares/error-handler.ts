@@ -1,4 +1,3 @@
-import { ApiResponse } from '@repo/common/types';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -22,5 +21,5 @@ export const errorHandlerMiddleware = (
 
   return res
     .status(defaultError.statusCode)
-    .json(new ApiResponse(defaultError.statusCode, {}, defaultError.message));
+    .json({ message: defaultError.message });
 };

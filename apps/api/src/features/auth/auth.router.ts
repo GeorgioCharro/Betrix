@@ -75,12 +75,16 @@ router.post('/register', async (req, res) => {
 
   const existingEmail = await db.user.findUnique({ where: { email } });
   if (existingEmail) {
-    throw new BadRequestError('Email already exists');
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'Email already exists' });
   }
 
   const existingUsername = await db.user.findFirst({ where: { username } });
   if (existingUsername) {
-    throw new BadRequestError('Username already exists');
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'Username already exists' });
   }
 
   const hashedPassword = await hash(password, 10);

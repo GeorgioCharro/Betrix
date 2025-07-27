@@ -49,16 +49,18 @@ passport.use(
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'email',
+      usernameField: 'identifier',
     },
-    async (email, password, done) => {
+    async (identifier, password, done) => {
       try {
-        const user = await db.user.findUnique({
-          where: { email },
+        const user = await db.user.findFirst({
+          where: identifier.includes('@')
+            ? { email: identifier }
+            : { username: identifier },
         });
 
         if (!user || !(await compare(password, user.password || ''))) {
-          done(null, false, { message: 'Invalid email or password' });
+          done(null, false, { message: 'Invalid credentials' });
           return;
         }
 

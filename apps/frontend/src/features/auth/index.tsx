@@ -1,15 +1,10 @@
-import { SiGoogle } from '@icons-pack/react-simple-icons';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BASE_API_URL } from '@/const/routes';
+
+import { GoogleAuthButton } from './components/GoogleAuthButton';
 
 export default function Login(): JSX.Element {
-  const handleGoogleLogin = (): void => {
-    window.location.href = `${BASE_API_URL}/api/v1/auth/google`;
-  };
-
   return (
     <div className="mx-auto max-w-md space-y-6 mt-16 px-6">
       <div className="space-y-2 text-center">
@@ -19,14 +14,11 @@ export default function Login(): JSX.Element {
         </p>
       </div>
       <div className="space-y-4">
-        <Button
+        <GoogleAuthButton
           className="w-full"
-          onClick={handleGoogleLogin}
-          variant="outline"
-        >
-          <SiGoogle className="mr-2 h-4 w-4" />
-          Sign in with Google
-        </Button>
+          redirectTo="/"
+          text="Sign in with Google"
+        />
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
@@ -37,10 +29,6 @@ export default function Login(): JSX.Element {
             </span>
           </div>
         </div>
-        {/* <div className="space-y-1">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" placeholder="John Doe" />
-        </div> */}
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
           <Input id="email" placeholder="m@example.com" type="email" />
