@@ -1,12 +1,20 @@
 import { gql } from 'apollo-server-express';
 
 export const usersTypeDefs = gql`
+enum Level {
+    none
+    vip
+    vip_plus
+    diamond
+  }
   type User {
     id: ID!
     email: String!
     name: String!
     picture: String
     balance: Float
+    xp: Int!
+    level: Level!
   }
 
   type ProvablyFairState {
@@ -25,6 +33,8 @@ export const usersTypeDefs = gql`
     email: String!
     name: String
     balance: Float!
+    xp: Int!
+    level: Level!
     createdAt: String!
     updatedAt: String!
   }
@@ -56,5 +66,6 @@ export const usersTypeDefs = gql`
 
   extend type Mutation {
     rotateSeed(clientSeed: String!): ProvablyFairState!
+    addXp(amount: Int!, userId: ID): AdminUser!
   }
 `;

@@ -29,6 +29,8 @@ passport.use(
             data: {
               ...profileInfo,
               email: profile.emails?.[0].value || '',
+              xp: 0,
+              level: 'none',
             },
           });
         } else {

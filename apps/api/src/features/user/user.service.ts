@@ -7,7 +7,7 @@ import {
   getHmacSeed,
 } from '@repo/common/game-utils/provably-fair/utils.js';
 import { BadRequestError } from '../../errors';
-import { generateClientSeed, generateServerSeed } from './user.utils';
+import { calculateLevel, generateClientSeed, generateServerSeed } from './user.utils';
 
 export class UserInstance {
   constructor(
@@ -16,7 +16,6 @@ export class UserInstance {
   ) {}
 
   setBalance(amount: string) {
-    // Ensure the balance is stored as a string
     this.user.balance = amount;
   }
 
@@ -273,4 +272,41 @@ export const getUserBets = async ({
       hasPreviousPage,
     },
   };
+};
+
+export const addExperience = async ({
+  userId,
+  amount,
+}: {
+  userId: string;
+  amount: number;
+}) => {
+  const result = await db.$transaction(async tx => {
+    const updated = await tx.user.update({
+      where: { id: userId },
+      data: { xp: { increment: amount } },
+      select: { xp: true },
+    });
+
+    const level = calculateLevel(updated.xp);
+
+    const user = await tx.user.update({
+      where: { id: userId },
+      data: { level },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        balance: true,
+        xp: true,
+        level: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return user;
+  });
+
+  return result;
 };

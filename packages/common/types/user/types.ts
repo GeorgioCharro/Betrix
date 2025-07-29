@@ -5,9 +5,11 @@ export interface User {
   id: string;
   name: string;
   picture: string | null;
+  xp: number;
+  level: Level;
   updatedAt: string;
 }
-
+export type Level = 'none' | 'vip' | 'vip_plus' | 'diamond';
 export interface ProvablyFairStateResponse {
   clientSeed: string;
   hashedServerSeed: string;
@@ -48,6 +50,8 @@ export interface PaginatedUsersResponse {
     email: string;
     name: string | null;
     balance: number;
+    xp: number;
+    level: Level;
     createdAt: Date;
     updatedAt: Date;
   }[];

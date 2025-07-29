@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Club } from 'lucide-react';
 import { useState } from 'react';
+import { Footer } from 'react-day-picker';
 
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
@@ -11,6 +12,10 @@ import { PromoCard } from '@/components/ui/promo-card';
 import { GoogleAuthButton } from '@/features/auth/components/GoogleAuthButton';
 import { RegisterModal } from '@/features/auth/components/RegisterModal';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import CasinoBets from '@/features/casino-bets';
+import { Faq } from '@/features/home/components/Faq';
+import { FeaturedGames } from '@/features/home/components/FeaturedGames';
+import { VipCard } from '@/features/home/components/VipCard';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -33,35 +38,39 @@ function HomePage(): JSX.Element {
         <Hero backgroundSrc="/banner/header-bg.png">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-4">
-              <h1 className="text-3xl font-semibold text-neutral-default">
-                Welcome to SimCasino
-              </h1>
-
-              {!user && (
-                <div className="flex w-64 flex-col items-start space-y-2">
-                  <Button
-                    className="w-full"
-                    onClick={() => {
-                      setShowRegister(true);
-                    }}
-                  >
-                    Register
-                  </Button>
-                  <GoogleAuthButton className="w-full" type="button" />
-                  <RegisterModal
-                    onOpenChange={setShowRegister}
-                    open={showRegister}
-                  />
-                </div>
+                           {user ? (
+                <VipCard progress={50} user={user} />
+              ) : (
+                <>
+                  <h1 className="text-3xl font-semibold text-neutral-default">
+                    Welcome to SimCasino
+                  </h1>
+                  <div className="flex w-64 flex-col items-start space-y-2">
+                    <Button
+                      className="w-full"
+                      onClick={() => {
+                        setShowRegister(true);
+                      }}
+                    >
+                      Register
+                    </Button>
+                    <GoogleAuthButton className="w-full" type="button" />
+                    <RegisterModal
+                      onOpenChange={setShowRegister}
+                      open={showRegister}
+                    />
+                  </div>
+                </>
               )}
             </div>
 
             {/* Promo Card */}
             <div className="flex justify-center sm:block w-full sm:w-auto">
               <PromoCard
-                className="w-60 shrink-0"
+                className="w-80 shrink-0"
                 icon={Club}
                 imageSrc="/banner/casino.png"
+                navigateTo='/casino'
                 title="Casino"
               />
             </div>
@@ -71,6 +80,13 @@ function HomePage(): JSX.Element {
         <div className="container py-6">
           <SearchGames />
         </div>
+        <div className="container py-6">
+          <FeaturedGames />
+        </div>
+        <CasinoBets />
+        <Faq />
+        <Footer />
+        
       </div>
     </div>
   );

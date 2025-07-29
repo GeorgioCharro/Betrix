@@ -23,6 +23,8 @@ interface CreateUserData {
   password: string;
   dateOfBirth: Date;
   code?: string | null;
+  xp: number;
+  level: string;
 }
 
 const router: Router = Router();
@@ -96,6 +98,8 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
       dateOfBirth: new Date(dateOfBirth),
       code,
+      xp: 0,
+      level: 'none',
     } as CreateUserData,
   });
 

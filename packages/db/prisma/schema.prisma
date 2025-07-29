@@ -22,6 +22,13 @@ enum Game {
   plinkoo
 }
 
+enum Level {
+  none
+  vip
+  vip_plus
+  diamond
+}
+
 model User {
   id                 String              @id @default(cuid())
   googleId           String?             @unique
@@ -33,6 +40,8 @@ model User {
   password           String?
   picture            String?
   balance            String              @default("126000") // Amount in cents (multiply by 100, default 10000.00)
+  xp                 Int                 @default(0)
+  level              Level               @default(none)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   provablyFairStates ProvablyFairState[]

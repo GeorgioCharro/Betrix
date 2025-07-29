@@ -29,6 +29,7 @@ interface CommonDataTableProps<TData, TValue> {
   setPagination: (updater: Updater<PaginationState>) => void;
   pagination: PaginationState;
   rowCount: number;
+  hidePagination?: boolean;
 }
 
 // Type declaration to extend ColumnDef with our custom meta properties
@@ -37,6 +38,7 @@ declare module '@tanstack/react-table' {
   //Used to add custom properties to the column definition
   interface ColumnMeta<TData, TValue> {
     alignment?: 'left' | 'right' | 'center';
+    hideOnMobile?: boolean;
     TData?: TData;
     TValue?: TValue;
   }
@@ -49,6 +51,7 @@ export function CommonDataTable<TData, TValue>({
   setPagination,
   pagination,
   rowCount,
+  hidePagination = false,
 }: CommonDataTableProps<TData, TValue>): JSX.Element {
   const table = useReactTable({
     columns,
@@ -94,7 +97,9 @@ export function CommonDataTable<TData, TValue>({
                     header.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     header.column.columnDef.meta?.alignment === 'center' &&
-                      'text-center'
+                      'text-center',
+                    header.column.columnDef.meta?.hideOnMobile &&
+                      'hidden sm:table-cell'
                   )}
                   key={header.id}
                 >
@@ -122,7 +127,9 @@ export function CommonDataTable<TData, TValue>({
                     cell.column.columnDef.meta?.alignment === 'right' &&
                       'text-right',
                     cell.column.columnDef.meta?.alignment === 'center' &&
-                      'text-center'
+                      'text-center',
+                    cell.column.columnDef.meta?.hideOnMobile &&
+                      'hidden sm:table-cell'
                   )}
                   key={cell.id}
                 >
@@ -134,33 +141,34 @@ export function CommonDataTable<TData, TValue>({
         </TableBody>
       </TableUI>
 
-      {/* Pagination controls */}
-      <div className="flex justify-center mt-4 gap-4 items-center">
-        <Button
-          className="flex items-center"
-          disabled={!table.getCanPreviousPage()}
-          onClick={() => {
-            table.previousPage();
-          }}
-          size="default"
-          variant="ghost"
-        >
-          <ChevronLeftIcon className="h-4 w-4 mr-1" />
-          Prev
-        </Button>
-        <Button
-          className="flex items-center"
-          disabled={!table.getCanNextPage()}
-          onClick={() => {
-            table.nextPage();
-          }}
-          size="default"
-          variant="ghost"
-        >
-          Next
-          <ChevronRightIcon className="h-4 w-4 ml-1" />
-        </Button>
-      </div>
+      {!hidePagination && (
+        <div className="flex justify-center mt-4 gap-4 items-center">
+          <Button
+            className="flex items-center"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              table.previousPage();
+            }}
+            size="default"
+            variant="ghost"
+          >
+            <ChevronLeftIcon className="h-4 w-4 mr-1" />
+            Prev
+          </Button>
+          <Button
+            className="flex items-center"
+            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              table.nextPage();
+            }}
+            size="default"
+            variant="ghost"
+          >
+            Next
+            <ChevronRightIcon className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

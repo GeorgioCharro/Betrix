@@ -1,16 +1,21 @@
 const plugin = require('tailwindcss/plugin');
 
-const iconTokens = {
-  'neutral-weak': '#557086',
+const brandColors = {
   'neutral-weaker': '#2f4553',
   'neutral-weak': '#b1b4d3',
   'neutral-default': '#fff',
   'neutral-strong': '#1a2c38',
   'neutral-stronger': '#0f212e',
-  'neutral-strongest': '#071824',
+  'neutral-strongest': '#1a2c38',
+  'brand-weakest': '#557086',
+  'brand-weaker': '#2f4553',
+  'brand-weak': '#213743',
+  'brand-default': '#1a2c38',
+  'brand-strong': '#1a2c38',
+  'brand-stronger': '#0f212e',
+  'brand-strongest': '#071824',
 };
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['selector', 'class'],
   content: [
@@ -23,7 +28,7 @@ module.exports = {
   prefix: '',
   theme: {
     container: {
-      center: 'true',
+      center: true,
       padding: '2rem',
       screens: {
         xl: '1200px',
@@ -99,28 +104,32 @@ module.exports = {
       },
       keyframes: {
         'accordion-down': {
-          from: {
-            height: '0',
-          },
-          to: {
-            height: 'var(--radix-accordion-content-height)',
-          },
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: {
-            height: 'var(--radix-accordion-content-height)',
-          },
-          to: {
-            height: '0',
-          },
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
         slideInLeft: {
-          '0%': { transform: 'translateX(20px)', opacity: 0 },
-          '100%': { transform: 'translateX(0)', opacity: 1 },
+          '0%': {
+            transform: 'translateX(20px)',
+            opacity: 0,
+          },
+          '100%': {
+            transform: 'translateX(0)',
+            opacity: 1,
+          },
         },
         slideOutLeft: {
-          '0%': { transform: 'translateX(0)', opacity: 1 },
-          '100%': { transform: 'translateX(-20px)', opacity: 0 },
+          '0%': {
+            transform: 'translateX(0)',
+            opacity: 1,
+          },
+          '100%': {
+            transform: 'translateX(-20px)',
+            opacity: 0,
+          },
         },
       },
       animation: {
@@ -132,95 +141,43 @@ module.exports = {
       fontFamily: {
         custom: ['Montserrat', 'sans-serif'],
       },
+      backgroundColor: ({ theme }) => ({
+        ...theme('colors'),
+        ...brandColors,
+        'roulette-red': '#fe2247',
+        'roulette-red-hover': '#fe6e86',
+        'roulette-black': '#2f4553',
+        'roulette-black-hover': '#4b6e84',
+        'roulette-green': '#419e3f',
+        'roulette-green-hover': '#69c267',
+        'keno-selected-tile': '#962EFF',
+        'keno-selected-tile-hover': 'rgb(176, 97, 255)',
+      }),
+      textColor: ({ theme }) => ({
+        ...theme('colors'),
+        ...brandColors,
+        'roulette-red': '#fe2247',
+        'roulette-red-hover': '#fe6e86',
+        'roulette-black': '#2f4553',
+        'roulette-black-hover': '#4b6e84',
+        'roulette-green': '#419e3f',
+        'roulette-green-hover': '#69c267',
+      }),
+      borderColor: ({ theme }) => ({
+        ...theme('colors'),
+        ...brandColors,
+        'roulette-red': '#fe2247',
+        'roulette-red-hover': '#fe6e86',
+        'roulette-black': '#2f4553',
+        'roulette-black-hover': '#4b6e84',
+        'roulette-green': '#419e3f',
+        'roulette-green-hover': '#69c267',
+      }),
+      fill: ({ theme }) => ({
+        ...theme('colors'),
+        ...brandColors,
+      }),
     },
-    backgroundColor: ({ theme }) => ({
-      ...theme('colors'),
-      'neutral-weak': '#557086',
-      'neutral-weaker': '#2f4553',
-      'neutral-weak': '#b1b4d3',
-      'neutral-default': '#fff',
-      'neutral-strong': '#1a2c38',
-      'neutral-stronger': '#0f212e',
-      'neutral-strongest': '#1a2c38',
-      'brand-weakest': '#557086',
-      'brand-weaker': '#2f4553',
-      'brand-weak': '#213743',
-      'brand-default': '#1a2c38',
-      'brand-strong': '#1a2c38',
-      'brand-stronger': '#0f212e',
-      'brand-strongest': '#071824',
-      'roulette-red': '#fe2247',
-      'roulette-red-hover': '#fe6e86',
-      'roulette-black': '#2f4553',
-      'roulette-black-hover': '#4b6e84',
-      'roulette-green': '#419e3f',
-      'roulette-green-hover': '#69c267',
-      'keno-selected-tile': '#962EFF',
-      'keno-selected-tile-hover': 'rgb(176, 97, 255)',
-    }),
-    textColor: ({ theme }) => ({
-      'roulette-red': '#fe2247',
-      'roulette-red-hover': '#fe6e86',
-      'roulette-black': '#2f4553',
-      'roulette-black-hover': '#4b6e84',
-      'roulette-green': '#419e3f',
-      'roulette-green-hover': '#69c267',
-      'neutral-weak': '#557086',
-      'neutral-weaker': '#2f4553',
-      'neutral-weak': '#b1b4d3',
-      'neutral-default': '#fff',
-      'neutral-strong': '#1a2c38',
-      'neutral-stronger': '#0f212e',
-      'neutral-strongest': '#1a2c38',
-      'brand-weakest': '#1a2c38',
-      'brand-weaker': '#1a2c38',
-      'brand-weak': '#1a2c38',
-      'brand-default': '#1a2c38',
-      'brand-strong': '#1a2c38',
-      'brand-stronger': '#1a2c38',
-      'brand-strongest': '#071824',
-      ...theme('colors'),
-    }),
-    borderColor: ({ theme }) => ({
-      'roulette-red': '#fe2247',
-      'roulette-red-hover': '#fe6e86',
-      'roulette-black': '#2f4553',
-      'roulette-black-hover': '#4b6e84',
-      'roulette-green': '#419e3f',
-      'roulette-green-hover': '#69c267',
-      'neutral-weak': '#557086',
-      'neutral-weaker': '#2f4553',
-      'neutral-weak': '#b1b4d3',
-      'neutral-default': '#fff',
-      'neutral-strong': '#1a2c38',
-      'neutral-stronger': '#0f212e',
-      'neutral-strongest': '#1a2c38',
-      'brand-weakest': '#557086',
-      'brand-weaker': '#2f4553',
-      'brand-weak': '#213743',
-      'brand-default': '#1a2c38',
-      'brand-strong': '#1a2c38',
-      'brand-stronger': '#0f212e',
-      'brand-strongest': '#071824',
-      ...theme('colors'),
-    }),
-    fill: ({ theme }) => ({
-      'neutral-weak': '#557086',
-      'neutral-weaker': '#2f4553',
-      'neutral-weak': '#b1b4d3',
-      'neutral-default': '#fff',
-      'neutral-strong': '#1a2c38',
-      'neutral-stronger': '#0f212e',
-      'neutral-strongest': '#1a2c38',
-      'brand-weakest': '#557086',
-      'brand-weaker': '#2f4553',
-      'brand-weak': '#213743',
-      'brand-default': '#1a2c38',
-      'brand-strong': '#1a2c38',
-      'brand-stronger': '#0f212e',
-      'brand-strongest': '#071824',
-      ...theme('colors'),
-    }),
   },
   plugins: [
     require('tailwindcss-animate'),
@@ -229,9 +186,7 @@ module.exports = {
         {
           icon: value => ({ color: value }),
         },
-        {
-          values: { ...iconTokens },
-        }
+        { values: brandColors }
       );
     }),
   ],

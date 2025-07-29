@@ -9,7 +9,10 @@ export const currentUser = (_: unknown, __: unknown, { req }: Context) => {
   const user = req.user as User | undefined;
   if (!user) return null;
   const { password: _password, balance, ...rest } = user;
-  return { ...rest, balance: parseInt(balance, 10) / 100 };
+  return {
+    ...rest,
+    balance: parseInt(balance, 10) / 100,
+  };
 };
 
 export const balance = async (_: unknown, __: unknown, { req }: Context) => {
@@ -67,6 +70,8 @@ export const allUsers = async (
       email: true,
       name: true,
       balance: true,
+      xp: true,
+      level: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -80,6 +85,8 @@ export const allUsers = async (
     email: u.email,
     name: u.name,
     balance: parseInt(u.balance, 10) / 100,
+    xp: u.xp,
+    level: u.level,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
   }));
@@ -138,6 +145,8 @@ export const users = async (
       email: true,
       name: true,
       balance: true,
+      xp: true,
+      level: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -151,6 +160,8 @@ export const users = async (
     email: u.email,
     name: u.name,
     balance: parseInt(u.balance, 10) / 100,
+    xp: u.xp,
+    level: u.level,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
   }));

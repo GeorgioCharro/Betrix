@@ -1,13 +1,16 @@
 import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
 
 import { logout } from '@/api/auth';
 import { Button } from '@/components/ui/button';
+import { RegisterModal } from '@/features/auth/components/RegisterModal';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 import { Balance } from './Balance';
 
 export function Header(): JSX.Element {
   const { user, setUser, showLoginModal } = useAuthStore();
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -28,6 +31,7 @@ export function Header(): JSX.Element {
           />
         </Link>
 
+        {/* Center Balance */}
         {user ? (
           <div className="absolute left-1/2 -translate-x-1/2">
             <Balance />
@@ -36,14 +40,25 @@ export function Header(): JSX.Element {
           <div className="absolute left-1/2 -translate-x-1/2" />
         )}
 
+        {/* Right-side buttons */}
         {user ? (
           <Button onClick={() => void handleLogout()} variant="outline">
             Logout
           </Button>
         ) : (
-          <Button onClick={showLoginModal} variant="outline">
-            Login
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => { setShowRegisterModal(true); }} variant="outline">
+              Register
+            </Button>
+            <RegisterModal
+              onOpenChange={setShowRegisterModal}
+              open={showRegisterModal}
+            />
+            <Button onClick={showLoginModal} variant="outline">
+              Login
+            </Button>
+            
+          </div>
         )}
       </div>
     </header>
