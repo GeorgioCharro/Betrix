@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable */ // This line is to disable ESLint for this file
 
 // @ts-nocheck
 
@@ -22,6 +22,7 @@ import { Route as PublicProvablyFairCalculationImport } from './routes/_public/p
 import { Route as ProtectedCasinoMyBetsImport } from './routes/_protected/casino/my-bets';
 import { Route as ProtectedCasinoHomeImport } from './routes/_protected/casino/home';
 import { Route as ProtectedCasinoGamesImport } from './routes/_protected/casino/games';
+import { Route as ProtectedCasinoChallengesImport } from './routes/_protected/casino/challenges';
 import { Route as ProtectedCasinoGamesGameIdImport } from './routes/_protected/casino/games/$gameId';
 
 // Create/Update Routes
@@ -92,6 +93,12 @@ const ProtectedCasinoGamesRoute = ProtectedCasinoGamesImport.update({
   getParentRoute: () => ProtectedCasinoRoute,
 } as any);
 
+const ProtectedCasinoChallengesRoute = ProtectedCasinoChallengesImport.update({
+  id: '/challenges',
+  path: '/challenges',
+  getParentRoute: () => ProtectedCasinoRoute,
+} as any);
+
 const ProtectedCasinoGamesGameIdRoute = ProtectedCasinoGamesGameIdImport.update(
   {
     id: '/$gameId',
@@ -145,6 +152,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/provably-fair';
       preLoaderRoute: typeof PublicProvablyFairImport;
       parentRoute: typeof PublicImport;
+    };
+    '/_protected/casino/challenges': {
+      id: '/_protected/casino/challenges';
+      path: '/challenges';
+      fullPath: '/casino/challenges';
+      preLoaderRoute: typeof ProtectedCasinoChallengesImport;
+      parentRoute: typeof ProtectedCasinoImport;
     };
     '/_protected/casino/games': {
       id: '/_protected/casino/games';
@@ -205,12 +219,14 @@ const ProtectedCasinoGamesRouteWithChildren =
   ProtectedCasinoGamesRoute._addFileChildren(ProtectedCasinoGamesRouteChildren);
 
 interface ProtectedCasinoRouteChildren {
+  ProtectedCasinoChallengesRoute: typeof ProtectedCasinoChallengesRoute;
   ProtectedCasinoGamesRoute: typeof ProtectedCasinoGamesRouteWithChildren;
   ProtectedCasinoHomeRoute: typeof ProtectedCasinoHomeRoute;
   ProtectedCasinoMyBetsRoute: typeof ProtectedCasinoMyBetsRoute;
 }
 
 const ProtectedCasinoRouteChildren: ProtectedCasinoRouteChildren = {
+  ProtectedCasinoChallengesRoute: ProtectedCasinoChallengesRoute,
   ProtectedCasinoGamesRoute: ProtectedCasinoGamesRouteWithChildren,
   ProtectedCasinoHomeRoute: ProtectedCasinoHomeRoute,
   ProtectedCasinoMyBetsRoute: ProtectedCasinoMyBetsRoute,
@@ -265,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/casino': typeof ProtectedCasinoRouteWithChildren;
   '/login': typeof PublicLoginRoute;
   '/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/casino/challenges': typeof ProtectedCasinoChallengesRoute;
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
   '/casino/home': typeof ProtectedCasinoHomeRoute;
   '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
@@ -279,6 +296,7 @@ export interface FileRoutesByTo {
   '/casino': typeof ProtectedCasinoRouteWithChildren;
   '/login': typeof PublicLoginRoute;
   '/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/casino/challenges': typeof ProtectedCasinoChallengesRoute;
   '/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
   '/casino/home': typeof ProtectedCasinoHomeRoute;
   '/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
@@ -295,6 +313,7 @@ export interface FileRoutesById {
   '/_protected/casino': typeof ProtectedCasinoRouteWithChildren;
   '/_public/login': typeof PublicLoginRoute;
   '/_public/provably-fair': typeof PublicProvablyFairRouteWithChildren;
+  '/_protected/casino/challenges': typeof ProtectedCasinoChallengesRoute;
   '/_protected/casino/games': typeof ProtectedCasinoGamesRouteWithChildren;
   '/_protected/casino/home': typeof ProtectedCasinoHomeRoute;
   '/_protected/casino/my-bets': typeof ProtectedCasinoMyBetsRoute;
@@ -311,6 +330,7 @@ export interface FileRouteTypes {
     | '/casino'
     | '/login'
     | '/provably-fair'
+    | '/casino/challenges'
     | '/casino/games'
     | '/casino/home'
     | '/casino/my-bets'
@@ -324,6 +344,7 @@ export interface FileRouteTypes {
     | '/casino'
     | '/login'
     | '/provably-fair'
+    | '/casino/challenges'
     | '/casino/games'
     | '/casino/home'
     | '/casino/my-bets'
@@ -338,6 +359,7 @@ export interface FileRouteTypes {
     | '/_protected/casino'
     | '/_public/login'
     | '/_public/provably-fair'
+    | '/_protected/casino/challenges'
     | '/_protected/casino/games'
     | '/_protected/casino/home'
     | '/_protected/casino/my-bets'
@@ -394,6 +416,7 @@ export const routeTree = rootRoute
       "filePath": "_protected/casino.jsx",
       "parent": "/_protected",
       "children": [
+        "/_protected/casino/challenges",
         "/_protected/casino/games",
         "/_protected/casino/home",
         "/_protected/casino/my-bets"
@@ -410,6 +433,10 @@ export const routeTree = rootRoute
         "/_public/provably-fair/calculation",
         "/_public/provably-fair/unhash-server-seed"
       ]
+    },
+    "/_protected/casino/challenges": {
+      "filePath": "_protected/casino/challenges.tsx",
+      "parent": "/_protected/casino"
     },
     "/_protected/casino/games": {
       "filePath": "_protected/casino/games.tsx",

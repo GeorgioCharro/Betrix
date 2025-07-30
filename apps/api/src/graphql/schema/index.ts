@@ -4,6 +4,7 @@ import { usersTypeDefs } from './users';
 import { betsTypeDefs } from './bets';
 import { depositsTypeDefs } from './deposits';
 import { withdrawsTypeDefs } from './withdraws';
+import { challengesTypeDefs } from './challenges';
 import { commonTypeDefs } from './common';
 
 export const typeDefs = gql`
@@ -13,4 +14,5 @@ export const typeDefs = gql`
   ${betsTypeDefs}
   ${depositsTypeDefs}
   ${withdrawsTypeDefs}
+  ${challengesTypeDefs}
 `;

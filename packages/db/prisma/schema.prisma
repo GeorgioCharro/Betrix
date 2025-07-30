@@ -48,6 +48,7 @@ model User {
   bets               Bet[]
   deposits           Deposit[]
   withdraws          Withdraw[]
+  progress           ChallengeProgress[]
   @@map("users")
 }
 
@@ -116,4 +117,31 @@ model Withdraw {
   updatedAt       DateTime @updatedAt
 
   @@map("withdraws")
+}
+model Challenge {
+  id          String   @id @default(cuid())
+  challengeId BigInt   @unique @default(autoincrement())
+  code        String?  @unique
+  name        String
+  description String
+  prize       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  progress    ChallengeProgress[]
+  @@map("challenges")
+}
+
+model ChallengeProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  user        User     @relation(fields: [userId], references: [id])
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+  @@map("challenge_progress")
 }

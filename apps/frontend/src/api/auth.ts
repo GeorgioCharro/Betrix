@@ -14,6 +14,8 @@ const CURRENT_USER = gql`
       name
       picture
       balance
+      xp
+      level
     }
   }
 `;

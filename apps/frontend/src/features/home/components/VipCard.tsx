@@ -1,24 +1,66 @@
-import type { User } from '@repo/common/types';
+import type { User, Level } from '@repo/common/types';
 import { ChevronRightIcon, StarIcon, InfoIcon } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
+import CommonTooltip from '@/components/ui/common-tooltip';
 import { Progress } from '@/components/ui/progress';
 
 export interface VipCardProps {
   user: Partial<User> & { username?: string };
-  progress?: number;
 }
 
-export function VipCard({ user, progress = 0 }: VipCardProps): JSX.Element {
+export function VipCard({ user }: VipCardProps): JSX.Element {
   const displayName = user.username ?? user.name ?? user.email ?? '';
+  const xp = user.xp ?? 0;
+  const level: Level = user.level ?? 'none';
 
+  const nextLevelMap: Record<Level, Level> = {
+    none: 'vip',
+    vip: 'vip_plus',
+    vip_plus: 'diamond',
+    diamond: 'diamond',
+  };
+
+  const thresholds: Record<Level, number> = {
+    none: 0,
+    vip: 1000,
+    vip_plus: 5000,
+    diamond: 10000,
+  };
+
+  const nextThresholds: Record<Level, number> = {
+    none: 1000,
+    vip: 5000,
+    vip_plus: 10000,
+    diamond: 10000,
+  };
+
+  const prev = thresholds[level];
+  const next = nextThresholds[level];
+  const rawProgress =
+    level === 'diamond' ? 100 : ((xp - prev) / (next - prev)) * 100;
+  const progress = Math.max(0, Math.min(100, rawProgress));
+
+  const format = (lvl: Level): string => {
+    switch (lvl) {
+      case 'vip_plus':
+        return 'VIP +';
+      case 'vip':
+        return 'VIP';
+      case 'diamond':
+        return 'Diamond';
+      default:
+        return 'None';
+    }
+  };
+
+  const currentLabel = format(level);
+  const nextLabel = format(nextLevelMap[level]);
   return (
     <div className="relative w-[320px] h-[215px]">
-
       <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-md bg-[#0f212e] border border-[#1f2e3a] z-0" />
 
       <Card className="relative z-10 bg-brand-stronger border border-border rounded-md px-4 py-4 flex flex-col justify-between h-full text-sm">
-
         <div className="flex items-center justify-between">
           <span className="font-semibold text-white">{displayName}</span>
           <StarIcon className="size-4 text-neutral-strong" />
@@ -34,7 +76,13 @@ export function VipCard({ user, progress = 0 }: VipCardProps): JSX.Element {
             </div>
             <div className="flex items-center gap-1">
               <span>{progress.toFixed(2)}%</span>
-              <InfoIcon className="size-3" />
+              <CommonTooltip
+                content={
+                  <p>Total bet amount and missions contributes with xp</p>
+                }
+              >
+                <InfoIcon className="size-3 cursor-pointer" />
+              </CommonTooltip>
             </div>
           </div>
           <Progress className="h-2" value={progress} />
@@ -43,11 +91,11 @@ export function VipCard({ user, progress = 0 }: VipCardProps): JSX.Element {
         <div className="flex justify-between items-center text-xs mt-3">
           <div className="flex flex-col items-center gap-1">
             <StarIcon className="size-4 text-neutral-strong" />
-            <span className="text-neutral-weak">None</span>
+            <span className="text-neutral-weak">{currentLabel}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <StarIcon className="size-4 text-yellow-400" fill="currentColor" />
-            <span className="text-white font-medium">Bronze</span>
+            <span className="text-white font-medium">{nextLabel}</span>
           </div>
         </div>
       </Card>

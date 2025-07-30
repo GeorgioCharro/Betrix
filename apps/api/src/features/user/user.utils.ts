@@ -11,8 +11,8 @@ export const generateServerSeed = () => {
 export const calculateLevel = (
   xp: number
 ): 'none' | 'vip' | 'vip_plus' | 'diamond' => {
-  if (xp >= 5000) return 'diamond';
-  if (xp >= 1000) return 'vip_plus';
-  if (xp > 0) return 'vip';
+  if (xp >= 10000) return 'diamond';
+  if (xp >= 5000) return 'vip_plus';
+  if (xp >= 1000) return 'vip';
   return 'none';
 };

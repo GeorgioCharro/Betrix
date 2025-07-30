@@ -38,8 +38,8 @@ function HomePage(): JSX.Element {
         <Hero backgroundSrc="/banner/header-bg.png">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-4">
-                           {user ? (
-                <VipCard progress={50} user={user} />
+              {user ? (
+                <VipCard user={user} />
               ) : (
                 <>
                   <h1 className="text-3xl font-semibold text-neutral-default">
@@ -70,7 +70,7 @@ function HomePage(): JSX.Element {
                 className="w-80 shrink-0"
                 icon={Club}
                 imageSrc="/banner/casino.png"
-                navigateTo='/casino'
+                navigateTo="/casino"
                 title="Casino"
               />
             </div>
@@ -86,7 +86,6 @@ function HomePage(): JSX.Element {
         <CasinoBets />
         <Faq />
         <Footer />
-        
       </div>
     </div>
   );

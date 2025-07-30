@@ -1,13 +1,21 @@
 import db from '@repo/db';
 import type { Request, Response } from 'express';
-import type { RoulettePlaceBetResponse, RouletteFormattedBet} from '@repo/common/game-utils/roulette/index.js';
+import type {
+  RoulettePlaceBetResponse,
+  RouletteFormattedBet,
+} from '@repo/common/game-utils/roulette/index.js';
 import type { Prisma, User } from '@prisma/client';
-import { BetsSchema, validateBets, RouletteBetTypes } from '@repo/common/game-utils/roulette/index.js';
+import {
+  BetsSchema,
+  validateBets,
+  RouletteBetTypes,
+} from '@repo/common/game-utils/roulette/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 import { sum } from 'lodash';
 import { BadRequestError } from '../../../errors';
 import { userManager } from '../../user/user.service';
+import { checkChallengesAfterBet } from '../../challenges/challenge.service';
 import { calculatePayout, spinWheel } from './roulette.service';
 
 export const placeBetAndSpin = async (
@@ -43,39 +51,39 @@ export const placeBetAndSpin = async (
   const winningNumber = await spinWheel(user.id);
   const payout = calculatePayout(validBets, winningNumber);
 
+  const formattedBets: RouletteFormattedBet[] = validBets.map(bet => {
+    switch (bet.betType) {
+      case RouletteBetTypes.STRAIGHT:
+      case RouletteBetTypes.DOZEN:
+      case RouletteBetTypes.COLUMN:
+        // Always wrap as array for GraphQL consistency
+        return {
+          ...bet,
+          selection: Array.isArray(bet.selection)
+            ? bet.selection
+            : [bet.selection],
+        } as RouletteFormattedBet;
 
-const formattedBets: RouletteFormattedBet[] = validBets.map(bet => {
-  switch (bet.betType) {
-    case RouletteBetTypes.STRAIGHT:
-    case RouletteBetTypes.DOZEN:
-    case RouletteBetTypes.COLUMN:
-      // Always wrap as array for GraphQL consistency
-      return {
-        ...bet,
-        selection: Array.isArray(bet.selection) ? bet.selection : [bet.selection],
-      } as RouletteFormattedBet;
+      case RouletteBetTypes.SPLIT:
+      case RouletteBetTypes.CORNER:
+      case RouletteBetTypes.STREET:
+      case RouletteBetTypes.SIXLINE:
+        // These already have array selection
+        return { ...bet } as RouletteFormattedBet;
 
-    case RouletteBetTypes.SPLIT:
-    case RouletteBetTypes.CORNER:
-    case RouletteBetTypes.STREET:
-    case RouletteBetTypes.SIXLINE:
-      // These already have array selection
-      return { ...bet } as RouletteFormattedBet;
+      // These bet types have NO selection
+      case RouletteBetTypes.BLACK:
+      case RouletteBetTypes.RED:
+      case RouletteBetTypes.EVEN:
+      case RouletteBetTypes.ODD:
+      case RouletteBetTypes.HIGH:
+      case RouletteBetTypes.LOW:
+        return bet as RouletteFormattedBet;
 
-    // These bet types have NO selection
-    case RouletteBetTypes.BLACK:
-    case RouletteBetTypes.RED:
-    case RouletteBetTypes.EVEN:
-    case RouletteBetTypes.ODD:
-    case RouletteBetTypes.HIGH:
-    case RouletteBetTypes.LOW:
-      return bet as RouletteFormattedBet;
-
-    default:
-      return bet as RouletteFormattedBet;
-  }
-});
-
+      default:
+        return bet as RouletteFormattedBet;
+    }
+  });
 
   const gameState: Prisma.JsonObject = {
     bets: formattedBets as unknown as Prisma.JsonArray,
@@ -116,7 +124,10 @@ const formattedBets: RouletteFormattedBet[] = validBets.map(bet => {
   });
 
   userInstance.setBalance(balance);
-
+  await checkChallengesAfterBet({
+    userId: user.id,
+    game: 'roulette',
+  });
   response.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       id,
