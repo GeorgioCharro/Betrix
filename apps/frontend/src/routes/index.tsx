@@ -1,12 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Club } from 'lucide-react';
 import { useState } from 'react';
-import { Footer } from 'react-day-picker';
 
+import { Footer2 } from '@/components/footer2';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { SearchGames } from '@/components/SearchGames';
 import { SideMenu } from '@/components/SideMenu';
+import { StartPlayingPromo } from '@/components/StartPlayingPromo';
 import { Button } from '@/components/ui/button';
 import { PromoCard } from '@/components/ui/promo-card';
 import { GoogleAuthButton } from '@/features/auth/components/GoogleAuthButton';
@@ -31,62 +32,64 @@ function HomePage(): JSX.Element {
   };
 
   return (
-    <div className="flex min-h-screen">
-      <SideMenu isOpen={isMenuOpen} onToggle={toggleMenu} />
-      <div className="flex flex-1 flex-col">
-        <Header />
-        <Hero backgroundSrc="/banner/header-bg.png">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-col gap-4">
-              {user ? (
-                <VipCard user={user} />
-              ) : (
-                <>
-                  <h1 className="text-3xl font-semibold text-neutral-default">
-                    Welcome to SimCasino
-                  </h1>
-                  <div className="flex w-64 flex-col items-start space-y-2">
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        setShowRegister(true);
-                      }}
-                    >
-                      Register
-                    </Button>
-                    <GoogleAuthButton className="w-full" type="button" />
-                    <RegisterModal
-                      onOpenChange={setShowRegister}
-                      open={showRegister}
-                    />
+    <>
+      <div className="flex min-h-screen">
+        <SideMenu isOpen={isMenuOpen} onToggle={toggleMenu} />
+        <div className="flex flex-1 flex-col">
+          <Header />
+          <Hero backgroundSrc="/banner/header-bg.png">
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col items-center gap-4 sm:items-start">
+                {user ? (
+                  <div className="flex justify-center sm:justify-start">
+                    <VipCard user={user} />
                   </div>
-                </>
-              )}
-            </div>
+                ) : (
+                  <>
+                    <h1 className="text-center text-3xl font-semibold text-neutral-default sm:text-left">
+                      Welcome to Betrix
+                    </h1>
+                    <div className="flex w-full flex-col items-center space-y-2 sm:w-64 sm:items-start">
+                      <Button
+                        className="w-full"
+                        onClick={() => {
+                          setShowRegister(true);
+                        }}
+                      >
+                        Register
+                      </Button>
+                      <GoogleAuthButton className="w-full" type="button" />
+                      <RegisterModal
+                        onOpenChange={setShowRegister}
+                        open={showRegister}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
 
-            {/* Promo Card */}
-            <div className="flex justify-center sm:block w-full sm:w-auto">
-              <PromoCard
-                className="w-80 shrink-0"
-                icon={Club}
-                imageSrc="/banner/casino.png"
-                navigateTo="/casino"
-                title="Casino"
-              />
+              {/* Promo Card */}
+              <div className="hidden justify-center sm:block w-full sm:w-auto">
+                <PromoCard
+                  className="w-80 shrink-0"
+                  icon={Club}
+                  imageSrc="/banner/casino.png"
+                  navigateTo="/casino"
+                  title="Casino"
+                />
+              </div>
             </div>
+          </Hero>
+          <StartPlayingPromo />
+          <div className="container py-6">
+            <SearchGames />
           </div>
-        </Hero>
-
-        <div className="container py-6">
-          <SearchGames />
-        </div>
-        <div className="container py-6">
           <FeaturedGames />
+          <CasinoBets />
+          <Faq />
         </div>
-        <CasinoBets />
-        <Faq />
-        <Footer />
       </div>
-    </div>
+      <Footer2 />
+    </>
   );
 }

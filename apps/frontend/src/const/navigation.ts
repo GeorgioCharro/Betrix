@@ -39,7 +39,7 @@ export const NAV_ITEMS: NavItem[] = [
     type: 'general',
   },
   {
-    label: 'Provably Fair',
+    label: 'Provably',
     path: '/provably-fair/calculation',
     icon: ScaleIcon,
     type: 'general',

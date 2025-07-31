@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import * as React from 'react';
 
 import { setupInterceptors } from '@/api/_utils/axiosInstance';
+import { getUserDetails } from '@/api/auth';
 import { LoginModal } from '@/features/auth/components/LoginModal';
 import type { AuthState } from '@/features/auth/store/authStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -16,7 +17,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootLayout(): JSX.Element {
-  const { setUser, showLoginModal } = useAuthStore();
+  const { user, setUser, showLoginModal } = useAuthStore();
 
   // Setup interceptors to show login modal on auth errors
   React.useEffect(() => {
@@ -27,6 +28,19 @@ function RootLayout(): JSX.Element {
       },
     });
   }, [setUser, showLoginModal]);
+
+  React.useEffect(() => {
+    if (!user) {
+      getUserDetails()
+        .then(res => {
+          setUser(res.data);
+        })
+        .catch(() => {
+          // Ignore errors, user might not be authenticated
+        });
+    }
+  }, [user, setUser]);
+
   React.useEffect(() => {
     const redirectUrl = localStorage.getItem('auth_redirect');
     if (redirectUrl) {
