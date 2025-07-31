@@ -2,6 +2,7 @@ import passport from 'passport';
 import { hash } from 'bcrypt';
 import db from '@repo/db';
 import type { User } from '@prisma/client';
+import { Level } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 import { Router } from 'express';
@@ -15,16 +16,6 @@ interface RegisterRequestBody {
   password: string;
   dateOfBirth: string;
   code?: string;
-}
-
-interface CreateUserData {
-  email: string;
-  username: string;
-  password: string;
-  dateOfBirth: Date;
-  code?: string | null;
-  xp: number;
-  level: string;
 }
 
 const router: Router = Router();
@@ -57,15 +48,43 @@ router.get(
 );
 
 // Local authentication routes
-router.post(
-  '/login',
-  passport.authenticate('local', {
-    failureRedirect: `${process.env.CLIENT_URL}/login`,
-  }) as RequestHandler,
-  (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}`);
-  }
-);
+router.post('/login', (req, res, next) => {
+  (
+    passport.authenticate(
+      'local',
+      (
+        err: unknown,
+        user: Express.User | false,
+        info: { message?: string } | undefined
+      ) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        if (!user) {
+          return res
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({ message: info?.message || 'Invalid credentials' });
+        }
+
+        req.logIn(user, (err2: unknown) => {
+          if (err2) {
+            next(err2);
+            return;
+          }
+
+          type UserWithPassword = typeof user & { password?: string };
+          const { password: _pw, ...userWithoutPassword } =
+            user as UserWithPassword;
+
+          return res
+            .status(StatusCodes.OK)
+            .json(new ApiResponse(StatusCodes.OK, userWithoutPassword));
+        });
+      }
+    ) as RequestHandler
+  )(req, res, next);
+});
 
 router.post('/register', async (req, res) => {
   const { email, username, password, dateOfBirth, code } =
@@ -99,8 +118,8 @@ router.post('/register', async (req, res) => {
       dateOfBirth: new Date(dateOfBirth),
       code,
       xp: 0,
-      level: 'none',
-    } as CreateUserData,
+      level: Level.none,
+    },
   });
 
   type UserWithPassword = Record<string, unknown> & { password?: string };
@@ -112,7 +131,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.get('/logout', (req, res, next) => {
-  req.logout(err => {
+  req.logout((err: unknown) => {
     if (err) next(err);
     res.redirect('/auth');
   });

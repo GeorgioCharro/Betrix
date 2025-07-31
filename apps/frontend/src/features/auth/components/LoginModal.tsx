@@ -28,6 +28,10 @@ export function LoginModal(): JSX.Element {
     formState: { errors, isSubmitting },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
   });
 
   // Close the modal when user becomes authenticated

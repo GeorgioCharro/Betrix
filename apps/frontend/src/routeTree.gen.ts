@@ -1,4 +1,4 @@
-/* eslint-disable */ // This line is to disable ESLint for this file
+/* eslint-disable */
 
 // @ts-nocheck
 

@@ -24,11 +24,16 @@ export const createServer = async (): Promise<Express> => {
     .use(json())
     .use(
       cors({
-        origin: process.env.REACT_ORIGINS_URL?.split(',') || [
-          'http://localhost:3000',
-          'http://localhost:5173',
-          'https://studio.apollographql.com/',
-        ], // Use env variable with fallback
+        // Allow any origin when REACT_ORIGINS_URL is "*". Otherwise use the
+        // provided comma-separated list or a safe local default.
+        origin:
+          process.env.REACT_ORIGINS_URL === '*'
+            ? true
+            : process.env.REACT_ORIGINS_URL?.split(',') || [
+                'http://localhost:3000',
+                'http://localhost:5173',
+                'https://studio.apollographql.com/',
+              ],
         credentials: true, // Allow cookies and other credentials
       })
     )

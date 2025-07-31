@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 export const usersTypeDefs = gql`
-enum Level {
+  enum Level {
     none
     vip
     vip_plus
@@ -10,7 +10,7 @@ enum Level {
   type User {
     id: ID!
     email: String!
-    name: String!
+    name: String
     picture: String
     balance: Float
     xp: Int!

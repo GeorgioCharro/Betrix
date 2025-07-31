@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import type { User, ApiResponse } from '@repo/common/types';
+import axios from 'axios';
 
 import { BASE_API_URL } from '@/const/routes';
 
@@ -59,23 +60,22 @@ interface LoginRequest {
   password: string;
 }
 
+interface LoginError {
+  message?: string;
+}
+
 export const loginAccount = async (req: LoginRequest): Promise<void> => {
-  const res = await fetch(`${BASE_API_URL}/api/v1/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    redirect: 'manual',
-    body: JSON.stringify(req),
-  });
-  if (res.status === 302) {
-    const location = res.headers.get('Location') || '';
-    if (location.includes('/login')) {
-      throw new Error('Invalid credentials');
+  const res = await axios.post<ApiResponse<User> | LoginError>(
+    `${BASE_API_URL}/api/v1/auth/login`,
+    req,
+    {
+      withCredentials: true,
+      validateStatus: () => true,
     }
-  } else if (!res.ok) {
-    const message = await res.text();
-    throw new Error(message || 'Login failed');
+  );
+
+  if (res.status >= 400) {
+    const data = res.data as LoginError;
+    throw new Error(data.message ?? 'Login failed');
   }
 };

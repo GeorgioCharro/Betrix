@@ -3,7 +3,7 @@ export interface User {
   email: string;
   googleId: string | null;
   id: string;
-  name: string;
+  name: string | null;
   picture: string | null;
   xp: number;
   level: Level;

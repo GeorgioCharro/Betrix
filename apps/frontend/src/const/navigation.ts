@@ -1,4 +1,10 @@
-import { HomeIcon, NotepadTextIcon, TrophyIcon } from 'lucide-react';
+import {
+  HomeIcon,
+  NotepadTextIcon,
+  TrophyIcon,
+  ScaleIcon,
+  BadgeDollarSignIcon,
+} from 'lucide-react';
 import type { ComponentType } from 'react';
 
 import { GAME_VALUES_MAPPING } from './games';
@@ -13,7 +19,13 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', path: '/casino/home', icon: HomeIcon, type: 'general' },
+  { label: 'Home', path: '/', icon: HomeIcon, type: 'general' },
+  {
+    label: 'Casino',
+    path: '/casino/home',
+    icon: BadgeDollarSignIcon,
+    type: 'general',
+  },
   {
     label: 'My Bets',
     path: '/casino/my-bets',
@@ -24,6 +36,12 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Challenges',
     path: '/casino/challenges',
     icon: TrophyIcon,
+    type: 'general',
+  },
+  {
+    label: 'Provably Fair',
+    path: '/provably-fair/calculation',
+    icon: ScaleIcon,
     type: 'general',
   },
   { ...GAME_VALUES_MAPPING.dice, type: 'games' },
