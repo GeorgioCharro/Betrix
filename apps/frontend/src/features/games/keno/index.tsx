@@ -18,6 +18,7 @@ import {
 } from './store/kenoSelectors';
 import useKenoStore from './store/kenoStore';
 import GameSettingsBar from '../common/components/game-settings';
+import GameDescriptionAccordion from '../common/components/GameDescriptionAccordion';
 
 export function Keno(): JSX.Element {
   const selectedTiles = useSelectedTiles();
@@ -177,6 +178,7 @@ export function Keno(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.KENO} />
+      <GameDescriptionAccordion game={Games.KENO} />
     </>
   );
 }

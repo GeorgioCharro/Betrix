@@ -26,53 +26,35 @@ interface Footer2Props {
 
 function Footer2({
   logo = {
-    src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg',
-    alt: 'blocks for shadcn/ui',
-    title: 'Shadcnblocks.com',
-    url: 'https://www.shadcnblocks.com',
+    src: '/logo.png',
+    alt: 'Betrix Logo',
+    title: '',
+    url: '/',
   },
-  tagline = 'Components made easy.',
+  tagline = 'Gambling made easy.',
   menuItems = [
     {
-      title: 'Product',
+      title: 'Navigation',
       links: [
-        { text: 'Overview', url: '#' },
-        { text: 'Pricing', url: '#' },
-        { text: 'Marketplace', url: '#' },
-        { text: 'Features', url: '#' },
-        { text: 'Integrations', url: '#' },
-        { text: 'Pricing', url: '#' },
+        { text: 'Home', url: '/' },
+        { text: 'Casino', url: '/casino/home' },
+        { text: 'My Bets', url: '/casino/my-bets' },
+        { text: 'Challenges', url: '/casino/challenges' },
+        { text: 'Provably Fair', url: '/provably-fair/calculation' },
       ],
     },
     {
-      title: 'Company',
+      title: 'Games',
       links: [
-        { text: 'About', url: '#' },
-        { text: 'Team', url: '#' },
-        { text: 'Blog', url: '#' },
-        { text: 'Careers', url: '#' },
-        { text: 'Contact', url: '#' },
-        { text: 'Privacy', url: '#' },
-      ],
-    },
-    {
-      title: 'Resources',
-      links: [
-        { text: 'Help', url: '#' },
-        { text: 'Sales', url: '#' },
-        { text: 'Advertise', url: '#' },
-      ],
-    },
-    {
-      title: 'Social',
-      links: [
-        { text: 'Twitter', url: '#' },
-        { text: 'Instagram', url: '#' },
-        { text: 'LinkedIn', url: '#' },
+        { text: 'Dice', url: '/casino/games/dice' },
+        { text: 'Roulette', url: '/casino/games/roulette' },
+        { text: 'Mines', url: '/casino/games/mines' },
+        { text: 'Keno', url: '/casino/games/keno' },
+        { text: 'Plinkoo', url: '/casino/games/plinkoo' },
       ],
     },
   ],
-  copyright = '© 2024 Shadcnblocks.com. All rights reserved.',
+  copyright = '©2025 Betrix All rights reserved.',
   bottomLinks = [
     { text: 'Terms and Conditions', url: '#' },
     { text: 'Privacy Policy', url: '#' },
@@ -88,7 +70,7 @@ function Footer2({
                 <Logo url={logo.url}>
                   <LogoImage
                     alt={logo.alt}
-                    className="h-10"
+                    className="size-[100px]"
                     src={logo.src}
                     title={logo.title}
                   />

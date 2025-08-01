@@ -33,9 +33,12 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
     header: 'Time',
     accessorKey: 'createdAt',
     cell: ({ row }) => {
-      const date = new Date(row.original.createdAt);
+      const raw = row.original.createdAt;
+      const date = new Date(
+        typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : raw
+      );
       const formatted = isValid(date)
-        ? format(date, 'h:mm a M/d/yyyy')
+        ? format(date, 'MMM d, yyyy h:mm a')
         : String(row.original.createdAt);
 
       return <div className="text-neutral-weak font-medium">{formatted}</div>;
@@ -59,7 +62,6 @@ export const columns: ColumnDef<PaginatedBetData>[] = [
     meta: {
       alignment: 'right',
       hideOnMobile: true,
-      
     },
   },
   {

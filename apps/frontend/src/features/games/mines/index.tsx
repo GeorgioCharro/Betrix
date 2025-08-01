@@ -21,6 +21,7 @@ import {
 } from './store/minesSelectors';
 import useMinesStore from './store/minesStore';
 import GameSettingsBar from '../common/components/game-settings';
+import GameDescriptionAccordion from '../common/components/GameDescriptionAccordion';
 
 export function Mines(): JSX.Element {
   const { setGameState, gameState } = useMinesStore();
@@ -143,6 +144,7 @@ export function Mines(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.MINES} />
+      <GameDescriptionAccordion game={Games.MINES} />
     </>
   );
 }

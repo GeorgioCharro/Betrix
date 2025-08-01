@@ -23,7 +23,10 @@ export function SideMenu({ isOpen, onToggle }: SideMenuProps): JSX.Element {
     e: React.MouseEvent<HTMLAnchorElement>,
     path: string
   ): void => {
-    if (path === '/casino/my-bets' && !user) {
+    if (
+      (path === '/casino/my-bets' || path === '/casino/challenges') &&
+      !user
+    ) {
       e.preventDefault();
       showLoginModal();
       return;
@@ -35,7 +38,7 @@ export function SideMenu({ isOpen, onToggle }: SideMenuProps): JSX.Element {
     <aside
       className={cn(
         'hidden h-screen flex-col overflow-hidden bg-brand-strong shadow-lg transition-all duration-300 md:flex',
-        isOpen ? 'w-36' : 'w-14'
+        isOpen ? 'w-[150px]' : 'w-14'
       )}
     >
       <div className="bg-brand-stronger p-3 shadow-lg">

@@ -17,6 +17,7 @@ import useRouletteStore from './store/rouletteStore';
 import { useWinningNumber } from './store/rouletteStoreSelectors';
 import { parseBetId } from './utils/helpers';
 import GameSettingsBar from '../common/components/game-settings';
+import GameDescriptionAccordion from '../common/components/GameDescriptionAccordion';
 
 export function Roulette({
   isPreview = false,
@@ -139,6 +140,7 @@ export function Roulette({
         </div>
       </RouletteProvider>
       <GameSettingsBar game={Games.ROULETTE} />
+      <GameDescriptionAccordion game={Games.ROULETTE} />
     </>
   );
 }

@@ -11,6 +11,7 @@ import { useResultSlider } from './hooks/useResultSlider';
 import { useSliderValue } from './hooks/useSliderValue';
 import { BettingControls } from '../common/components/BettingControls';
 import GameSettingsBar from '../common/components/game-settings';
+import GameDescriptionAccordion from '../common/components/GameDescriptionAccordion';
 
 export function DiceGame(): JSX.Element {
   const diceState = useDiceStore();
@@ -58,6 +59,7 @@ export function DiceGame(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.DICE} />
+      <GameDescriptionAccordion game={Games.DICE} />
     </>
   );
 }

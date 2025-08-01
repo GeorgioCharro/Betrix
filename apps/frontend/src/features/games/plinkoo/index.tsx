@@ -8,6 +8,7 @@ import { Games } from '@/const/games';
 
 import BettingControls from './components/BettingControls';
 import GameSettingsBar from '../common/components/game-settings';
+import GameDescriptionAccordion from '../common/components/GameDescriptionAccordion';
 
 export function Plinkoo(): JSX.Element {
   const [betAmount, setBetAmount] = useState(0);
@@ -65,6 +66,7 @@ export function Plinkoo(): JSX.Element {
         </div>
       </div>
       <GameSettingsBar game={Games.PLINKOO} />
+      <GameDescriptionAccordion game={Games.PLINKOO} />
     </>
   );
 }
