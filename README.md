@@ -30,7 +30,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/GeorgioCharro/Betrix">
-    <img src="./apps/frontend/public/logo-readme.png" alt="Logo" width="80" height="80">
+    <img src="./apps/frontend/public/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Betrix SimCasino</h3>
@@ -559,7 +559,7 @@ List of resources I found helpful and would like to give credit to.
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: ./apps/frontend/public/banner/casino.png
+[product-screenshot]: ./apps/frontend/public/logo-readme.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
