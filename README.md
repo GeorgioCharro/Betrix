@@ -1,5 +1,7 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
 <a id="readme-top"></a>
+
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
 *** that would make this better, please fork the repo and create a pull request
@@ -7,8 +9,6 @@
 *** Don't forget to give the project a star!
 *** Thanks again! Now go create something AMAZING! :D
 -->
-
-
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -18,6 +18,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+
 [![Contributors](https://img.shields.io/badge/Contributors--blue?style=for-the-badge)](https://github.com/GeorgioCharro/Betrix/graphs/contributors)
 [![Forks](https://img.shields.io/badge/Forks--blue?style=for-the-badge)](https://github.com/GeorgioCharro/Betrix/network/members)
 [![Stars](https://img.shields.io/badge/Stars--blue?style=for-the-badge)](https://github.com/GeorgioCharro/Betrix/stargazers)
@@ -25,14 +26,11 @@
 [![Unlicense License][license-shield]][license-url]
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](https://www.linkedin.com/in/georgio-charro-59280a1b2/)
 
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/GeorgioCharro/Betrix">
-    <img src="apps/frontend/public/logo-readme" alt="Logo" width="80" height="80">
+    <img src="./apps/frontend/public/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Betrix SimCasino</h3>
@@ -49,7 +47,6 @@
     <a href="https://github.com/GeorgioCharro/Betrix/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
-
 
 <details>
   <summary>Table of Contents</summary>
@@ -85,10 +82,8 @@
   </ol>
 </details>
 
-
-
-
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
@@ -107,57 +102,43 @@ Through Betrix, I’ve implemented provably fair game logic, real-time balance u
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ### Built With
 
-* [![React][React.js]][React-url]
-* [![TypeScript][TypeScript.ts]][TypeScript-url]
-* [![ShadCN][ShadCN.ui]][ShadCN-url]
-* [![Tailwind][Tailwind.css]][Tailwind-url]
-* [![Vite][Vite.js]][Vite-url]
-* [![GraphQL][GraphQL.graphql]][GraphQL-url]
-* [![Apollo][Apollo.apollo]][Apollo-url]
-* [![Express][Express.js]][Express-url]
-* [![PostgreSQL][Postgres.pg]][Postgres-url]
-* [![Prisma][Prisma.prisma]][Prisma-url]
+- [![React][React.js]][React-url]
+- [![TypeScript][TypeScript.ts]][TypeScript-url]
+- [![ShadCN][ShadCN.ui]][ShadCN-url]
+- [![Tailwind][Tailwind.css]][Tailwind-url]
+- [![Vite][Vite.js]][Vite-url]
+- [![GraphQL][GraphQL.graphql]][GraphQL-url]
+- [![Apollo][Apollo.apollo]][Apollo-url]
+- [![Express][Express.js]][Express-url]
+- [![PostgreSQL][Postgres.pg]][Postgres-url]
+- [![Prisma][Prisma.prisma]][Prisma-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- Badges -->
+
 [React.js]: https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61dafb
 [React-url]: https://reactjs.org/
-
 [TypeScript.ts]: https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white
 [TypeScript-url]: https://www.typescriptlang.org/
-
 [ShadCN.ui]: https://img.shields.io/badge/ShadCN/UI-111827?style=for-the-badge&logo=tailwindcss&logoColor=38bdf8
 [ShadCN-url]: https://ui.shadcn.com/
-
 [Tailwind.css]: https://img.shields.io/badge/Tailwind_CSS-38bdf8?style=for-the-badge&logo=tailwindcss&logoColor=white
 [Tailwind-url]: https://tailwindcss.com/
-
 [Vite.js]: https://img.shields.io/badge/Vite-646cff?style=for-the-badge&logo=vite&logoColor=white
 [Vite-url]: https://vitejs.dev/
-
 [GraphQL.graphql]: https://img.shields.io/badge/GraphQL-e535ab?style=for-the-badge&logo=graphql&logoColor=white
 [GraphQL-url]: https://graphql.org/
-
 [Apollo.apollo]: https://img.shields.io/badge/Apollo_GraphQL-311C87?style=for-the-badge&logo=apollo-graphql&logoColor=white
 [Apollo-url]: https://www.apollographql.com/
-
 [Express.js]: https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white
 [Express-url]: https://expressjs.com/
-
 [Postgres.pg]: https://img.shields.io/badge/PostgreSQL-4169e1?style=for-the-badge&logo=postgresql&logoColor=white
 [Postgres-url]: https://www.postgresql.org/
-
 [Prisma.prisma]: https://img.shields.io/badge/Prisma-2d3748?style=for-the-badge&logo=prisma&logoColor=white
 [Prisma-url]: https://www.prisma.io/
-
-
-
-
 
 ## 🚀 Getting Started
 
@@ -221,10 +202,9 @@ pnpm run dev
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- USAGE EXAMPLES -->
 <!-- USAGE EXAMPLES -->
+
 ## 📖 Usage
 
 SimCasino is a monorepo managed with **Turborepo** and **pnpm**.  
@@ -249,6 +229,7 @@ It also includes shared packages for database access and provably fair game util
 ### ⚙️ Server Architecture
 
 #### Express Server
+
 - Configured via `createServer`
 - Handles:
   - Logging
@@ -262,6 +243,7 @@ It also includes shared packages for database access and provably fair game util
   - Initializes Apollo Server for GraphQL support
 
 #### WebSocket Layer
+
 - A `WebSocketServer` is bound to the HTTP server
 - Greets new connections and exposes `broadcastBalanceUpdate` to push live balance updates to clients
 
@@ -272,20 +254,24 @@ It also includes shared packages for database access and provably fair game util
 Authentication logic is in `auth.router.ts`:
 
 - **Google OAuth**
+
   - `/google` initiates login
   - `/google/callback` processes the response and redirects
 
 - **Local Login**
+
   - `/login` uses Passport's local strategy
   - Returns user data (excluding password) on success
 
 - **Register**
+
   - Validates input, ensures unique email/username
   - Hashes password (bcrypt)
   - Initializes user level, XP, and seeds
   - Persists to DB
 
 - **`/me` route**
+
   - Protected via `isAuthenticated` middleware
   - Returns the current session user
 
@@ -319,44 +305,50 @@ Controllers expose:
 All routes under `/api/v1/games/:game` require authentication.  
 Each controller:
 
-1. Validates input  
-2. Loads the user and provably fair state  
-3. Generates game outcomes  
-4. Debits balance, calculates payouts, and persists bets in a Prisma transaction  
+1. Validates input
+2. Loads the user and provably fair state
+3. Generates game outcomes
+4. Debits balance, calculates payouts, and persists bets in a Prisma transaction
 
 #### **Games Included:**
 
 - **🎲 Dice**
+
   - One float → 0–100
   - Multiplier computed by target & direction (above/below)
-  ▶️ [Watch demo](https://vimeo.com/1106741261)
+    ▶️ [Watch demo](https://vimeo.com/1106741261)
 
 - **🎡 Roulette**
+
   - One float → number 0–36
   - Payouts support all traditional types (straight, corner, parity, etc.)
-  ▶️ [Watch demo](https://vimeo.com/1106741308)
+    ▶️ [Watch demo](https://vimeo.com/1106741308)
 
 - **🎯 Keno**
+
   - Ten floats → ten drawn numbers
   - Matched tiles → payout multiplier from risk table
-  ▶️ [Watch demo](https://vimeo.com/1106741275)
+    ▶️ [Watch demo](https://vimeo.com/1106741275)
 
 - **💣 Mines**
+
   - Floats → mine positions
   - `playRound` tracks picks, mines, and finalizes cashout/mine hit
-  ▶️ [Watch demo](https://vimeo.com/1106741289)
+    ▶️ [Watch demo](https://vimeo.com/1106741289)
 
 - **🪙 Plinkoo**
+
   - Simulated path via `Math.random`
   - Counts right moves and returns multiplier from payout table
-  ▶️ [Watch demo](https://vimeo.com/1106741301)
+    ▶️ [Watch demo](https://vimeo.com/1106741301)
 
 - **🃏 Blackjack**
+
   - Uses `BlackjackManager` to generate 52-card deck from floats
   - `BlackjackGame` controls state, actions, card draws, and payout
 
 - **💥 Limbo**
-  - Placeholder: fixed float & 1% house edge  
+  - Placeholder: fixed float & 1% house edge
   - Real RNG implementation pending (`TODO` in source)
 
 ---
@@ -370,17 +362,18 @@ The backend exposes both a **REST API** and a **GraphQL API**, all mounted on an
 ### ⚙️ Server Setup
 
 - `createServer` configures middleware for:
-  - Logging  
-  - CORS  
-  - Sessions  
-  - Passport authentication  
-  - REST routes  
-- It initializes **Apollo Server** for GraphQL.  
+  - Logging
+  - CORS
+  - Sessions
+  - Passport authentication
+  - REST routes
+- It initializes **Apollo Server** for GraphQL.
 - A `/health` endpoint is exposed for health checks before mounting feature routers under `/api/v1`.
 
 **Routers:**
-- `authRouter`  
-- `gameRouter`  
+
+- `authRouter`
+- `gameRouter`
 - `userRouter` (currently not mounted in `server.ts`)
 
 ---
@@ -388,17 +381,18 @@ The backend exposes both a **REST API** and a **GraphQL API**, all mounted on an
 ### 🔐 Authentication and User Endpoints
 
 - The **auth router** handles:
-  - **Google OAuth** login  
-  - Local login  
-  - Registration  
-  - Logout  
-  - A session-backed `/me` route to fetch the current user  
+
+  - **Google OAuth** login
+  - Local login
+  - Registration
+  - Logout
+  - A session-backed `/me` route to fetch the current user
 
 - The **user router** provides (requires authentication):
-  - Balance retrieval  
-  - Provably fair **seed rotation**  
-  - **Server-seed reveal**  
-  - **Bet history**  
+  - Balance retrieval
+  - Provably fair **seed rotation**
+  - **Server-seed reveal**
+  - **Bet history**
 
 ---
 
@@ -409,13 +403,13 @@ The backend exposes both a **REST API** and a **GraphQL API**, all mounted on an
   /api/v1/games/<game>
   ```
 - Supported games:
-  - Plinkoo  
-  - Mines  
-  - Limbo  
-  - Keno  
-  - Dice  
-  - Roulette  
-  - Blackjack  
+  - Plinkoo
+  - Mines
+  - Limbo
+  - Keno
+  - Dice
+  - Roulette
+  - Blackjack
 
 ---
 
@@ -425,14 +419,15 @@ The backend exposes both a **REST API** and a **GraphQL API**, all mounted on an
   ```
   /graphql
   ```
-- It combines schema and resolver modules.  
+- It combines schema and resolver modules.
 - The Express session context is shared with GraphQL.
 
 **Game-specific operations include:**
-- `placeDiceBet`  
-- `startMines`  
-- `blackjackBet`  
-- `playLimbo`  
+
+- `placeDiceBet`
+- `startMines`
+- `blackjackBet`
+- `playLimbo`
 
 These are handled by the **games resolver set**.
 
@@ -440,7 +435,7 @@ These are handled by the **games resolver set**.
 
 ### 🔄 WebSocket Support
 
-- A **WebSocket server** runs alongside the HTTP server.  
+- A **WebSocket server** runs alongside the HTTP server.
 - It broadcasts real-time balance updates to all connected clients via:
   ```
   broadcastBalanceUpdate
@@ -451,20 +446,21 @@ These are handled by the **games resolver set**.
 ### 🛠 Overall Flow
 
 - **Express routes** serve:
-  - Authentication  
-  - User endpoints  
-  - Per-game REST endpoints  
+
+  - Authentication
+  - User endpoints
+  - Per-game REST endpoints
 
 - **Apollo Server** handles:
-  - GraphQL queries and mutations for bets and game interactions  
 
-- **Sessions (via Passport)** secure both REST and GraphQL layers.  
+  - GraphQL queries and mutations for bets and game interactions
+
+- **Sessions (via Passport)** secure both REST and GraphQL layers.
 - **WebSockets** push live balance changes to the frontend clients.
 
 ---
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 ### 🗃️ Data & Transactions
 
@@ -497,8 +493,6 @@ Shared logic and TypeScript types are imported from `packages/common` to ensure 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -520,45 +514,39 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the Unlicense License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTACT -->
+
 ## Contact
 
-Georgio Charro  - georgiocharro@hotmail.com
+Georgio Charro - georgiocharro@hotmail.com
 
 Project Link: [https://github.com/GeorgioCharro/Betrix](https://github.com/GeorgioCharro/Betrix)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- ACKNOWLEDGMENTS -->
+
 ## Acknowledgments
 
- List of resources I found helpful and would like to give credit to.
+List of resources I found helpful and would like to give credit to.
 
-* [@Harkirat Singh](https://www.youtube.com/watch?v=l5bRPWxun4A&t=4998s)
-* [@nimit9 ](https://github.com/code100x/plinkoo/pull/24)
-* [@othneildrew](https://github.com/othneildrew/Best-README-Template)
-
+- [@Harkirat Singh](https://www.youtube.com/watch?v=l5bRPWxun4A&t=4998s)
+- [@nimit9 ](https://github.com/code100x/plinkoo/pull/24)
+- [@othneildrew](https://github.com/othneildrew/Best-README-Template)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
@@ -571,7 +559,7 @@ Project Link: [https://github.com/GeorgioCharro/Betrix](https://github.com/Georg
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: ./apps/frontend/public/logo-readme.png
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
@@ -587,4 +575,4 @@ Project Link: [https://github.com/GeorgioCharro/Betrix](https://github.com/Georg
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com
