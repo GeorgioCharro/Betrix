@@ -1,7 +1,4 @@
-import type {
-  ApiResponse,
-  PaginatedBetsResponse,
-} from '@repo/common/types';
+import type { ApiResponse, PaginatedBetsResponse } from '@repo/common/types';
 import { useQuery } from '@tanstack/react-query';
 import { NotepadTextIcon } from 'lucide-react';
 
@@ -19,7 +16,7 @@ function CasinoBets(): JSX.Element {
       fetchAllBets({
         page: 1,
         pageSize: pagination.pageSize,
-        apiKey: (import.meta.env.VITE_ADMIN_API_KEY as string | undefined) ?? 'test',
+        apiKey: (import.meta.env.ADMIN_API_KEY as string | undefined) ?? 'test',
       }),
     placeholderData: prev => prev,
   });
