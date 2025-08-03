@@ -16,7 +16,7 @@ function CasinoBets(): JSX.Element {
       fetchAllBets({
         page: 1,
         pageSize: pagination.pageSize,
-        apiKey: (import.meta.env.ADMIN_API_KEY as string | undefined) ?? 'test',
+        apiKey: process.env.ADMIN_API_KEY ?? 'test',
       }),
     placeholderData: prev => prev,
   });
