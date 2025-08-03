@@ -83,7 +83,7 @@ export const addChallenge = async (req: {
   const { data } = await graphqlClient.mutate<{ addChallenge: Challenge }>({
     mutation: ADD_CHALLENGE,
     variables: vars,
-    context: { headers: { 'x-api-key': apiKey } },
+    context: { headers: { admin_api_key: apiKey } },
   });
   if (!data) {
     throw new Error('Failed to add challenge');

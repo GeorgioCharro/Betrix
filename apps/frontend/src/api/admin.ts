@@ -27,7 +27,7 @@ export const depositBalance = async (
       status?: string;
     },
     ApiResponse<BalanceResponse>
-  >('/api/v1/admin/deposit', data, { headers: { 'x-api-key': apiKey } });
+  >('/api/v1/admin/deposit', data, { headers: { admin_api_key: apiKey } });
 };
 
 export const withdrawBalance = async (
@@ -42,5 +42,5 @@ export const withdrawBalance = async (
       status?: string;
     },
     ApiResponse<BalanceResponse>
-  >('/api/v1/admin/withdraw', data, { headers: { 'x-api-key': apiKey } });
+  >('/api/v1/admin/withdraw', data, { headers: { admin_api_key: apiKey } });
 };

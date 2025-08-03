@@ -6,7 +6,10 @@ export const requireApiKey = (
   res: Response,
   next: NextFunction
 ): void => {
-  const apiKey = req.header('x-api-key');
+  const apiKey =
+    req.header('admin_api_key') ??
+    req.header('admin-api-key') ??
+    req.header('x-api-key');
   if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
     res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid API key' });
     return;

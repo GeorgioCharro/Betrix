@@ -47,7 +47,7 @@ export const fetchAllBets = async ({
     query: ALL_BETS,
     variables: { page, pageSize },
     fetchPolicy: 'no-cache',
-    context: { headers: { 'x-api-key': apiKey } },
+    context: { headers: { admin_api_key: apiKey } },
   });
 
   return {
