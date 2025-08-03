@@ -355,7 +355,82 @@ Each controller:
 
 ## 🏗 API Architecture
 
-The backend exposes both a **REST API** and a **GraphQL API**, all mounted on an **Express** server.
+This service provides REST endpoints for authentication, user management, and game actions. Below is an overview of the available routes and their purpose.
+
+## Authentication
+
+| Method | Endpoint                | Description                            |
+| ------ | ----------------------- | -------------------------------------- |
+| GET    | `/auth/google`          | Start Google OAuth flow.               |
+| GET    | `/auth/google/callback` | Handle Google OAuth callback.          |
+| POST   | `/auth/login`           | Log in with username and password.     |
+| POST   | `/auth/register`        | Create a new account.                  |
+| GET    | `/auth/logout`          | Log out the current session.           |
+| GET    | `/auth/me`              | Return details about the current user. |
+
+## User
+
+| Method | Endpoint                                     | Description                                   |
+| ------ | -------------------------------------------- | --------------------------------------------- |
+| GET    | `/user/balance`                              | Retrieve the user's balance.                  |
+| POST   | `/user/rotate-seeds`                         | Rotate provably fair client and server seeds. |
+| GET    | `/user/provably-fair-state`                  | Get the current provably fair state.          |
+| GET    | `/user/unhash-server-seed/:hashedServerSeed` | Reveal the original server seed.              |
+| GET    | `/user/bets`                                 | Fetch the user's betting history.             |
+
+## Games
+
+Each game exposes specific endpoints under `/games`:
+
+### Blackjack
+
+| Method | Endpoint                  | Description                                 |
+| ------ | ------------------------- | ------------------------------------------- |
+| POST   | `/games/blackjack/bet`    | Place a bet and start a game.               |
+| POST   | `/games/blackjack/next`   | Submit the next action in the current game. |
+| GET    | `/games/blackjack/active` | Retrieve the active blackjack game.         |
+
+### Dice
+
+| Method | Endpoint                | Description       |
+| ------ | ----------------------- | ----------------- |
+| POST   | `/games/dice/place-bet` | Place a dice bet. |
+
+### Keno
+
+| Method | Endpoint                | Description       |
+| ------ | ----------------------- | ----------------- |
+| POST   | `/games/keno/place-bet` | Place a keno bet. |
+
+### Limbo
+
+| Method | Endpoint                 | Description        |
+| ------ | ------------------------ | ------------------ |
+| POST   | `/games/limbo/place-bet` | Place a limbo bet. |
+
+### Mines
+
+| Method | Endpoint                  | Description                        |
+| ------ | ------------------------- | ---------------------------------- |
+| POST   | `/games/mines/start`      | Start a new mines game.            |
+| POST   | `/games/mines/play-round` | Uncover a tile in the active game. |
+| POST   | `/games/mines/cash-out`   | Cash out the current game.         |
+| GET    | `/games/mines/active`     | Retrieve the active mines game.    |
+
+### Plinkoo
+
+| Method | Endpoint                 | Description                |
+| ------ | ------------------------ | -------------------------- |
+| POST   | `/games/plinkoo/outcome` | Request a plinkoo outcome. |
+
+### Roulette
+
+| Method | Endpoint                    | Description                     |
+| ------ | --------------------------- | ------------------------------- |
+| POST   | `/games/roulette/place-bet` | Place a bet and spin the wheel. |
+
+All routes that modify or retrieve user-specific data require authentication unless noted otherwise.
+
 
 ---
 
