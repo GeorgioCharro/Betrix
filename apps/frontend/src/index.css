@@ -123,3 +123,19 @@
     @apply bg-background text-foreground font-custom;
   }
 }
+
+/* Blackjack deal animation – cards appear to come from the deck */
+@keyframes blackjack-deal-from-deck {
+  0% {
+    transform: translate(120%, -100%) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-blackjack-deal {
+  animation: blackjack-deal-from-deck 0.55s ease-out both;
+}

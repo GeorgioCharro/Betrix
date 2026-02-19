@@ -15,6 +15,9 @@ const BLACKJACK_BET = gql`
       active
       betAmount
       amountMultiplier
+      payout
+      payoutMultiplier
+      balance
     }
   }
 `;
@@ -27,6 +30,9 @@ const BLACKJACK_NEXT = gql`
       active
       betAmount
       amountMultiplier
+      payout
+      payoutMultiplier
+      balance
     }
   }
 `;
@@ -39,6 +45,9 @@ const BLACKJACK_ACTIVE = gql`
       active
       betAmount
       amountMultiplier
+      payout
+      payoutMultiplier
+      balance
     }
   }
 `;

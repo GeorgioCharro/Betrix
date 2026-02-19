@@ -1,6 +1,6 @@
 import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import { getValidActionsFromState } from '@repo/common/game-utils/blackjack/utils.js';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { blackjackBet, getActiveGame, playRound } from '@/api/games/blackjack';
@@ -12,31 +12,21 @@ import { BetButton } from '../../common/components/BettingControls';
 import useBlackjackStore from '../store/blackjackStore';
 
 const BlackjackActionButtons = [
-  {
-    label: 'Hit',
-    value: BlackjackActions.HIT,
-    icon: '/games/blackjack/hit.svg',
-  },
-  {
-    label: 'Stand',
-    value: BlackjackActions.STAND,
-    icon: '/games/blackjack/stand.svg',
-  },
-  {
-    label: 'Split',
-    value: BlackjackActions.SPLIT,
-    icon: '/games/blackjack/split.svg',
-  },
-  {
-    label: 'Double',
-    value: BlackjackActions.DOUBLE,
-    icon: '/games/blackjack/double.svg',
-  },
+  { label: 'Hit', value: BlackjackActions.HIT, icon: '/games/blackjack/hit.svg' },
+  { label: 'Stand', value: BlackjackActions.STAND, icon: '/games/blackjack/stand.svg' },
+  { label: 'Split', value: BlackjackActions.SPLIT, icon: '/games/blackjack/split.svg' },
+  { label: 'Double', value: BlackjackActions.DOUBLE, icon: '/games/blackjack/double.svg' },
+];
+
+const InsuranceButtons = [
+  { label: 'Insurance', value: BlackjackActions.INSURANCE },
+  { label: 'No Insurance', value: BlackjackActions.NOINSURANCE },
 ];
 
 function BettingControls(): JSX.Element {
   const { betAmount, setBetAmount, gameState, setGameState } =
     useBlackjackStore();
+  const queryClient = useQueryClient();
 
   const {
     isPending: isFetchingActiveGame,
@@ -48,18 +38,50 @@ function BettingControls(): JSX.Element {
     retry: false,
   });
 
+  const getErrorMessage = (error: unknown): string => {
+    if (error && typeof error === 'object') {
+      const err = error as { message?: string; graphQLErrors?: { message?: string }[]; response?: { data?: { message?: string } } };
+      if (err.graphQLErrors?.[0]?.message) return err.graphQLErrors[0].message;
+      if (err.response?.data?.message) return err.response.data.message;
+      if (typeof err.message === 'string') return err.message;
+    }
+    return 'Something went wrong. Please try again.';
+  };
+
   const { mutate: bet, isPending: isStartingGame } = useMutation({
     mutationKey: ['blackjack-bet'],
     mutationFn: () => blackjackBet({ betAmount }),
     onSuccess: ({ data }) => {
       setGameState(data);
       setBetAmount(Number(data.betAmount));
+      queryClient.setQueryData(['blackjack-active-game'], { data });
+      if (data.balance !== undefined) {
+        queryClient.setQueryData(['balance'], () => data.balance);
+      }
+    },
+    onError: (error: unknown) => {
+      // eslint-disable-next-line no-alert -- intentional user-facing error feedback
+      window.alert(getErrorMessage(error));
     },
   });
 
-  const { mutate: playNextRound, isPending: _isPlayingRound } = useMutation({
+  const { mutate: playNextRound, isPending: isPlayingRound } = useMutation({
     mutationKey: ['blackjack-play-round'],
     mutationFn: (action: BlackjackActions) => playRound(action),
+    onSuccess: (res) => {
+      if (res.data) {
+        setGameState(res.data);
+        setBetAmount(Number(res.data.betAmount));
+        queryClient.setQueryData(['blackjack-active-game'], res);
+        if (res.data.balance !== undefined) {
+          queryClient.setQueryData(['balance'], () => res.data.balance);
+        }
+      }
+    },
+    onError: (error: unknown) => {
+      // eslint-disable-next-line no-alert -- intentional user-facing error feedback
+      window.alert(getErrorMessage(error));
+    },
   });
 
   const balance = useBalance();
@@ -88,23 +110,41 @@ function BettingControls(): JSX.Element {
             setBetAmount(amount * multiplier);
           }}
         />
-        <div className="grid grid-cols-2 gap-2 gap-y-3 my-2">
-          {BlackjackActionButtons.map(action => (
-            <Button
-              className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
-              disabled={
-                !validActions[action.value as keyof typeof validActions]
-              }
-              key={action.label}
-              onClick={() => {
-                playNextRound(action.value);
-              }}
-            >
-              {action.label}
-              <img alt={action.label} className="size-4" src={action.icon} />
-            </Button>
-          ))}
-        </div>
+        {validActions[BlackjackActions.INSURANCE] ? (
+          <div className="grid grid-cols-2 gap-2 gap-y-3 my-2">
+            {InsuranceButtons.map(action => (
+              <Button
+                className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12"
+                disabled={isPlayingRound}
+                key={action.label}
+                onClick={() => {
+                  playNextRound(action.value);
+                }}
+              >
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 gap-y-3 my-2">
+            {BlackjackActionButtons.map(action => (
+              <Button
+                className="bg-brand-weaker rounded-sm text-neutral-default font-medium hover:bg-brand-weakest text-xs mt-1 h-12 flex items-center justify-center gap-1"
+                disabled={
+                  !validActions[action.value as keyof typeof validActions] ||
+                  isPlayingRound
+                }
+                key={action.label}
+                onClick={() => {
+                  playNextRound(action.value);
+                }}
+              >
+                {action.label}
+                <img alt={action.label} className="size-4" src={action.icon} />
+              </Button>
+            ))}
+          </div>
+        )}
 
         {/* {isGameActive ? (
           <div className="flex flex-col gap-2">
@@ -186,7 +226,12 @@ function BettingControls(): JSX.Element {
 
       <BetButton
         animate="animate-pulse"
-        disabled={isDisabled || isFetchingActiveGame}
+        disabled={
+          isDisabled ||
+          isFetchingActiveGame ||
+          Boolean(gameState?.active) ||
+          isPlayingRound
+        }
         isPending={isFetchingActiveGame || isStartingGame}
         loadingImage="/games/mines/bomb.png"
         onClick={bet}

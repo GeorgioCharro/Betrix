@@ -134,6 +134,9 @@ export const gamesTypeDefs = gql`
     active: Boolean!
     betAmount: Float!
     amountMultiplier: Float!
+    payout: Float
+    payoutMultiplier: Float
+    balance: Float
   }
 
   type PlinkooResult {

@@ -19,7 +19,7 @@ export function Balance(): JSX.Element {
       className="disabled:opacity-100 text-base font-semibold"
       disabled
       icon={<BadgeDollarSign className="text-gray-500" />}
-      value={balance?.toFixed(2)}
+      value={typeof balance === 'number' ? balance.toFixed(2) : ''}
       wrapperClassName="shadow-md w-60 max-xs:w-32"
     />
   );

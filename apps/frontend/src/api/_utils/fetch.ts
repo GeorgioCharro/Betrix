@@ -15,6 +15,9 @@ export const fetchPost = async <T, R>(
   data: T,
   config?: AxiosRequestConfig
 ): Promise<R> => {
-  const response = await axios.post<R>(BASE_API_URL + url, data, config);
+  const response = await axios.post<R>(BASE_API_URL + url, data, {
+    ...config,
+    withCredentials: true,
+  });
   return response.data;
 };

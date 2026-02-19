@@ -25,7 +25,7 @@ export const placeBet = async (
 
   await validateUserBalance(user.id, betAmount);
 
-  const game = await blackjackManager.createGame({
+  const { game } = await blackjackManager.createGame({
     betAmount: Math.round(betAmount * 100), // Convert to cents
     userId: user.id,
   });
@@ -36,9 +36,10 @@ export const placeBet = async (
     await db.bet.update(dbUpdateObject);
   }
 
+  const response = game.getPlayRoundResponse();
   res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, game.getPlayRoundResponse()));
+    .json(new ApiResponse(StatusCodes.OK, response));
 };
 
 export const getActiveGame = async (

@@ -131,12 +131,26 @@ module.exports = {
             opacity: 0,
           },
         },
+        dealFromDeck: {
+          '0%': {
+            transform: 'translate(100%, -90%) scale(0.75)',
+            opacity: '0.6',
+          },
+          '60%': {
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'translate(0, 0) scale(1)',
+            opacity: '1',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         slideInLeft: 'slideInLeft 600ms ease-out',
         slideOutLeft: 'slideOutLeft 600ms ease-out',
+        dealFromDeck: 'dealFromDeck 0.45s ease-out forwards',
       },
       fontFamily: {
         custom: ['Montserrat', 'sans-serif'],

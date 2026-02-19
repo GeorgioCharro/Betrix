@@ -13,6 +13,7 @@ import type {
   BlackjackActions,
   BlackjackGameState,
 } from '@repo/common/game-utils/blackjack/types.js';
+import { BadRequestError } from '../../../errors';
 import type { UserInstance } from '../../user/user.service';
 import { userManager } from '../../user/user.service';
 
@@ -49,15 +50,22 @@ class BlackjackManager {
     return game;
   }
 
-  async createGame({ betAmount, userId }: GameCreationParams) {
+  async createGame({
+    betAmount,
+    userId,
+  }: GameCreationParams): Promise<{ game: BlackjackGame; newBalance: string }> {
     const userInstance = await userManager.getUser(userId);
     const gameEvents = this.generateGameEvents(userInstance);
 
-    const bet = await this.createBetTransaction(userInstance, betAmount);
+    const { bet, newBalance } = await this.createBetTransaction(
+      userInstance,
+      betAmount
+    );
     const game = new BlackjackGame({ bet, gameEvents });
 
     this.games.set(bet.userId, game);
-    return game;
+    userInstance.setBalance(newBalance);
+    return { game, newBalance };
   }
 
   private async findActiveBet(userId: string): Promise<Bet | null> {
@@ -80,7 +88,13 @@ class BlackjackManager {
   private async createBetTransaction(
     userInstance: UserInstance,
     betAmount: number
-  ): Promise<Bet> {
+  ): Promise<{ bet: Bet; newBalance: string }> {
+    const userBalanceInCents = userInstance.getBalanceAsNumber();
+    if (userBalanceInCents < betAmount) {
+      throw new BadRequestError('Insufficient balance');
+    }
+    const newBalanceInCents = userBalanceInCents - betAmount;
+
     return db.$transaction(async tx => {
       const bet = await tx.bet.create({
         data: {
@@ -95,7 +109,11 @@ class BlackjackManager {
         },
       });
       await userInstance.updateNonce(tx);
-      return bet;
+      const userWithNewBalance = await tx.user.update({
+        where: { id: userInstance.getUser().id },
+        data: { balance: newBalanceInCents.toString() },
+      });
+      return { bet, newBalance: userWithNewBalance.balance };
     });
   }
 

@@ -10,7 +10,7 @@ import type {
   RouletteFormattedBet,
   RoulettePlaceBetResponse,
 } from '@repo/common/game-utils/roulette/index.js';
-import type { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
+import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
 import { userManager } from '../../../../features/user/user.service';
@@ -356,7 +356,7 @@ export const blackjackBet = async (
   }
   const user = req.user as User;
 
-  const game = await blackjackManager.createGame({
+  const { game, newBalance } = await blackjackManager.createGame({
     betAmount: Math.round(args.betAmount * 100),
     userId: user.id,
   });
@@ -366,7 +366,11 @@ export const blackjackBet = async (
     await db.bet.update(dbUpdateObject);
   }
 
-  return game.getPlayRoundResponse();
+  const response = game.getPlayRoundResponse();
+  return {
+    ...response,
+    balance: parseInt(newBalance, 10) / 100,
+  };
 };
 
 export const blackjackNext = async (
@@ -384,14 +388,72 @@ export const blackjackNext = async (
     throw new BadRequestError('Game not found');
   }
 
-  game.playRound(args.action);
-  const dbUpdateObject = game.getDbUpdateObject();
+  const userInstance = await userManager.getUser(userId);
+  const bet = game.getBet();
+  const balanceInCents = userInstance.getBalanceAsNumber();
+  const betAmountInCents = bet.betAmount;
 
-  if (dbUpdateObject) {
-    await db.bet.update(dbUpdateObject);
+  if (args.action === BlackjackActions.DOUBLE || args.action === BlackjackActions.SPLIT) {
+    if (balanceInCents < betAmountInCents) {
+      throw new BadRequestError('Insufficient balance to double or split');
+    }
+  }
+  if (args.action === BlackjackActions.INSURANCE) {
+    if (balanceInCents < Math.floor(betAmountInCents / 2)) {
+      throw new BadRequestError('Insufficient balance for insurance');
+    }
   }
 
-  return game.getPlayRoundResponse();
+  game.playRound(args.action);
+  const dbUpdateObject = game.getDbUpdateObject();
+  const response = game.getPlayRoundResponse();
+
+  // Additional wager deductions: double = +1x bet, split = +1x bet, insurance = +0.5x bet
+  let deductionCents = 0;
+  if (args.action === BlackjackActions.DOUBLE) {
+    deductionCents += bet.betAmount;
+  }
+  if (args.action === BlackjackActions.SPLIT) {
+    deductionCents += bet.betAmount;
+  }
+  if (args.action === BlackjackActions.INSURANCE) {
+    deductionCents += Math.floor(bet.betAmount / 2);
+  }
+
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+  const payoutInCents = Math.round((response.payout ?? 0) * 100);
+  const balanceChange = -deductionCents + (response.active ? 0 : payoutInCents);
+
+  await db.$transaction(async tx => {
+    if (dbUpdateObject) {
+      await tx.bet.update(dbUpdateObject);
+    }
+    // Apply deduction for double/split/insurance, and credit payout when game ends
+    if (balanceChange !== 0) {
+      const newBalance = (userBalanceInCents + balanceChange).toString();
+      const userWithNewBalance = await tx.user.update({
+        where: { id: userId },
+        data: { balance: newBalance },
+      });
+      userInstance.setBalance(userWithNewBalance.balance);
+    }
+  });
+
+  if (!response.active) {
+    blackjackManager.deleteGame(userId);
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { balance: true },
+  });
+  const balanceInDollars = user
+    ? parseInt(user.balance, 10) / 100
+    : userInstance.getBalanceAsNumber() / 100;
+  return {
+    ...response,
+    balance: balanceInDollars,
+  };
 };
 
 export const plinkooOutcome = async (

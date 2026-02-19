@@ -84,22 +84,38 @@ export function RegisterModal({
           msg = match?.groups?.msg?.trim() ?? respData;
         } else if (isErrorResponse(respData)) {
           msg = respData.message;
+        } else if (
+          typeof respData === 'object' &&
+          respData !== null &&
+          'message' in respData
+        ) {
+          msg = String(respData.message);
         }
 
-        if (msg) {
-          const lower = msg.toLowerCase();
-          if (lower.includes('email')) {
-            setError('email', { type: 'server', message: msg });
-          } else if (lower.includes('username')) {
-            setError('username', { type: 'server', message: msg });
+        if (!msg) {
+          if (err.response) {
+            msg = `Registration failed (${err.response.status}). Check that the API is running.`;
           } else {
-            setErrorMsg(msg);
+            const apiUrl =
+              import.meta.env.VITE_APP_API_URL ?? 'http://localhost:5000';
+            msg =
+              err.message ??
+              `Registration failed. Is the API running at ${apiUrl}?`;
           }
+        }
+
+        const lower = msg.toLowerCase();
+        if (lower.includes('email')) {
+          setError('email', { type: 'server', message: msg });
+        } else if (lower.includes('username')) {
+          setError('username', { type: 'server', message: msg });
         } else {
-          setErrorMsg('Registration failed');
+          setErrorMsg(msg);
         }
       } else {
-        setErrorMsg('Registration failed');
+        setErrorMsg(
+          err instanceof Error ? err.message : 'Registration failed'
+        );
       }
     }
   });
