@@ -10,8 +10,9 @@
     "typecheck": "turbo run typecheck",
     "prepare": "test -d .git && husky install || echo 'Skipping husky in CI'",
     "db:generate": "cd packages/db && npx prisma generate && cd ../..",
-    "db:migrate": "cd packages/db && npx prisma migrate dev && cd ../.."
-  },
+"db:migrate": "cd packages/db && npx prisma migrate dev && cd ../..",
+    "simulate:chicken-road": "node packages/common/game-utils/chicken-road/simulate.mjs"
+},
   "devDependencies": {
     "husky": "^8.0.0",
     "lint-staged": "^15.2.2",

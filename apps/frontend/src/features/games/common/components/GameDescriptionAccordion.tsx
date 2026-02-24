@@ -72,6 +72,14 @@ const GAME_STATS: Record<
     provablyFair: 'Yes',
     demoMode: 'Yes',
   },
+  [Games.CHICKEN_ROAD]: {
+    rtp: '~95%',
+    houseEdge: '~5%',
+    multiplier: 'Up to 1.5^50x',
+    cashOut: 'Yes',
+    provablyFair: 'Yes',
+    demoMode: 'Yes',
+  },
 };
 
 export default function GameDescriptionAccordion({

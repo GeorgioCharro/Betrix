@@ -15,6 +15,7 @@ import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
 import { userManager } from '../../../../features/user/user.service';
 import { minesManager } from '../../../../features/games/mines/mines.service';
+import { chickenRoadManager } from '../../../../features/games/chicken-road/chicken-road.service';
 import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
 import { getResult as getDiceResult } from '../../../../features/games/dice/dice.service';
 import { getResult as getLimboResult } from '../../../../features/games/limbo/limbo.service';
@@ -226,6 +227,80 @@ export const cashOutMines = async (
   }
   const state = await game.cashOut(userId);
   minesManager.deleteGame(userId);
+  return state;
+};
+
+const CHICKEN_ROAD_DIFFICULTIES = ['easy', 'medium', 'hard', 'expert'] as const;
+
+export const startChickenRoad = async (
+  _: unknown,
+  args: { betAmount: number; difficulty?: string },
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const user = req.user as User;
+  const betAmountInCents = Math.round(args.betAmount * 100);
+  const rawDifficulty =
+    typeof args.difficulty === 'string' ? args.difficulty.toLowerCase() : '';
+  const difficulty = CHICKEN_ROAD_DIFFICULTIES.includes(
+    rawDifficulty as (typeof CHICKEN_ROAD_DIFFICULTIES)[number]
+  )
+    ? (rawDifficulty as (typeof CHICKEN_ROAD_DIFFICULTIES)[number])
+    : 'medium';
+  const { game, newBalance } = await chickenRoadManager.createGame({
+    betAmount: betAmountInCents,
+    userId: user.id,
+    difficulty,
+  });
+  const bet = game.getBet();
+  return {
+    id: bet.id,
+    active: true,
+    state: { hopsCompleted: 0 },
+    betAmount: bet.betAmount / 100,
+    currentMultiplier: 1,
+    hopsCompleted: 0,
+    difficulty,
+  };
+};
+
+export const crossChickenRoad = async (
+  _: unknown,
+  __: unknown,
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const userId = (req.user as User).id;
+  const game = await chickenRoadManager.getGame(userId);
+  if (!game?.getBet().active) {
+    throw new BadRequestError('Game not found');
+  }
+  const result = await game.cross();
+  if (!result.active) {
+    chickenRoadManager.deleteGame(userId);
+  }
+  return result;
+};
+
+export const cashOutChickenRoad = async (
+  _: unknown,
+  __: unknown,
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const userId = (req.user as User).id;
+  const game = await chickenRoadManager.getGame(userId);
+  if (!game?.getBet().active) {
+    throw new BadRequestError('Game not found');
+  }
+  const state = await game.cashOut(userId);
+  chickenRoadManager.deleteGame(userId);
   return state;
 };
 

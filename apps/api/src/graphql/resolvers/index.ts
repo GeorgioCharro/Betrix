@@ -22,4 +22,5 @@ export const resolvers = {
     ...challengesResolvers.Mutation,
   },
   MinesRoundResponse: gamesResolvers.MinesRoundResponse,
+  ChickenRoadRoundResponse: gamesResolvers.ChickenRoadRoundResponse,
 };

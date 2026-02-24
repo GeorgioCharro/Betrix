@@ -10,3 +10,4 @@ dist-ssr
 .cache
 server/dist
 public/dist
+packages/common/game-utils/chicken-road/simulation-results.json

@@ -139,3 +139,67 @@
 .animate-blackjack-deal {
   animation: blackjack-deal-from-deck 0.55s ease-out both;
 }
+
+/* Rocket exhaust: fire particles falling from under the rocket */
+@keyframes rocket-exhaust {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(100%) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.rocket-exhaust-particle {
+  animation: rocket-exhaust 0.5s ease-in infinite;
+}
+
+/* Meteoroid passing: invisible until animation starts (after delay), then 1s pass, then 7s off (8s cycle) */
+@keyframes meteoroid-pass {
+  0% {
+    left: 110%;
+    opacity: 0;
+  }
+  0.01% {
+    left: 110%;
+    opacity: 1;
+  }
+  12.5% {
+    left: -60px;
+    opacity: 1;
+  }
+  100% {
+    left: -60px;
+    opacity: 1;
+  }
+}
+
+.rocket-meteoroid-pass {
+  /* Start off-screen and invisible so no flash on the left before animation runs */
+  left: 110%;
+  opacity: 0;
+  animation: meteoroid-pass 8s linear infinite;
+}
+
+/* Meteoroid hit: same path and speed as pass (right-to-left), stops at rocket then disappears; used once on crash */
+@keyframes meteoroid-hit-pass {
+  0% {
+    left: 100%;
+    opacity: 1;
+  }
+  95% {
+    left: 78%;
+    opacity: 1;
+  }
+  100% {
+    left: 78%;
+    opacity: 0;
+  }
+}
+
+.rocket-meteoroid-hit-pass {
+  /* Same visual speed as pass (full pass = 1s); 100% to 78% ≈ 0.35s */
+  animation: meteoroid-hit-pass 0.35s linear forwards;
+}

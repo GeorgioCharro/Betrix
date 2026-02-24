@@ -5,6 +5,7 @@ import {
   GemIcon,
   JoystickIcon,
   ClubIcon,
+  Rocket,
 } from 'lucide-react';
 
 export enum Games {
@@ -14,6 +15,7 @@ export enum Games {
   KENO = 'keno',
   BLACKJACK = 'blackjack',
   PLINKOO = 'plinkoo',
+  CHICKEN_ROAD = 'chicken-road',
 }
 
 export type Game = (typeof Games)[keyof typeof Games];
@@ -45,6 +47,11 @@ export const GAME_VALUES_MAPPING = {
     icon: JoystickIcon,
     path: '/casino/games/plinkoo',
   },
+  [Games.CHICKEN_ROAD]: {
+    label: 'Rocket',
+    icon: Rocket,
+    path: '/casino/games/chicken-road',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [
@@ -71,5 +78,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.BLACKJACK].label,
     value: Games.BLACKJACK,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.CHICKEN_ROAD].label,
+    value: Games.CHICKEN_ROAD,
   },
 ];

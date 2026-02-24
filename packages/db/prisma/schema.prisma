@@ -15,11 +15,12 @@ datasource db {
 
 enum Game {
   blackjack
+  chicken_road
   dice
   keno
   mines
-  roulette
   plinkoo
+  roulette
 }
 
 enum Level {

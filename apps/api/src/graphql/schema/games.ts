@@ -81,6 +81,48 @@ export const gamesTypeDefs = gql`
   }
   union MinesRoundResponse = MinesPlayRoundResponse | MinesGameOverResponse
 
+  enum ChickenRoadDifficulty {
+    easy
+    medium
+    hard
+    expert
+  }
+
+  """State for active round only – no future outcomes exposed."""
+  type ChickenRoadActiveState {
+    hopsCompleted: Int!
+  }
+
+  """State revealed after game over – for provably fair verification."""
+  type ChickenRoadRevealedState {
+    outcomes: [Boolean!]!
+    hopsCompleted: Int!
+  }
+
+  type ChickenRoadPlayRoundResponse {
+    id: ID!
+    state: ChickenRoadActiveState!
+    active: Boolean!
+    betAmount: Float!
+    currentMultiplier: Float!
+    hopsCompleted: Int!
+    difficulty: ChickenRoadDifficulty
+  }
+
+  type ChickenRoadGameOverResponse {
+    id: ID!
+    state: ChickenRoadRevealedState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+    active: Boolean!
+    crashedAtHop: Int
+  }
+
+  union ChickenRoadRoundResponse =
+      ChickenRoadPlayRoundResponse
+    | ChickenRoadGameOverResponse
+
   input RouletteBetInput {
     betType: String!
     selection: [Int!]
@@ -154,6 +196,7 @@ export const gamesTypeDefs = gql`
 
   extend type Query {
     activeMines: MinesPlayRoundResponse
+    activeChickenRoad: ChickenRoadPlayRoundResponse
     blackjackActive: BlackjackPlayRoundResponse
   }
 
@@ -171,6 +214,9 @@ export const gamesTypeDefs = gql`
     startMines(betAmount: Float!, minesCount: Int!): MinesPlayRoundResponse!
     playMinesRound(selectedTileIndex: Int!): MinesRoundResponse!
     cashOutMines: MinesGameOverResponse!
+    startChickenRoad(betAmount: Float!, difficulty: ChickenRoadDifficulty): ChickenRoadPlayRoundResponse!
+    crossChickenRoad: ChickenRoadRoundResponse!
+    cashOutChickenRoad: ChickenRoadGameOverResponse!
     placeRouletteBet(bets: [RouletteBetInput!]!): RoulettePlaceBetResponse!
     blackjackBet(betAmount: Float!): BlackjackPlayRoundResponse!
     blackjackNext(action: String!): BlackjackPlayRoundResponse!

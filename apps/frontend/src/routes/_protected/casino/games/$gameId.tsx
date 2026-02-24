@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import Blackjack from '@/features/games/blackjack';
+import ChickenRoad from '@/features/games/chicken-road';
 import { DiceGame } from '@/features/games/dice';
 import { Keno } from '@/features/games/keno';
 import { Mines } from '@/features/games/mines';
@@ -27,6 +28,8 @@ function GamePage(): JSX.Element {
       return <Keno />;
     case 'blackjack':
       return <Blackjack />;
+    case 'chicken-road':
+      return <ChickenRoad />;
     default:
       return <div>Game not found</div>;
   }

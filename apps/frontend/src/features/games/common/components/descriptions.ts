@@ -43,4 +43,10 @@ export const GAME_DESCRIPTIONS: Record<Games, GameDescriptionInfo> = {
       'Drop balls through the board and aim for the highest multipliers at the bottom.',
     image: '/games/plinkoo/plinkoo-icon.png',
   },
+  [Games.CHICKEN_ROAD]: {
+    title: 'Rocket',
+    description:
+      'Launch your rocket and advance step by step. Each click moves you to the next multiplier. Cash out anytime—if you push too far, the rocket explodes and you lose the round.',
+    image: '/games/dice/loading-dice.png',
+  },
 };
