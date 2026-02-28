@@ -79,6 +79,38 @@ function VerificationInputs({
             value={meta?.minesCount.toString() ?? '3'}
           />
         );
+      case Games.LIMBO: {
+        const limboMeta = meta && 'targetMultiplier' in meta ? meta : undefined;
+        const value = limboMeta?.targetMultiplier ?? 2;
+        return (
+          <div>
+            <Label className="pl-px text-xs text-neutral-weak font-medium">
+              Target multiplier
+            </Label>
+            <div className="flex h-8 rounded-sm overflow-hidden group mt-1">
+              <InputWithIcon
+                className="text-neutral-default disabled:opacity-100 font-medium text-sm disabled:cursor-text"
+                icon={null}
+                min={1.01}
+                onChange={e => {
+                  const num = Number(e.target.value);
+                  if (!Number.isNaN(num) && num >= 1.01) {
+                    const metaVal = { targetMultiplier: num };
+                    setMeta(metaVal);
+                    setVerificationInputs(prev => ({ ...prev, meta: metaVal }));
+                  }
+                }}
+                step={0.01}
+                type="number"
+                value={value}
+                wrapperClassName={cn(
+                  'bg-brand-stronger h-8 border-brand-weaker shadow-none w-full pr-0'
+                )}
+              />
+            </div>
+          </div>
+        );
+      }
       default:
         return null;
     }

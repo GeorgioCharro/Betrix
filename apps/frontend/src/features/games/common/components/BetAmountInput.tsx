@@ -11,13 +11,18 @@ export function BetAmountInput({
   betAmount,
   onBetAmountChange,
   isInputDisabled,
+  labelRight,
 }: Pick<BettingControlsProps, 'betAmount' | 'onBetAmountChange'> & {
   isInputDisabled?: boolean;
+  labelRight?: React.ReactNode;
 }): JSX.Element {
   const balance = useBalance() ?? 0;
   return (
     <div>
-      <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="pl-px text-xs font-semibold">Bet Amount</Label>
+        {labelRight && <div className="flex gap-2">{labelRight}</div>}
+      </div>
       <div className="flex h-10 rounded-r overflow-hidden shadow-md group">
         <div className="bg-input-disabled rounded-l flex items-center gap-1">
           <InputWithIcon

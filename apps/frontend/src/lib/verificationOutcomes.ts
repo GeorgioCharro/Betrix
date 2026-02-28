@@ -8,13 +8,19 @@ import {
 
 import { Games } from '@/const/games';
 import type { Game } from '@/const/games';
+import { clampTargetMultiplier, resolveLimboBet } from '@repo/common/game-utils/limbo/utils.js';
 
 import { getGeneratedFloats } from './crypto';
 
 interface MinesGameMeta {
   minesCount: number;
 }
-export type GameMeta = MinesGameMeta | undefined;
+
+interface LimboGameMeta {
+  targetMultiplier: number;
+}
+
+export type GameMeta = MinesGameMeta | LimboGameMeta | undefined;
 
 const diceVerificationOutcomes = async ({
   clientSeed,
@@ -95,6 +101,33 @@ const kenoVerificationOutcomes = async ({
   return drawnNumbers;
 };
 
+const limboVerificationOutcomes = async ({
+  clientSeed,
+  serverSeed,
+  nonce,
+  meta,
+}: {
+  clientSeed: string;
+  serverSeed: string;
+  nonce: string;
+  meta?: LimboGameMeta;
+}): Promise<string> => {
+  const [rawFloat] = await getGeneratedFloats({
+    count: 1,
+    seed: serverSeed,
+    message: `${clientSeed}:${nonce}`,
+  });
+  const target = clampTargetMultiplier(meta?.targetMultiplier ?? 2);
+  const { winChance, payoutMultiplier } = resolveLimboBet({
+    targetMultiplier: target,
+    roll: rawFloat,
+  });
+
+  return `roll=${rawFloat.toFixed(8)}, target=${target.toFixed(
+    2
+  )}x, winChance=${(winChance * 100).toFixed(8)}%, payoutOnHit=${payoutMultiplier.toFixed(4)}x`;
+};
+
 export const getVerificationOutcome = async ({
   game,
   clientSeed,
@@ -117,6 +150,13 @@ export const getVerificationOutcome = async ({
       return minesVerificationOutcomes({ clientSeed, serverSeed, nonce, meta });
     case Games.KENO:
       return kenoVerificationOutcomes({ clientSeed, serverSeed, nonce });
+    case Games.LIMBO:
+      return limboVerificationOutcomes({
+        clientSeed,
+        serverSeed,
+        nonce,
+        meta: meta as LimboGameMeta | undefined,
+      });
     default:
       return '';
   }

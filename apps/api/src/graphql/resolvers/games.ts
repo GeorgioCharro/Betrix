@@ -14,6 +14,7 @@ export const gamesResolvers = {
   Mutation: {
     placeDiceBet: mutations.placeDiceBet,
     placeKenoBet: mutations.placeKenoBet,
+    placeLimboBet: mutations.placeLimboBet,
     startMines: mutations.startMines,
     playMinesRound: mutations.playMinesRound,
     cashOutMines: mutations.cashOutMines,

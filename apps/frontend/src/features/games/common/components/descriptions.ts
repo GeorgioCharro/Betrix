@@ -49,4 +49,10 @@ export const GAME_DESCRIPTIONS: Record<Games, GameDescriptionInfo> = {
       'Launch your rocket and advance step by step. Each click moves you to the next multiplier. Cash out anytime—if you push too far, the rocket explodes and you lose the round.',
     image: '/games/dice/loading-dice.png',
   },
+  [Games.LIMBO]: {
+    title: 'Limbo',
+    description:
+      'Choose your target multiplier and try to cash in before the game crashes. Higher targets mean higher rewards but lower chances of winning.',
+    image: '/games/dice/dice-icon.png',
+  },
 };

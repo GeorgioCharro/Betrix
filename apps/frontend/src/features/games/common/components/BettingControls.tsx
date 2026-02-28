@@ -12,6 +12,8 @@ export interface BettingControlsProps {
   betAmount?: number;
   profitOnWin?: number;
   isPending?: boolean;
+  forceDisabled?: boolean;
+  betAmountLabelRight?: React.ReactNode;
   onBetAmountChange?: (amount: number, multiplier?: number) => void;
   onBet?: () => Promise<void>;
   betButtonText?: string;
@@ -79,6 +81,8 @@ export function BettingControls({
   betAmount,
   profitOnWin,
   isPending,
+  forceDisabled,
+  betAmountLabelRight,
   onBetAmountChange,
   onBet,
   betButtonText,
@@ -87,12 +91,16 @@ export function BettingControls({
 }: BettingControlsProps): JSX.Element {
   const balance = useBalance();
   const isDisabled =
-    (betAmount ?? 0) > (balance ?? 0) || (betAmount ?? 0) <= 0 || isPending;
+    forceDisabled ||
+    (betAmount ?? 0) > (balance ?? 0) ||
+    (betAmount ?? 0) <= 0 ||
+    isPending;
 
   return (
     <div className={cn('bg-brand-weak flex flex-col gap-4 p-3', className)}>
       <BetAmountInput
         betAmount={betAmount}
+        labelRight={betAmountLabelRight}
         onBetAmountChange={onBetAmountChange}
       />
       <ProfitDisplay profitOnWin={profitOnWin} />

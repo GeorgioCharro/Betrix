@@ -194,6 +194,20 @@ export const gamesTypeDefs = gql`
     balance: Float!
   }
 
+  type LimboState {
+    targetMultiplier: Float!
+    roll: Float!
+    winChance: Float!
+  }
+
+  type LimboBetResponse {
+    id: ID!
+    state: LimboState!
+    payoutMultiplier: Float!
+    payout: Float!
+    balance: Float!
+  }
+
   extend type Query {
     activeMines: MinesPlayRoundResponse
     activeChickenRoad: ChickenRoadPlayRoundResponse
@@ -227,5 +241,6 @@ export const gamesTypeDefs = gql`
       risk: PlinkooRisk!
     ): PlinkooBetResponse!
     playLimbo(clientSeed: String): Float!
+    placeLimboBet(betAmount: Float!, targetMultiplier: Float!): LimboBetResponse!
   }
 `;

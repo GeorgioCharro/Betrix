@@ -610,3 +610,88 @@ export const playLimbo = (
 ) => {
   return getLimboResult(args.clientSeed || '');
 };
+
+export const placeLimboBet = async (
+  _: unknown,
+  args: { betAmount: number; targetMultiplier: number },
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+
+  const { betAmount, targetMultiplier } = args;
+
+  if (betAmount <= 0) {
+    throw new BadRequestError('Bet amount must be greater than 0');
+  }
+
+  const user = req.user as User;
+  const userInstance = await userManager.getUser(user.id);
+  const betAmountInCents = Math.round(betAmount * 100);
+  const userBalanceInCents = userInstance.getBalanceAsNumber();
+
+  if (userBalanceInCents < betAmountInCents) {
+    throw new BadRequestError('Insufficient balance');
+  }
+
+  // For Limbo we treat the provably-fair float as the roll in (0,1)
+  const [roll] = userInstance.generateFloats(1);
+
+  const {
+    clampTargetMultiplier,
+    resolveLimboBet,
+  } = await import('@repo/common/game-utils/limbo/utils.js');
+
+  const target = clampTargetMultiplier(targetMultiplier);
+  const { payoutMultiplier, winChance } = resolveLimboBet({
+    targetMultiplier: target,
+    roll,
+  });
+
+  const payoutInCents =
+    payoutMultiplier > 0 ? Math.round(betAmountInCents * payoutMultiplier) : 0;
+  const balanceChangeInCents = payoutInCents - betAmountInCents;
+
+  const state: Prisma.JsonObject = {
+    targetMultiplier: target,
+    roll,
+    winChance,
+  };
+
+  const { balance, id } = await db.$transaction(async tx => {
+    const bet = await tx.bet.create({
+      data: {
+        active: false,
+        betAmount: betAmountInCents,
+        betNonce: userInstance.getNonce(),
+        game: 'dice', // NOTE: keep as 'dice' until Game enum is extended with 'limbo'
+        payoutAmount: payoutInCents,
+        provablyFairStateId: userInstance.getProvablyFairStateId(),
+        state: state as Prisma.InputJsonValue,
+        userId: user.id,
+      },
+    });
+
+    await userInstance.updateNonce(tx);
+
+    const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
+
+    const userWithNewBalance = await tx.user.update({
+      where: { id: user.id },
+      data: { balance: newBalance },
+    });
+
+    return { balance: userWithNewBalance.balance, id: bet.id };
+  });
+
+  userInstance.setBalance(balance);
+
+  return {
+    id,
+    state,
+    payoutMultiplier,
+    payout: payoutInCents / 100,
+    balance: userInstance.getBalanceAsNumber() / 100,
+  };
+};

@@ -80,6 +80,14 @@ const GAME_STATS: Record<
     provablyFair: 'Yes',
     demoMode: 'Yes',
   },
+  [Games.LIMBO]: {
+    rtp: '98%',
+    houseEdge: '2%',
+    multiplier: '1.01x – 1,000,000x',
+    cashOut: 'Yes',
+    provablyFair: 'Yes',
+    demoMode: 'Yes',
+  },
 };
 
 export default function GameDescriptionAccordion({

@@ -1,4 +1,4 @@
-const HOUSE_EDGE = 0.99;
+const HOUSE_EDGE = 0.98;
 
 export const getResult = (_clientSeed: string) => {
   // const floats = rng.generateFloats({
@@ -15,3 +15,4 @@ export const getResult = (_clientSeed: string) => {
   // Consolidate all crash points below 1
   return Math.max(crashPoint, 1);
 };
+
