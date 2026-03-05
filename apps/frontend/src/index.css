@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes hilo-swipe {
+  0% {
+    transform: translate(32px, 24px) rotate(4deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+.animate-hilo-swipe {
+  animation: hilo-swipe 220ms ease-out;
+}
+
 @layer base {
   /* Hide number input spinners */
   input[type='number']::-webkit-inner-spin-button,

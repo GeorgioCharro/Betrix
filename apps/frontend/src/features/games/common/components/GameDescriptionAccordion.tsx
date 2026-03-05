@@ -88,6 +88,14 @@ const GAME_STATS: Record<
     provablyFair: 'Yes',
     demoMode: 'Yes',
   },
+  [Games.HILO]: {
+    rtp: '98%',
+    houseEdge: '2%',
+    multiplier: 'Varies by card',
+    cashOut: 'No',
+    provablyFair: 'Yes',
+    demoMode: 'Yes',
+  },
 };
 
 export default function GameDescriptionAccordion({

@@ -17,6 +17,7 @@ export enum Games {
   PLINKOO = 'plinkoo',
   CHICKEN_ROAD = 'chicken-road',
   LIMBO = 'limbo',
+  HILO = 'hilo',
 }
 
 export type Game = (typeof Games)[keyof typeof Games];
@@ -58,6 +59,11 @@ export const GAME_VALUES_MAPPING = {
     icon: DicesIcon,
     path: '/casino/games/limbo',
   },
+  [Games.HILO]: {
+    label: 'Hilo',
+    icon: ClubIcon,
+    path: '/casino/games/hilo',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [
@@ -92,5 +98,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.LIMBO].label,
     value: Games.LIMBO,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.HILO].label,
+    value: Games.HILO,
   },
 ];

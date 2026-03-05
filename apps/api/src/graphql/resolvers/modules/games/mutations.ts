@@ -19,6 +19,12 @@ import { chickenRoadManager } from '../../../../features/games/chicken-road/chic
 import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
 import { getResult as getDiceResult } from '../../../../features/games/dice/dice.service';
 import { getResult as getLimboResult } from '../../../../features/games/limbo/limbo.service';
+import {
+  getHiloStartCard as getHiloStartCardService,
+  startHiloRound as startHiloRoundService,
+  advanceHilo as advanceHiloService,
+  cashOutHilo as cashOutHiloService,
+} from '../../../../features/games/hilo/hilo.service';
 import { calculateOutcome } from '../../../../features/games/plinkoo/plinkoo.service';
 import { getResult as getKenoResult } from '../../../../features/games/keno/keno.service';
 import {
@@ -694,4 +700,70 @@ export const placeLimboBet = async (
     payout: payoutInCents / 100,
     balance: userInstance.getBalanceAsNumber() / 100,
   };
+};
+
+export const getHiloStartCard = async (
+  _: unknown,
+  __: Record<string, never>,
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const user = req.user as User;
+  const userInstance = await userManager.getUser(user.id);
+  return getHiloStartCardService(userInstance, user);
+};
+
+export const startHiloRound = async (
+  _: unknown,
+  args: { betAmount: number },
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const user = req.user as User;
+  const { betAmount } = args;
+  const userInstance = await userManager.getUser(user.id);
+  return startHiloRoundService({
+    userInstance,
+    userId: user.id,
+    betAmount,
+  });
+};
+
+export const advanceHilo = async (
+  _: unknown,
+  args: { betAmount: number; choice: string },
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const user = req.user as User;
+  const { betAmount, choice } = args;
+  if (choice !== 'higher' && choice !== 'lower' && choice !== 'equal') {
+    throw new Error('Choice must be "higher", "lower" or "equal"');
+  }
+  const userInstance = await userManager.getUser(user.id);
+  return advanceHiloService({
+    userInstance,
+    userId: user.id,
+    betAmount,
+    choice: choice as 'higher' | 'lower' | 'equal',
+  });
+};
+
+export const cashOutHilo = async (
+  _: unknown,
+  __: Record<string, never>,
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const user = req.user as User;
+  const userInstance = await userManager.getUser(user.id);
+  return cashOutHiloService({ userInstance, userId: user.id });
 };

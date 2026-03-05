@@ -67,8 +67,8 @@ export function Card({
       )}
       style={dealStyle}
     >
-      <span className="text-lg font-bold leading-none">{rank}</span>
-      <span className="text-xl leading-none">{symbol}</span>
+      <span className="text-2xl font-bold leading-none">{rank}</span>
+      <span className="text-3xl leading-none">{symbol}</span>
     </div>
   );
 }

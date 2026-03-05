@@ -5,6 +5,7 @@ import { getMultiplierAfterHops } from '@repo/common/game-utils/chicken-road/uti
 import { minesManager } from '../../../../features/games/mines/mines.service';
 import { chickenRoadManager } from '../../../../features/games/chicken-road/chicken-road.service';
 import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
+import { getActiveHilo } from '../../../../features/games/hilo/hilo.service';
 import type { Context } from '../../common';
 
 export const activeMines = async (
@@ -71,4 +72,16 @@ export const blackjackActive = async (
   const game = await blackjackManager.getGame(userId);
   if (!game?.getBet().active) return null;
   return game.getPlayRoundResponse();
+};
+
+export const activeHilo = async (
+  _: unknown,
+  __: unknown,
+  { req }: Context
+) => {
+  if (!req.isAuthenticated()) {
+    throw new Error('Unauthorized');
+  }
+  const userId = (req.user as User).id;
+  return getActiveHilo(userId);
 };

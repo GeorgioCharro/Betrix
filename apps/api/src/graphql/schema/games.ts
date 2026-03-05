@@ -208,10 +208,68 @@ export const gamesTypeDefs = gql`
     balance: Float!
   }
 
+  type HiloCard {
+    rank: Int!
+    suit: String!
+  }
+
+  type HiloStartCardResponse {
+    card: HiloCard!
+  }
+
+  type HiloBetState {
+    startCard: HiloCard!
+    nextCard: HiloCard!
+    outcome: String!
+    probabilityHigher: Float!
+    probabilityLower: Float!
+    multiplierHigher: Float!
+    multiplierLower: Float!
+  }
+
+  type HiloPlaceBetResponse {
+    id: ID!
+    state: HiloBetState!
+    payout: Float!
+    balance: Float!
+  }
+
+  type HiloActiveRound {
+    id: ID!
+    currentCard: HiloCard!
+    betAmount: Float!
+    totalMultiplier: Float!
+    accumulatedProfit: Float!
+    multiplierHigher: Float!
+    multiplierLower: Float!
+    balance: Float!
+  }
+
+  type HiloAdvanceResponse {
+    id: ID!
+    active: Boolean!
+    currentCard: HiloCard!
+    betAmount: Float!
+    totalMultiplier: Float!
+    accumulatedProfit: Float!
+    nextCard: HiloCard!
+    outcome: String!
+    stepProfit: Float!
+    balance: Float!
+    lost: Boolean
+  }
+
+  type HiloCashOutResponse {
+    id: ID!
+    payout: Float!
+    balance: Float!
+  }
+
   extend type Query {
     activeMines: MinesPlayRoundResponse
     activeChickenRoad: ChickenRoadPlayRoundResponse
     blackjackActive: BlackjackPlayRoundResponse
+    activeHilo: HiloActiveRound
   }
 
   extend type Mutation {
@@ -242,5 +300,9 @@ export const gamesTypeDefs = gql`
     ): PlinkooBetResponse!
     playLimbo(clientSeed: String): Float!
     placeLimboBet(betAmount: Float!, targetMultiplier: Float!): LimboBetResponse!
+    getHiloStartCard: HiloStartCardResponse!
+    startHiloRound(betAmount: Float!): HiloActiveRound!
+    advanceHilo(betAmount: Float!, choice: String!): HiloAdvanceResponse!
+    cashOutHilo: HiloCashOutResponse!
   }
 `;

@@ -17,6 +17,7 @@ enum Game {
   blackjack
   chicken_road
   dice
+  hilo
   keno
   mines
   plinkoo

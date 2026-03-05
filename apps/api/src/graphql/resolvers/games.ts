@@ -8,6 +8,7 @@ export const gamesResolvers = {
     activeMines: queries.activeMines,
     activeChickenRoad: queries.activeChickenRoad,
     blackjackActive: queries.blackjackActive,
+    activeHilo: queries.activeHilo,
   },
   MinesRoundResponse,
   ChickenRoadRoundResponse,
@@ -26,5 +27,9 @@ export const gamesResolvers = {
     blackjackNext: mutations.blackjackNext,
     plinkooOutcome: mutations.plinkooOutcome,
     playLimbo: mutations.playLimbo,
+    getHiloStartCard: mutations.getHiloStartCard,
+    startHiloRound: mutations.startHiloRound,
+    advanceHilo: mutations.advanceHilo,
+    cashOutHilo: mutations.cashOutHilo,
   },
 };

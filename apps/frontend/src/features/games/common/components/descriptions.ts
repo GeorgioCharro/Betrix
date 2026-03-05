@@ -55,4 +55,10 @@ export const GAME_DESCRIPTIONS: Record<Games, GameDescriptionInfo> = {
       'Choose your target multiplier and try to cash in before the game crashes. Higher targets mean higher rewards but lower chances of winning.',
     image: '/games/dice/dice-icon.png',
   },
+  [Games.HILO]: {
+    title: 'Hilo',
+    description:
+      'Guess whether the next playing card will be higher, lower, or equal to your starting card. Choose your start card with Skip, then bet on Higher or Lower with a 2% house edge.',
+    image: '/games/blackjack/blackjack-icon.png',
+  },
 };
