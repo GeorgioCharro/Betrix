@@ -1,12 +1,6 @@
 import { gql } from 'apollo-server-express';
 
 export const usersTypeDefs = gql`
-  enum Level {
-    none
-    vip
-    vip_plus
-    diamond
-  }
   type User {
     id: ID!
     email: String!
@@ -14,7 +8,7 @@ export const usersTypeDefs = gql`
     picture: String
     balance: Float
     xp: Int!
-    level: Level!
+    level: Int!
   }
 
   type ProvablyFairState {
@@ -34,7 +28,7 @@ export const usersTypeDefs = gql`
     name: String
     balance: Float!
     xp: Int!
-    level: Level!
+    level: Int!
     createdAt: String!
     updatedAt: String!
   }

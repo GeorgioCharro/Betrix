@@ -34,7 +34,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
                 ...profileInfo,
                 email: profile.emails?.[0].value || '',
                 xp: 0,
-                level: 'none',
+                level: 1,
               },
             });
           } else {

@@ -8,7 +8,7 @@ import db from '@repo/db';
 import { ApiResponse } from '@repo/common/types';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError } from '../../../errors';
-import { userManager } from '../../user/user.service';
+import { addPlayerXpInTransaction, userManager } from '../../user/user.service';
 import { getResult } from './dice.service';
 
 interface DiceRequestBody {
@@ -63,6 +63,12 @@ export const placeBet = async (
     });
 
     await userInstance.updateNonce(tx);
+
+    // Award XP based on wager amount (in major currency units)
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: betAmount,
+    });
 
     // Calculate new balance as a string
     const newBalance = (userBalanceInCents + balanceChangeInCents).toString();

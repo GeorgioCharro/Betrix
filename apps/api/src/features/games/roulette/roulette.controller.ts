@@ -14,7 +14,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 import { sum } from 'lodash';
 import { BadRequestError } from '../../../errors';
-import { userManager } from '../../user/user.service';
+import { addPlayerXpInTransaction, userManager } from '../../user/user.service';
 import { checkChallengesAfterBet } from '../../challenges/challenge.service';
 import { calculatePayout, spinWheel } from './roulette.service';
 
@@ -38,8 +38,9 @@ export const placeBetAndSpin = async (
   const userInstance = await userManager.getUser((request.user as User).id);
   const user = userInstance.getUser();
 
+  const totalBetAmount = sum(validBets.map(bet => bet.amount));
   const totalBetAmountInCents = Math.round(
-    sum(validBets.map(bet => bet.amount)) * 100
+    totalBetAmount * 100
   );
 
   const userBalanceInCents = userInstance.getBalanceAsNumber();
@@ -109,6 +110,12 @@ export const placeBetAndSpin = async (
     });
 
     await userInstance.updateNonce(tx);
+
+    // Award XP based on total wagered amount (in major currency units)
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: totalBetAmount,
+    });
 
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },

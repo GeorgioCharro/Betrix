@@ -24,11 +24,9 @@ enum Game {
   roulette
 }
 
-enum Level {
-  none
-  vip
-  vip_plus
-  diamond
+enum CaseOpenStatus {
+  pending
+  completed
 }
 
 model User {
@@ -43,7 +41,10 @@ model User {
   picture            String?
   balance            String              @default("126000") // Amount in cents (multiply by 100, default 10000.00)
   xp                 Int                 @default(0)
-  level              Level               @default(none)
+  /// Player level 1-100 from XP formula: round(100 * level^1.5). Monotonic, never decreases.
+  level              Int                 @default(1)
+  /// Total amount wagered across all games, in major currency units (e.g. dollars)
+  totalWagered       Float               @default(0) @map("total_wagered")
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   provablyFairStates ProvablyFairState[]
@@ -51,6 +52,7 @@ model User {
   deposits           Deposit[]
   withdraws          Withdraw[]
   progress           ChallengeProgress[]
+  caseOpens          CaseOpen[]
   @@map("users")
 }
 
@@ -146,4 +148,25 @@ model ChallengeProgress {
   @@index([userId])
   @@index([challengeId])
   @@map("challenge_progress")
+}
+
+model CaseOpen {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id])
+  caseId           String
+  winningItemName  String
+  winningItemValue Float
+  priceInCents     Int
+  payoutInCents    Int
+  status           CaseOpenStatus  @default(pending)
+  roll             Float
+  nonce            Int
+  serverSeedHash   String
+  clientSeed       String
+  createdAt        DateTime        @default(now())
+  completedAt      DateTime?
+
+  @@index([userId, status])
+  @@map("case_opens")
 }

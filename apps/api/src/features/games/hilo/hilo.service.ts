@@ -10,6 +10,7 @@ import {
 import { HILO_RANK_MIN, HILO_RANK_MAX } from '@repo/common/game-utils/hilo/constants.js';
 import type { HiloCard, HiloChoice } from '@repo/common/game-utils/hilo/types.js';
 import type { UserInstance } from '../../user/user.service';
+import { addPlayerXpInTransaction } from '../../user/user.service';
 
 export interface HiloStartCardResult {
   card: HiloCard;
@@ -130,7 +131,7 @@ export async function startHiloRound(
     throw new Error('No start card chosen. Use getHiloStartCard first.');
   }
 
-  const state = activeBet.state as HiloActiveState;
+  const state = activeBet.state as unknown as HiloActiveState;
   const currentCard = state.currentCard;
   if (!currentCard?.rank || !currentCard.suit) {
     throw new Error('Invalid round state');
@@ -170,6 +171,11 @@ export async function startHiloRound(
       },
     });
     await userInstance.updateNonce(tx);
+    // Award XP based on wager amount (in major currency units)
+    await addPlayerXpInTransaction(tx, {
+      userId,
+      wagerAmount: betAmount,
+    });
     const u = await tx.user.findUnique({ where: { id: userId } });
     return { balance: u!.balance };
   });
@@ -210,7 +216,7 @@ export async function getActiveHilo(userId: string): Promise<GetActiveHiloResult
   if (!bet?.state || !bet.betAmount || bet.betAmount <= 0) {
     return null;
   }
-  const s = bet.state as HiloActiveState & { accumulatedProfit?: number };
+  const s = bet.state as unknown as HiloActiveState & { accumulatedProfit?: number };
   if (!s.currentCard?.rank || !s.currentCard?.suit) return null;
   // Support old state format: accumulatedProfit was in cents
   const totalMultiplier =
@@ -267,7 +273,7 @@ export async function advanceHilo(params: AdvanceHiloParams): Promise<AdvanceHil
     throw new Error('No active Hilo round. Get a start card first.');
   }
 
-  const state = activeBet.state as HiloActiveState & { accumulatedProfit?: number };
+  const state = activeBet.state as unknown as HiloActiveState & { accumulatedProfit?: number };
   const currentCard = state.currentCard;
   if (!currentCard?.rank || !currentCard?.suit) {
     throw new Error('Invalid round state');
@@ -373,6 +379,14 @@ export async function advanceHilo(params: AdvanceHiloParams): Promise<AdvanceHil
       },
     });
     await userInstance.updateNonce(tx);
+    // If this is the first advance and no separate start round was used,
+    // award XP based on the wager amount here.
+    if (isFirstAdvance) {
+      await addPlayerXpInTransaction(tx, {
+        userId,
+        wagerAmount: betAmount,
+      });
+    }
     const u = await tx.user.findUnique({ where: { id: userId } });
     return { balance: u!.balance };
   });
@@ -421,7 +435,7 @@ export async function cashOutHilo(params: CashOutHiloParams): Promise<CashOutHil
     throw new Error('No active Hilo round to cash out.');
   }
 
-  const state = activeBet.state as HiloActiveState & { accumulatedProfit?: number };
+  const state = activeBet.state as unknown as HiloActiveState & { accumulatedProfit?: number };
   const totalMultiplier =
     state.totalMultiplier != null
       ? state.totalMultiplier

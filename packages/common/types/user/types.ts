@@ -6,10 +6,9 @@ export interface User {
   name: string | null;
   picture: string | null;
   xp: number;
-  level: Level;
+  level: number;
   updatedAt: string;
 }
-export type Level = 'none' | 'vip' | 'vip_plus' | 'diamond';
 export interface ProvablyFairStateResponse {
   clientSeed: string;
   hashedServerSeed: string;
@@ -51,7 +50,7 @@ export interface PaginatedUsersResponse {
     name: string | null;
     balance: number;
     xp: number;
-    level: Level;
+    level: number;
     createdAt: Date;
     updatedAt: Date;
   }[];

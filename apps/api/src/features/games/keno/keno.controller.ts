@@ -6,7 +6,7 @@ import db from '@repo/db';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 import { BadRequestError } from '../../../errors';
-import { userManager } from '../../user/user.service';
+import { addPlayerXpInTransaction, userManager } from '../../user/user.service';
 import { getResult } from './keno.service';
 
 export const placeBet = async (
@@ -55,6 +55,12 @@ export const placeBet = async (
     });
 
     await userInstance.updateNonce(tx);
+
+    // Award XP based on wager amount (in major currency units)
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: betAmount,
+    });
 
     // Calculate new balance as a string
     const newBalance = (userBalanceInCents + balanceChangeInCents).toString();

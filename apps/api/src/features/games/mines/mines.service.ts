@@ -12,7 +12,7 @@ import {
   convertFloatsToGameEvents,
   calculateMines,
 } from '@repo/common/game-utils/mines/utils.js';
-import { userManager } from '../../user/user.service';
+import { addPlayerXpInTransaction, userManager } from '../../user/user.service';
 import { payouts } from './mines.constant';
 
 class MinesManager {
@@ -72,6 +72,11 @@ class MinesManager {
         },
       });
       await userInstance.updateNonce(tx);
+      // Award XP based on wager amount (convert cents to major units)
+      await addPlayerXpInTransaction(tx, {
+        userId,
+        wagerAmount: betAmount / 100,
+      });
       return bet;
     });
     const game = new Mines(createdBet);

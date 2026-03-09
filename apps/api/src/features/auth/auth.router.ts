@@ -2,7 +2,6 @@ import passport from 'passport';
 import { hash } from 'bcrypt';
 import db from '@repo/db';
 import type { User } from '@prisma/client';
-import { Level } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { ApiResponse } from '@repo/common/types';
 import { Router } from 'express';
@@ -118,7 +117,7 @@ router.post('/register', async (req, res) => {
       dateOfBirth: new Date(dateOfBirth),
       code,
       xp: 0,
-      level: Level.none,
+      level: 1,
     },
   });
 

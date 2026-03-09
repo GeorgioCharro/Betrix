@@ -15,7 +15,7 @@ import type {
 } from '@repo/common/game-utils/blackjack/types.js';
 import { BadRequestError } from '../../../errors';
 import type { UserInstance } from '../../user/user.service';
-import { userManager } from '../../user/user.service';
+import { addPlayerXpInTransaction, userManager } from '../../user/user.service';
 
 interface GameCreationParams {
   userId: string;
@@ -109,6 +109,13 @@ class BlackjackManager {
         },
       });
       await userInstance.updateNonce(tx);
+
+      // Award XP based on wager amount (convert cents to major units)
+      await addPlayerXpInTransaction(tx, {
+        userId: userInstance.getUser().id,
+        wagerAmount: betAmount / 100,
+      });
+
       const userWithNewBalance = await tx.user.update({
         where: { id: userInstance.getUser().id },
         data: { balance: newBalanceInCents.toString() },

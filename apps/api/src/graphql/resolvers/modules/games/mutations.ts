@@ -13,7 +13,10 @@ import type {
 import { BlackjackActions } from '@repo/common/game-utils/blackjack/types.js';
 import type { DiceCondition } from '@repo/common/game-utils/dice/types.js';
 import type { KenoRisk } from '@repo/common/game-utils/keno/types.js';
-import { userManager } from '../../../../features/user/user.service';
+import {
+  addPlayerXpInTransaction,
+  userManager,
+} from '../../../../features/user/user.service';
 import { minesManager } from '../../../../features/games/mines/mines.service';
 import { chickenRoadManager } from '../../../../features/games/chicken-road/chicken-road.service';
 import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
@@ -80,6 +83,11 @@ export const placeDiceBet = async (
 
     await userInstance.updateNonce(tx);
 
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: betAmount,
+    });
+
     const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },
@@ -142,6 +150,11 @@ export const placeKenoBet = async (
     });
 
     await userInstance.updateNonce(tx);
+
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: betAmount,
+    });
 
     const newBalance = (userBalanceInCents + balanceChangeInCents).toString();
     const userWithNewBalance = await tx.user.update({
@@ -333,9 +346,8 @@ export const placeRouletteBet = async (
 
   const userInstance = await userManager.getUser((req.user as User).id);
   const user = userInstance.getUser();
-  const totalBetAmountInCents = Math.round(
-    validBets.reduce((sum, b) => sum + b.amount, 0) * 100
-  );
+  const totalBetAmount = validBets.reduce((sum, b) => sum + b.amount, 0);
+  const totalBetAmountInCents = Math.round(totalBetAmount * 100);
 
   const userBalanceInCents = userInstance.getBalanceAsNumber();
 
@@ -402,6 +414,11 @@ export const placeRouletteBet = async (
     });
 
     await userInstance.updateNonce(tx);
+
+    await addPlayerXpInTransaction(tx, {
+      userId: user.id,
+      wagerAmount: totalBetAmount,
+    });
 
     const userWithNewBalance = await tx.user.update({
       where: { id: user.id },

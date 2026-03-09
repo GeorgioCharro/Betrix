@@ -1,9 +1,24 @@
-import type { User, Level } from '@repo/common/types';
+import type { User } from '@repo/common/types';
 import { ChevronRightIcon, StarIcon, InfoIcon } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import CommonTooltip from '@/components/ui/common-tooltip';
 import { Progress } from '@/components/ui/progress';
+
+const MAX_LEVEL = 100;
+
+function getXpRequired(level: number): number {
+  const clamped = Math.min(Math.max(1, Math.floor(level)), MAX_LEVEL);
+  return Math.round(100 * Math.pow(clamped, 1.5));
+}
+
+function getLevelFromXp(xp: number): number {
+  let level = 1;
+  while (level < MAX_LEVEL && xp >= getXpRequired(level + 1)) {
+    level += 1;
+  }
+  return level;
+}
 
 export interface VipCardProps {
   user: Partial<User> & { username?: string };
@@ -12,50 +27,23 @@ export interface VipCardProps {
 export function VipCard({ user }: VipCardProps): JSX.Element {
   const displayName = user.username ?? user.name ?? user.email ?? '';
   const xp = user.xp ?? 0;
-  const level: Level = user.level ?? 'none';
+  const level = typeof user.level === 'number' ? user.level : getLevelFromXp(xp);
 
-  const nextLevelMap: Record<Level, Level> = {
-    none: 'vip',
-    vip: 'vip_plus',
-    vip_plus: 'diamond',
-    diamond: 'diamond',
-  };
+  const xpForCurrentLevel = level === 1 ? 0 : getXpRequired(level);
+  const xpForNextLevel =
+    level >= MAX_LEVEL ? null : getXpRequired(level + 1);
+  const progress =
+    level >= MAX_LEVEL || xpForNextLevel === null
+      ? 100
+      : Math.max(
+          0,
+          Math.min(
+            100,
+            (100 * (xp - xpForCurrentLevel)) /
+              (xpForNextLevel - xpForCurrentLevel)
+          )
+        );
 
-  const thresholds: Record<Level, number> = {
-    none: 0,
-    vip: 1000,
-    vip_plus: 5000,
-    diamond: 10000,
-  };
-
-  const nextThresholds: Record<Level, number> = {
-    none: 1000,
-    vip: 5000,
-    vip_plus: 10000,
-    diamond: 10000,
-  };
-
-  const prev = thresholds[level];
-  const next = nextThresholds[level];
-  const rawProgress =
-    level === 'diamond' ? 100 : ((xp - prev) / (next - prev)) * 100;
-  const progress = Math.max(0, Math.min(100, rawProgress));
-
-  const format = (lvl: Level): string => {
-    switch (lvl) {
-      case 'vip_plus':
-        return 'VIP +';
-      case 'vip':
-        return 'VIP';
-      case 'diamond':
-        return 'Diamond';
-      default:
-        return 'None';
-    }
-  };
-
-  const currentLabel = format(level);
-  const nextLabel = format(nextLevelMap[level]);
   return (
     <div className="relative w-[320px] h-[215px]">
       <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-md bg-[#0f212e] border border-[#1f2e3a] z-0" />
@@ -71,14 +59,14 @@ export function VipCard({ user }: VipCardProps): JSX.Element {
         <div className="space-y-1">
           <div className="flex items-center justify-between text-xs text-white font-bold">
             <div className="flex items-center gap-1">
-              <span>Your VIP Progress</span>
+              <span>Level progress</span>
               <ChevronRightIcon className="size-3" />
             </div>
             <div className="flex items-center gap-1">
               <span>{progress.toFixed(2)}%</span>
               <CommonTooltip
                 content={
-                  <p>Total bet amount and missions contributes with xp</p>
+                  <p>1 XP per 1 coin wagered. Level 1–100.</p>
                 }
               >
                 <InfoIcon className="size-3 cursor-pointer" />
@@ -91,11 +79,13 @@ export function VipCard({ user }: VipCardProps): JSX.Element {
         <div className="flex justify-between items-center text-xs mt-3">
           <div className="flex flex-col items-center gap-1">
             <StarIcon className="size-4 text-neutral-strong" />
-            <span className="text-neutral-weak">{currentLabel}</span>
+            <span className="text-neutral-weak">Level {level}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <StarIcon className="size-4 text-yellow-400" fill="currentColor" />
-            <span className="text-white font-medium">{nextLabel}</span>
+            <span className="text-white font-medium">
+              {level >= MAX_LEVEL ? 'Max' : `Level ${level + 1}`}
+            </span>
           </div>
         </div>
       </Card>
