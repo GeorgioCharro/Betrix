@@ -97,7 +97,9 @@ export function RegisterModal({
             msg = `Registration failed (${err.response.status}). Check that the API is running.`;
           } else {
             const apiUrl =
-              import.meta.env.VITE_APP_API_URL ?? 'http://localhost:5000';
+              (import.meta.env as any).REACT_API_URL ??
+              import.meta.env.VITE_APP_API_URL ??
+              'http://localhost:5000';
             msg =
               err.message ??
               `Registration failed. Is the API running at ${apiUrl}?`;
