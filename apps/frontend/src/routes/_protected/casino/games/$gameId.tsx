@@ -8,6 +8,7 @@ import { Mines } from '@/features/games/mines';
 import { Plinkoo } from '@/features/games/plinkoo';
 import { Roulette } from '@/features/games/roulette';
 import { Limbo } from '@/features/games/limbo';
+import { Crash } from '@/features/games/crash';
 import { Hilo } from '@/features/games/hilo';
 
 export const Route = createFileRoute('/_protected/casino/games/$gameId')({
@@ -34,6 +35,8 @@ function GamePage(): JSX.Element {
       return <ChickenRoad />;
     case 'limbo':
       return <Limbo />;
+    case 'crash':
+      return <Crash />;
     case 'hilo':
       return <Hilo />;
     default:

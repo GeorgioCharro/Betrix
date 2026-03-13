@@ -61,4 +61,10 @@ export const GAME_DESCRIPTIONS: Record<Games, GameDescriptionInfo> = {
       'Guess whether the next playing card will be higher, lower, or equal to your starting card. Choose your start card with Skip, then bet on Higher or Lower with a 2% house edge.',
     image: '/games/blackjack/blackjack-icon.png',
   },
+  [Games.CRASH]: {
+    title: 'Crash',
+    description:
+      'Watch the multiplier climb and cash out before the game crashes. Each round has a provably fair crash point with a 3% house edge. Time your exit carefully — if you wait too long and it crashes, you lose your bet.',
+    image: '/games/dice/dice-icon.png',
+  },
 };

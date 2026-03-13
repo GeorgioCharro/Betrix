@@ -18,6 +18,7 @@ export enum Games {
   CHICKEN_ROAD = 'chicken-road',
   LIMBO = 'limbo',
   HILO = 'hilo',
+  CRASH = 'crash',
 }
 
 export type Game = (typeof Games)[keyof typeof Games];
@@ -64,6 +65,11 @@ export const GAME_VALUES_MAPPING = {
     icon: ClubIcon,
     path: '/casino/games/hilo',
   },
+  [Games.CRASH]: {
+    label: 'Crash',
+    icon: Rocket,
+    path: '/casino/games/crash',
+  },
 };
 
 export const GAMES_DROPDOWN_OPTIONS = [
@@ -102,5 +108,9 @@ export const GAMES_DROPDOWN_OPTIONS = [
   {
     label: GAME_VALUES_MAPPING[Games.HILO].label,
     value: Games.HILO,
+  },
+  {
+    label: GAME_VALUES_MAPPING[Games.CRASH].label,
+    value: Games.CRASH,
   },
 ];

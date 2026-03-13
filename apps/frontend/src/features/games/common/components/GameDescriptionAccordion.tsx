@@ -96,6 +96,14 @@ const GAME_STATS: Record<
     provablyFair: 'Yes',
     demoMode: 'Yes',
   },
+  [Games.CRASH]: {
+    rtp: '97%',
+    houseEdge: '3%',
+    multiplier: '1.00x – ∞ (crash point)',
+    cashOut: 'Yes',
+    provablyFair: 'Yes',
+    demoMode: 'Yes',
+  },
 };
 
 export default function GameDescriptionAccordion({
