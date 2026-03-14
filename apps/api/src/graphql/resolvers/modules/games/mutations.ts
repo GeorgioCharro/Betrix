@@ -719,6 +719,22 @@ export const placeLimboBet = async (
   };
 };
 
+function buildHiloProvablyFair(
+  userInstance: {
+    getHashedServerSeed: () => string;
+    getClientSeed: () => string;
+    getNonce: () => number;
+  },
+  /** When provided, use this nonce (round's betNonce) so client can verify the round that just ended. */
+  roundNonce?: number
+) {
+  return {
+    serverSeedHash: userInstance.getHashedServerSeed(),
+    clientSeed: userInstance.getClientSeed(),
+    nonce: roundNonce !== undefined ? roundNonce : userInstance.getNonce(),
+  };
+}
+
 export const getHiloStartCard = async (
   _: unknown,
   __: Record<string, never>,
@@ -729,7 +745,11 @@ export const getHiloStartCard = async (
   }
   const user = req.user as User;
   const userInstance = await userManager.getUser(user.id);
-  return getHiloStartCardService(userInstance, user);
+  const result = await getHiloStartCardService(userInstance, user);
+  return {
+    ...result,
+    provablyFair: buildHiloProvablyFair(userInstance, result.roundNonce),
+  };
 };
 
 export const startHiloRound = async (
@@ -743,11 +763,15 @@ export const startHiloRound = async (
   const user = req.user as User;
   const { betAmount } = args;
   const userInstance = await userManager.getUser(user.id);
-  return startHiloRoundService({
+  const result = await startHiloRoundService({
     userInstance,
     userId: user.id,
     betAmount,
   });
+  return {
+    ...result,
+    provablyFair: buildHiloProvablyFair(userInstance, result.roundNonce),
+  };
 };
 
 export const advanceHilo = async (
@@ -764,12 +788,16 @@ export const advanceHilo = async (
     throw new Error('Choice must be "higher", "lower" or "equal"');
   }
   const userInstance = await userManager.getUser(user.id);
-  return advanceHiloService({
+  const result = await advanceHiloService({
     userInstance,
     userId: user.id,
     betAmount,
     choice: choice as 'higher' | 'lower' | 'equal',
   });
+  return {
+    ...result,
+    provablyFair: buildHiloProvablyFair(userInstance, result.roundNonce),
+  };
 };
 
 export const cashOutHilo = async (
@@ -782,5 +810,9 @@ export const cashOutHilo = async (
   }
   const user = req.user as User;
   const userInstance = await userManager.getUser(user.id);
-  return cashOutHiloService({ userInstance, userId: user.id });
+  const result = await cashOutHiloService({ userInstance, userId: user.id });
+  return {
+    ...result,
+    provablyFair: buildHiloProvablyFair(userInstance, result.roundNonce),
+  };
 };

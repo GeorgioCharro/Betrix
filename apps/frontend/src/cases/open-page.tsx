@@ -223,6 +223,7 @@ export function CaseOpenPage({ caseId }: CaseOpenPageProps): JSX.Element {
                           orientation="vertical"
                           slotSize={verticalSlotSize}
                           embeddedInGroup
+                          caseImage={caseDef.image}
                         />
                       </div>
                       {index < caseAmount - 1 && (
@@ -244,6 +245,7 @@ export function CaseOpenPage({ caseId }: CaseOpenPageProps): JSX.Element {
                     caseItems={caseDef.items}
                     onComplete={undefined}
                     orientation="horizontal"
+                    caseImage={caseDef.image}
                   />
                 )}
                 {results?.map((result, index) => (

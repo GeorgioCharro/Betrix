@@ -20,6 +20,8 @@ type CaseOpeningAnimationProps = {
   slotSize?: { width: number; height: number };
   /** When true, omit border/background so a single outer container can wrap multiple spinners. */
   embeddedInGroup?: boolean;
+  /** Case image to show above "Click Open Case to spin" when placeholder is visible. */
+  caseImage?: string;
 };
 
 const STRIP_LENGTH = 80;
@@ -97,6 +99,7 @@ export function CaseOpeningAnimation({
   orientation = 'horizontal',
   slotSize,
   embeddedInGroup = false,
+  caseImage,
 }: CaseOpeningAnimationProps): JSX.Element {
   const verticalViewportHeight = slotSize?.height ?? VERTICAL_VIEWPORT_HEIGHT;
   const startYVertical = getStartYVertical(verticalViewportHeight);
@@ -432,14 +435,23 @@ export function CaseOpeningAnimation({
       />
       {showPlaceholder && (
         <div
-          className={`flex items-center justify-center text-sm text-neutral-400 ${
-            slotSize ? 'h-full w-full' : compact ? 'h-12 min-h-12' : 'h-16 min-h-16'
+          className={`flex flex-col items-center justify-center gap-3 text-sm text-neutral-400 ${
+            slotSize ? 'h-full w-full' : compact ? 'h-12 min-h-12' : 'min-h-16'
           } ${orientation === 'vertical' && !slotSize ? 'w-full' : ''}`}
         >
           {isLoading ? (
             <span>Opening case…</span>
           ) : (
-            <span>Click Open Case to spin</span>
+            <>
+              {caseImage && (
+                <img
+                  src={caseImage}
+                  alt=""
+                  className="max-h-24 w-auto max-w-[140px] object-contain"
+                />
+              )}
+              <span>Click Open Case to spin</span>
+            </>
           )}
         </div>
       )}

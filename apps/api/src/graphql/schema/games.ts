@@ -213,8 +213,15 @@ export const gamesTypeDefs = gql`
     suit: String!
   }
 
+  type HiloProvablyFair {
+    serverSeedHash: String!
+    clientSeed: String!
+    nonce: Int!
+  }
+
   type HiloStartCardResponse {
     card: HiloCard!
+    provablyFair: HiloProvablyFair
   }
 
   type HiloBetState {
@@ -243,6 +250,7 @@ export const gamesTypeDefs = gql`
     multiplierHigher: Float!
     multiplierLower: Float!
     balance: Float!
+    provablyFair: HiloProvablyFair
   }
 
   type HiloAdvanceResponse {
@@ -257,12 +265,14 @@ export const gamesTypeDefs = gql`
     stepProfit: Float!
     balance: Float!
     lost: Boolean
+    provablyFair: HiloProvablyFair
   }
 
   type HiloCashOutResponse {
     id: ID!
     payout: Float!
     balance: Float!
+    provablyFair: HiloProvablyFair
   }
 
   extend type Query {

@@ -1,15 +1,79 @@
-import { HILO_HOUSE_EDGE, HILO_RANK_MAX, HILO_RANK_MIN } from './constants.js';
+import { HILO_RANK_MAX, HILO_RANK_MIN, HILO_RTP } from './constants.js';
+import { HILO_SUITS } from './constants.js';
 import type { HiloCard } from './types.js';
 
 /**
- * Compute P(higher), P(lower), P(equal) using an infinite-rank model.
+ * Create a standard 52-card deck in deterministic order:
+ * hearts 1..13, diamonds 1..13, clubs 1..13, spades 1..13.
+ */
+export function createOrderedDeck(): HiloCard[] {
+  const deck: HiloCard[] = [];
+  for (const suit of HILO_SUITS) {
+    for (let rank = HILO_RANK_MIN; rank <= HILO_RANK_MAX; rank++) {
+      deck.push({ rank, suit });
+    }
+  }
+  return deck;
+}
+
+/**
+ * Fisher–Yates shuffle using provably fair floats.
+ * getFloat(index) should return a number in [0, 1) for each index 0..(deck.length-2).
+ */
+export function shuffleDeck(
+  deck: HiloCard[],
+  getFloat: (index: number) => number
+): HiloCard[] {
+  const shuffled = [...deck];
+  let randomIndex = 0;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const rand = getFloat(randomIndex++);
+    const j = Math.floor(rand * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+  }
+  return shuffled;
+}
+
+/**
+ * Build a deck with a fixed first card and the remaining 51 cards shuffled.
+ * Used when starting the next round from a known card (e.g. after loss or cashout).
+ */
+export function createDeckWithFirstCard(
+  firstCard: HiloCard,
+  getFloat: (index: number) => number
+): HiloCard[] {
+  const full = createOrderedDeck();
+  const rest = full.filter(
+    (c) => !(c.rank === firstCard.rank && c.suit === firstCard.suit)
+  );
+  if (rest.length !== 51) {
+    throw new Error('createDeckWithFirstCard: firstCard not in deck');
+  }
+  const shuffledRest = shuffleDeck(rest, getFloat);
+  return [firstCard, ...shuffledRest];
+}
+
+/** Number of cards remaining after the start card is removed (52 - 1 = 51). */
+const CARDS_REMAINING = 51;
+
+/** Cards of the same rank but different suit (4 suits - 1 = 3). */
+const EQUAL_CARDS_COUNT = 3;
+
+/** Cards per rank in a standard deck. */
+const CARDS_PER_RANK = 4;
+
+/**
+ * Compute P(higher), P(lower), P(equal) using real deck probabilities.
  *
- * Ranks are 1..13 (A..K) and each rank is equally likely (1/13) on the next draw.
+ * Backend draws from a 52-card deck without replacement via floatToNextCard(startCard, float),
+ * so the next card is one of 51 remaining cards.
  *
- * For a current rank r:
- *   pHigher = (13 - r) / 13
- *   pLower  = (r - 1) / 13
- *   pEqual  = 1 / 13
+ * Distribution:
+ * - equal: 3 cards (same rank, other suits)
+ * - higher: 4 cards per rank above startRank
+ * - lower: 4 cards per rank below startRank
+ *
+ * Ensures RTP can be exactly 98% for all start cards when multipliers use RTP / probability.
  */
 export function getHiloProbabilities(startRank: number): {
   probabilityHigher: number;
@@ -17,40 +81,29 @@ export function getHiloProbabilities(startRank: number): {
   probabilityEqual: number;
 } {
   const rank = Math.max(HILO_RANK_MIN, Math.min(HILO_RANK_MAX, Math.round(startRank)));
-  const span = HILO_RANK_MAX - HILO_RANK_MIN + 1; // normally 13
 
-  const cardsHigher = HILO_RANK_MAX - rank;
-  const cardsLower = rank - HILO_RANK_MIN;
-  const cardsEqual = 1;
+  const higherCards = (HILO_RANK_MAX - rank) * CARDS_PER_RANK;
+  const lowerCards = (rank - HILO_RANK_MIN) * CARDS_PER_RANK;
 
   return {
-    probabilityHigher: span > 0 ? cardsHigher / span : 0,
-    probabilityLower: span > 0 ? cardsLower / span : 0,
-    probabilityEqual: span > 0 ? cardsEqual / span : 0,
+    probabilityHigher: higherCards / CARDS_REMAINING,
+    probabilityLower: lowerCards / CARDS_REMAINING,
+    probabilityEqual: EQUAL_CARDS_COUNT / CARDS_REMAINING,
   };
 }
 
 /**
- * Payout multipliers with 2% house edge in the infinite-rank model.
+ * Payout multipliers with 2% house edge (RTP 98%).
  *
- * Fair multiplier for a bet with win probability p is 1 / p.
- * With a fixed house edge (HILO_HOUSE_EDGE), we apply:
+ * Formula: multiplier = RTP / probability
+ * - When probability = 0 (e.g. lower at Ace, higher at King), multiplier = 0.
  *
- *   multiplier = RTP / p = (1 - HILO_HOUSE_EDGE) / p
- *
- * where RTP = 0.98 for a 2% house edge.
- *
- * These multipliers are *total* multipliers. Profit for a single step is:
- *
- *   profit = stake * (multiplier - 1)
- *
- * In the game, each correct guess multiplies a running totalMultiplier:
- *
+ * These are step multipliers. Each correct guess multiplies totalMultiplier:
  *   totalMultiplier = totalMultiplier * stepMultiplier
+ * Payout on cashout: stake * totalMultiplier.
  *
- * and final payout on cashout is:
- *
- *   payout = stake * totalMultiplier
+ * RTP verification: for every start rank 1..13, EV_higher = p_higher * mult_higher = RTP,
+ * and similarly for lower and equal (when p > 0).
  */
 export function getHiloMultipliers(startRank: number): {
   multiplierHigher: number;
@@ -60,19 +113,12 @@ export function getHiloMultipliers(startRank: number): {
   const { probabilityHigher, probabilityLower, probabilityEqual } =
     getHiloProbabilities(startRank);
 
-  const rtp = 1 - HILO_HOUSE_EDGE; // 0.98 for a 2% house edge
+  const rtp = HILO_RTP; // 0.98
 
   return {
-    // At A (rank 1), probabilityLower is 0, so multiplierLower becomes 0.
-    multiplierHigher:
-      probabilityHigher > 0 ? rtp / probabilityHigher : 0,
-    // At K (rank 13), probabilityHigher is 0, so multiplierHigher is 0 and
-    // probabilityLower drives the lower bet.
-    multiplierLower:
-      probabilityLower > 0 ? rtp / probabilityLower : 0,
-    // Equal always has probability 1/13 in this model.
-    multiplierEqual:
-      probabilityEqual > 0 ? rtp / probabilityEqual : 0,
+    multiplierHigher: probabilityHigher > 0 ? rtp / probabilityHigher : 0,
+    multiplierLower: probabilityLower > 0 ? rtp / probabilityLower : 0,
+    multiplierEqual: probabilityEqual > 0 ? rtp / probabilityEqual : 0,
   };
 }
 
@@ -114,4 +160,22 @@ export function compareHiloCards(start: HiloCard, next: HiloCard): 'higher' | 'l
   if (next.rank > start.rank) return 'higher';
   if (next.rank < start.rank) return 'lower';
   return 'equal';
+}
+
+/**
+ * Verify that for every start rank 1..13, EV = probability × multiplier equals RTP (0.98)
+ * for higher, lower, and equal (where probability > 0). Used for tests and audits.
+ */
+export function verifyHiloRtp(rtp: number = HILO_RTP): boolean {
+  for (let rank = HILO_RANK_MIN; rank <= HILO_RANK_MAX; rank++) {
+    const p = getHiloProbabilities(rank);
+    const m = getHiloMultipliers(rank);
+    if (p.probabilityHigher > 0 && Math.abs(p.probabilityHigher * m.multiplierHigher - rtp) > 1e-9)
+      return false;
+    if (p.probabilityLower > 0 && Math.abs(p.probabilityLower * m.multiplierLower - rtp) > 1e-9)
+      return false;
+    if (p.probabilityEqual > 0 && Math.abs(p.probabilityEqual * m.multiplierEqual - rtp) > 1e-9)
+      return false;
+  }
+  return true;
 }

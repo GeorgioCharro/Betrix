@@ -4,12 +4,23 @@ import type { ApiResponse } from '@repo/common/types';
 
 import { graphqlClient } from '../graphql/client';
 
+export interface HiloProvablyFair {
+  serverSeedHash: string;
+  clientSeed: string;
+  nonce: number;
+}
+
 const GET_HILO_START_CARD = gql`
   mutation GetHiloStartCard {
     getHiloStartCard {
       card {
         rank
         suit
+      }
+      provablyFair {
+        serverSeedHash
+        clientSeed
+        nonce
       }
     }
   }
@@ -25,6 +36,11 @@ const ACTIVE_HILO = gql`
       accumulatedProfit
       multiplierHigher
       multiplierLower
+      provablyFair {
+        serverSeedHash
+        clientSeed
+        nonce
+      }
     }
   }
 `;
@@ -40,6 +56,11 @@ const START_HILO_ROUND = gql`
       multiplierHigher
       multiplierLower
       balance
+      provablyFair {
+        serverSeedHash
+        clientSeed
+        nonce
+      }
     }
   }
 `;
@@ -58,6 +79,11 @@ const ADVANCE_HILO = gql`
       stepProfit
       balance
       lost
+      provablyFair {
+        serverSeedHash
+        clientSeed
+        nonce
+      }
     }
   }
 `;
@@ -68,12 +94,18 @@ const CASH_OUT_HILO = gql`
       id
       payout
       balance
+      provablyFair {
+        serverSeedHash
+        clientSeed
+        nonce
+      }
     }
   }
 `;
 
 export interface HiloStartCardResult {
   card: HiloCard;
+  provablyFair?: HiloProvablyFair;
 }
 
 export interface HiloActiveRoundResult {
@@ -85,6 +117,7 @@ export interface HiloActiveRoundResult {
   multiplierHigher: number;
   multiplierLower: number;
   balance?: number;
+  provablyFair?: HiloProvablyFair;
 }
 
 export interface HiloAdvanceResult {
@@ -99,12 +132,14 @@ export interface HiloAdvanceResult {
   stepProfit: number;
   balance: number;
   lost?: boolean;
+  provablyFair?: HiloProvablyFair;
 }
 
 export interface HiloCashOutResult {
   id: string;
   payout: number;
   balance: number;
+  provablyFair?: HiloProvablyFair;
 }
 
 export async function getHiloStartCard(): Promise<

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, ChevronUp, ChevronDown } from 'lucide-react';
+import { motion } from 'motion/react';
 
 import {
   getHiloStartCard,
@@ -26,8 +27,16 @@ import GameSettingsBar from '@/features/games/common/components/game-settings';
 import GameDescriptionAccordion from '@/features/games/common/components/GameDescriptionAccordion';
 import { BetAmountInput } from '@/features/games/common/components/BetAmountInput';
 import { BetButton } from '@/features/games/common/components/BettingControls';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { Card } from '@/features/games/blackjack/components/Card';
+
+const REVEAL_DELAY_MS = 600;
 
 const RANK_LABELS: Record<number, string> = {
   1: 'A',
@@ -67,6 +76,12 @@ export function Hilo(): JSX.Element {
   const [roundCards, setRoundCards] = useState<
     { card: HiloCard; cumulativeMultiplier: number }[]
   >([]);
+  const [revealing, setRevealing] = useState(false);
+  const [pendingRevealCard, setPendingRevealCard] = useState<HiloCard | null>(null);
+  const pendingAdvanceRef = useRef<{
+    res: { data: { nextCard: HiloCard; totalMultiplier?: number; lost?: boolean; betAmount: number; balance: number; id: string; currentCard: HiloCard; accumulatedProfit: number; outcome: string } };
+    currentCardForBase: HiloCard | null;
+  } | null>(null);
 
   const { data: activeRound, refetch: refetchActiveHilo } = useQuery({
     queryKey: ['activeHilo'],
@@ -93,62 +108,76 @@ export function Hilo(): JSX.Element {
     },
   });
 
+  const applyAdvanceResult = (res: { data: { nextCard: HiloCard; totalMultiplier?: number; lost?: boolean; betAmount: number; balance: number; id: string; currentCard: HiloCard; accumulatedProfit: number; outcome: string } }, currentCardForBase: HiloCard | null) => {
+    queryClient.setQueryData(['balance'], () => res.data.balance);
+    const totalMultiplierAfterStep = res.data.totalMultiplier ?? 1;
+    setRoundCards((prev) => {
+      const base =
+        prev.length === 0 && currentCardForBase
+          ? [{ card: currentCardForBase, cumulativeMultiplier: 1 }]
+          : prev;
+      return [
+        ...base,
+        { card: res.data.nextCard, cumulativeMultiplier: totalMultiplierAfterStep },
+      ];
+    });
+    if (res.data.lost) {
+      const stake = res.data.betAmount;
+      const nextBetAmount = res.data.balance >= stake ? stake : 0;
+      setLastResult({
+        type: 'lose',
+        nextCard: res.data.nextCard,
+        outcome: res.data.outcome,
+        displayCard: res.data.nextCard,
+      });
+      queryClient.setQueryData(['activeHilo'], () => null);
+      setSelectedSide('higher');
+      setBetAmount(nextBetAmount);
+      setHasPlacedInitialBet(false);
+      setStartCard(res.data.nextCard);
+      setRoundCards([{ card: res.data.nextCard, cumulativeMultiplier: 1 }]);
+    } else {
+      const mult = getHiloMultipliers(res.data.currentCard.rank);
+      queryClient.setQueryData(['activeHilo'], () => ({
+        id: res.data.id,
+        currentCard: res.data.currentCard,
+        betAmount: res.data.betAmount,
+        totalMultiplier: res.data.totalMultiplier,
+        accumulatedProfit: res.data.accumulatedProfit,
+        multiplierHigher: mult.multiplierHigher,
+        multiplierLower: mult.multiplierLower,
+      }));
+      setLastResult(null);
+      setHasPlacedInitialBet(false);
+    }
+    setRevealing(false);
+    setPendingRevealCard(null);
+    pendingAdvanceRef.current = null;
+  };
+
   const { mutate: doAdvance, isPending: isBetting } = useMutation({
     mutationFn: (choice: 'higher' | 'lower' | 'equal') =>
       advanceHilo(activeRound ? activeRound.betAmount : betAmount, choice),
     onSuccess: (res) => {
-      queryClient.setQueryData(['balance'], () => res.data.balance);
-      // Backend uses cumulative multiplier: totalMultiplier is the product of each step's mult.
-      const totalMultiplierAfterStep = res.data.totalMultiplier ?? 1;
-
-      setRoundCards((prev) => {
-        const base =
-          prev.length === 0 && currentCard
-            ? [{ card: currentCard, cumulativeMultiplier: 1 }]
-            : prev;
-        return [
-          ...base,
-          { card: res.data.nextCard, cumulativeMultiplier: totalMultiplierAfterStep },
-        ];
-      });
-      if (res.data.lost) {
-        const stake = res.data.betAmount;
-        const nextBetAmount =
-          res.data.balance >= stake ? stake : 0;
-        setLastResult({
-          type: 'lose',
-          nextCard: res.data.nextCard,
-          outcome: res.data.outcome,
-          displayCard: res.data.nextCard,
-        });
-        // End round immediately in UI and reset controls
-        queryClient.setQueryData(['activeHilo'], () => null);
-        setSelectedSide('higher');
-        setBetAmount(nextBetAmount);
-        setHasPlacedInitialBet(false);
-        // Next round will start from the losing card (server keeps it as start),
-        // so keep it as the visible start card and reset round history.
-        setStartCard(res.data.nextCard);
-        setRoundCards([{ card: res.data.nextCard, cumulativeMultiplier: 1 }]);
-      } else {
-        const mult = getHiloMultipliers(res.data.currentCard.rank);
-        queryClient.setQueryData(['activeHilo'], () => ({
-          id: res.data.id,
-          currentCard: res.data.currentCard,
-          betAmount: res.data.betAmount,
-          totalMultiplier: res.data.totalMultiplier,
-          accumulatedProfit: res.data.accumulatedProfit,
-          multiplierHigher: mult.multiplierHigher,
-          multiplierLower: mult.multiplierLower,
-        }));
-        setLastResult(null);
-        setHasPlacedInitialBet(false);
-      }
+      pendingAdvanceRef.current = { res, currentCardForBase: currentCard };
+      setPendingRevealCard(res.data.nextCard);
+      setRevealing(true);
     },
     onError: (err: Error) => {
       window.alert(err.message || 'Advance failed');
     },
   });
+
+  useEffect(() => {
+    if (!revealing || !pendingAdvanceRef.current) return;
+    const id = setTimeout(() => {
+      const pending = pendingAdvanceRef.current;
+      if (pending) {
+        applyAdvanceResult(pending.res, pending.currentCardForBase);
+      }
+    }, REVEAL_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [revealing]);
 
   const { mutate: doCashOut, isPending: isCashingOut } = useMutation({
     mutationFn: () => cashOutHilo(),
@@ -221,6 +250,7 @@ export function Hilo(): JSX.Element {
       : null;
 
   const currentCard = activeRound?.currentCard ?? startCard ?? losingCard ?? cashoutCard;
+  const displayCard = revealing && pendingRevealCard ? pendingRevealCard : currentCard;
   const multipliers = currentCard
     ? getHiloMultipliers(currentCard.rank)
     : { multiplierHigher: 0, multiplierLower: 0 };
@@ -310,15 +340,17 @@ export function Hilo(): JSX.Element {
   const isAdvanceDisabled =
     !currentCard ||
     isBetting ||
+    revealing ||
     (activeRound ? false : betAmount <= 0 || (balance != null && betAmount > balance));
 
   const isPrimaryDisabled = activeRound
-    ? isCashingOut || isBetting || !canCashOutNow
-    : isBetting || isCashingOut || (!hasPlacedInitialBet && isAdvanceDisabled);
+    ? isCashingOut || isBetting || revealing || !canCashOutNow
+    : isBetting || isCashingOut || revealing || (!hasPlacedInitialBet && isAdvanceDisabled);
 
-  const canAdvance = hasPlacedInitialBet || Boolean(activeRound);
+  const canAdvance = (hasPlacedInitialBet || Boolean(activeRound)) && !revealing;
 
   return (
+    <TooltipProvider>
     <div className="relative w-full">
       <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <div className="bg-brand-weak flex flex-col gap-4 p-3 w-full lg:w-1/4">
@@ -355,40 +387,96 @@ export function Hilo(): JSX.Element {
             </div>
           </div>
           <div className="mt-3 hidden sm:flex flex-col gap-2">
-            <button
-              type="button"
-              disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut}
-              onClick={() => {
-                if (!canAdvance || topOption.disabled || isBetting || isCashingOut) return;
-                setSelectedSide(topOption.key);
-                doAdvance(topOption.key);
-              }}
-              className={cn(
-                'flex h-10 w-full items-center justify-between rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-brand-stronger text-neutral-default border-neutral-weak/40'
-              )}
-            >
-              <span>{topOption.label}</span>
-              <span className="text-neutral-weak">
-                {topOption.pct > 0 ? topOption.pct.toFixed(2) : '0.00'}%
-              </span>
-            </button>
-            <button
-              type="button"
-              disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut}
-              onClick={() => {
-                if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut) return;
-                setSelectedSide(bottomOption.key);
-                doAdvance(bottomOption.key);
-              }}
-              className={cn(
-                'flex h-10 w-full items-center justify-between rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-brand-stronger text-neutral-default border-neutral-weak/40'
-              )}
-            >
-              <span>{bottomOption.label}</span>
-              <span className="text-neutral-weak">
-                {bottomOption.pct > 0 ? bottomOption.pct.toFixed(2) : '0.00'}%
-              </span>
-            </button>
+            {topOption.key === 'equal' ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing}
+                    onClick={() => {
+                      if (!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing) return;
+                      setSelectedSide(topOption.key);
+                      doAdvance(topOption.key);
+                    }}
+                    className={cn(
+                      'flex h-10 w-full flex-col items-start justify-center gap-0.5 rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-red-500 to-orange-500 text-white border-orange-400/80 shadow-[0_0_12px_rgba(249,115,22,0.4)]'
+                    )}
+                  >
+                    <span className="flex w-full items-center justify-between">
+                      <span>{topOption.label}</span>
+                      <span className="text-white/90">{topOption.pct > 0 ? topOption.pct.toFixed(2) : '0.00'}%</span>
+                    </span>
+                    <span className="text-[10px] text-white/80">
+                      {(probabilities.probabilityEqual * 100).toFixed(2)}% chance · {('multiplierEqual' in multipliers ? multipliers.multiplierEqual : 0).toFixed(2)}x multiplier
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[220px]">
+                  <p>Equal is rare (≈5.9%). This bet has high variance.</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <button
+                type="button"
+                disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing}
+                onClick={() => {
+                  if (!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing) return;
+                  setSelectedSide(topOption.key);
+                  doAdvance(topOption.key);
+                }}
+                className="flex h-10 w-full items-center justify-between rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-brand-stronger text-neutral-default border-neutral-weak/40"
+              >
+                <span>{topOption.label}</span>
+                <span className="text-neutral-weak">
+                  {topOption.pct > 0 ? topOption.pct.toFixed(2) : '0.00'}%
+                </span>
+              </button>
+            )}
+            {bottomOption.key === 'equal' ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing}
+                    onClick={() => {
+                      if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing) return;
+                      setSelectedSide(bottomOption.key);
+                      doAdvance(bottomOption.key);
+                    }}
+                    className={cn(
+                      'flex h-10 w-full flex-col items-start justify-center gap-0.5 rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-red-500 to-orange-500 text-white border-orange-400/80 shadow-[0_0_12px_rgba(249,115,22,0.4)]'
+                    )}
+                  >
+                    <span className="flex w-full items-center justify-between">
+                      <span>{bottomOption.label}</span>
+                      <span className="text-white/90">{bottomOption.pct > 0 ? bottomOption.pct.toFixed(2) : '0.00'}%</span>
+                    </span>
+                    <span className="text-[10px] text-white/80">
+                      {(probabilities.probabilityEqual * 100).toFixed(2)}% chance · {('multiplierEqual' in multipliers ? multipliers.multiplierEqual : 0).toFixed(2)}x multiplier
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[220px]">
+                  <p>Equal is rare (≈5.9%). This bet has high variance.</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <button
+                type="button"
+                disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing}
+                onClick={() => {
+                  if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing) return;
+                  setSelectedSide(bottomOption.key);
+                  doAdvance(bottomOption.key);
+                }}
+                className="flex h-10 w-full items-center justify-between rounded-md border px-3 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed bg-brand-stronger text-neutral-default border-neutral-weak/40"
+              >
+                <span>{bottomOption.label}</span>
+                <span className="text-neutral-weak">
+                  {bottomOption.pct > 0 ? bottomOption.pct.toFixed(2) : '0.00'}%
+                </span>
+              </button>
+            )}
           </div>
 
           <div className="mt-4">
@@ -433,9 +521,9 @@ export function Hilo(): JSX.Element {
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
-                  disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut}
+                  disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing}
                   onClick={() => {
-                    if (!canAdvance || topOption.disabled || isBetting || isCashingOut) return;
+                    if (!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing) return;
                     setSelectedSide(topOption.key);
                     doAdvance(topOption.key);
                   }}
@@ -445,92 +533,77 @@ export function Hilo(): JSX.Element {
                   <ChevronUp className="h-3 w-3 shrink-0" />
                   <div className="w-px flex-1 min-h-[44px] bg-neutral-weak/80 shrink-0" aria-hidden />
                 </button>
-                <div className="relative flex items-center sm:block shrink-0">
+                <div className="relative flex items-center sm:block shrink-0" style={{ perspective: '1000px' }}>
                   <div className="relative inline-flex flex-col items-center justify-center">
-                    {currentCard ? (
+                    {displayCard ? (
                       <>
-                        {/* Stacked cards: blurred clones underneath */}
-                        <Card
-                          rank={RANK_LABELS[currentCard.rank]}
-                          suit={
-                            currentCard.suit === 'hearts'
-                              ? 'H'
-                              : currentCard.suit === 'diamonds'
-                                ? 'D'
-                                : currentCard.suit === 'clubs'
-                                  ? 'C'
-                                  : 'S'
-                          }
-                          className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[10px] opacity-35 blur-[1px]"
-                        />
-                        <Card
-                          rank={RANK_LABELS[currentCard.rank]}
-                          suit={
-                            currentCard.suit === 'hearts'
-                              ? 'H'
-                              : currentCard.suit === 'diamonds'
-                                ? 'D'
-                                : currentCard.suit === 'clubs'
-                                  ? 'C'
-                                  : 'S'
-                          }
-                          className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[6px] opacity-55 blur-[0.5px]"
-                        />
-                        <Card
-                          rank={RANK_LABELS[currentCard.rank]}
-                          suit={
-                            currentCard.suit === 'hearts'
-                              ? 'H'
-                              : currentCard.suit === 'diamonds'
-                                ? 'D'
-                                : currentCard.suit === 'clubs'
-                                  ? 'C'
-                                  : 'S'
-                          }
-                          className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[3px] opacity-75"
-                        />
-                        <div
-                          key={`${currentCard.rank}-${currentCard.suit}-${activeRound ? 'active' : 'start'}`}
+                        {/* Stacked cards: blurred clones underneath (use currentCard for stack, displayCard for main) */}
+                        {!revealing && currentCard && (
+                          <>
+                            <Card
+                              rank={RANK_LABELS[currentCard.rank]}
+                              suit={currentCard.suit === 'hearts' ? 'H' : currentCard.suit === 'diamonds' ? 'D' : currentCard.suit === 'clubs' ? 'C' : 'S'}
+                              className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[10px] opacity-35 blur-[1px]"
+                            />
+                            <Card
+                              rank={RANK_LABELS[currentCard.rank]}
+                              suit={currentCard.suit === 'hearts' ? 'H' : currentCard.suit === 'diamonds' ? 'D' : currentCard.suit === 'clubs' ? 'C' : 'S'}
+                              className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[6px] opacity-55 blur-[0.5px]"
+                            />
+                            <Card
+                              rank={RANK_LABELS[currentCard.rank]}
+                              suit={currentCard.suit === 'hearts' ? 'H' : currentCard.suit === 'diamonds' ? 'D' : currentCard.suit === 'clubs' ? 'C' : 'S'}
+                              className="pointer-events-none absolute z-0 h-32 w-24 translate-y-[3px] opacity-75"
+                            />
+                          </>
+                        )}
+                        <motion.div
+                          key={revealing ? 'reveal' : `${displayCard.rank}-${displayCard.suit}-${activeRound ? 'active' : 'start'}`}
+                          initial={{ rotateY: revealing ? 180 : 0 }}
+                          animate={{ rotateY: 0 }}
+                          transition={{ duration: REVEAL_DELAY_MS / 1000 }}
+                          style={{ transformStyle: 'preserve-3d' }}
                           className={cn(
                             'relative z-10 h-32 w-24 rounded-[13px] overflow-hidden',
                             !activeRound &&
                             !startCard &&
+                            !revealing &&
                             lastResult?.type === 'lose' &&
                             lastResult.displayCard &&
-                            lastResult.displayCard.rank === currentCard.rank &&
-                            lastResult.displayCard.suit === currentCard.suit &&
+                            lastResult.displayCard.rank === displayCard.rank &&
+                            lastResult.displayCard.suit === displayCard.suit &&
                             'border-4 border-red-500',
                             !activeRound &&
                             !startCard &&
+                            !revealing &&
                             lastResult?.type === 'cashout' &&
                             lastResult.displayCard &&
-                            lastResult.displayCard.rank === currentCard.rank &&
-                            lastResult.displayCard.suit === currentCard.suit &&
+                            lastResult.displayCard.rank === displayCard.rank &&
+                            lastResult.displayCard.suit === displayCard.suit &&
                             'border border-emerald-400'
                           )}
                         >
                           <Card
-                            rank={RANK_LABELS[currentCard.rank]}
+                            rank={RANK_LABELS[displayCard.rank]}
                             suit={
-                              currentCard.suit === 'hearts'
+                              displayCard.suit === 'hearts'
                                 ? 'H'
-                                : currentCard.suit === 'diamonds'
+                                : displayCard.suit === 'diamonds'
                                   ? 'D'
-                                  : currentCard.suit === 'clubs'
+                                  : displayCard.suit === 'clubs'
                                     ? 'C'
                                     : 'S'
                             }
                             className="h-full w-full"
                           />
-                        </div>
+                        </motion.div>
                       </>
                     ) : (
                       <div className="h-32 w-24 rounded-lg bg-brand-weaker/50 border-2 border-dashed border-neutral-weak/40" />
                     )}
 
-                    {/* Skip is available any time there is a visible card and no request in flight.
-                      Anchor it to the top-right of the card itself. */}
-                    {!activeRound && currentCard && (
+                    {/* Skip is available when there is a visible card, no active round, and not revealing. */}
+                    {!activeRound && currentCard && !revealing && (
                       <button
                         type="button"
                         onClick={() => {
@@ -557,9 +630,9 @@ export function Hilo(): JSX.Element {
                 <div className="flex flex-col gap-2 shrink-0">
                   <button
                     type="button"
-                    disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut}
-                    onClick={() => {
-                      if (!canAdvance || topOption.disabled || isBetting || isCashingOut) return;
+                    disabled={!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing}
+                  onClick={() => {
+                    if (!canAdvance || topOption.disabled || isBetting || isCashingOut || revealing) return;
                       setSelectedSide(topOption.key);
                       doAdvance(topOption.key);
                     }}
@@ -576,9 +649,9 @@ export function Hilo(): JSX.Element {
                   </button>
                   <button
                     type="button"
-                    disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut}
+                    disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing}
                     onClick={() => {
-                      if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut) return;
+                      if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing) return;
                       setSelectedSide(bottomOption.key);
                       doAdvance(bottomOption.key);
                     }}
@@ -596,9 +669,9 @@ export function Hilo(): JSX.Element {
                 </div>
                 <button
                   type="button"
-                  disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut}
+                  disabled={!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing}
                   onClick={() => {
-                    if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut) return;
+                    if (!canAdvance || bottomOption.disabled || isBetting || isCashingOut || revealing) return;
                     setSelectedSide(bottomOption.key);
                     doAdvance(bottomOption.key);
                   }}
@@ -709,5 +782,6 @@ export function Hilo(): JSX.Element {
       <GameSettingsBar game={Games.HILO} />
       <GameDescriptionAccordion game={Games.HILO} />
     </div>
+    </TooltipProvider>
   );
 }

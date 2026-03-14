@@ -6,7 +6,24 @@ import { minesManager } from '../../../../features/games/mines/mines.service';
 import { chickenRoadManager } from '../../../../features/games/chicken-road/chicken-road.service';
 import { blackjackManager } from '../../../../features/games/blackjack/blackjack.service';
 import { getActiveHilo } from '../../../../features/games/hilo/hilo.service';
+import { userManager } from '../../../../features/user/user.service';
 import type { Context } from '../../common';
+
+function buildHiloProvablyFair(
+  userInstance: {
+    getHashedServerSeed: () => string;
+    getClientSeed: () => string;
+    getNonce: () => number;
+  },
+  /** When provided, use this nonce (round's betNonce) so client can verify the active round. */
+  roundNonce?: number
+) {
+  return {
+    serverSeedHash: userInstance.getHashedServerSeed(),
+    clientSeed: userInstance.getClientSeed(),
+    nonce: roundNonce !== undefined ? roundNonce : userInstance.getNonce(),
+  };
+}
 
 export const activeMines = async (
   _: unknown,
@@ -82,6 +99,13 @@ export const activeHilo = async (
   if (!req.isAuthenticated()) {
     throw new Error('Unauthorized');
   }
-  const userId = (req.user as User).id;
-  return getActiveHilo(userId);
+  const user = req.user as User;
+  const userId = user.id;
+  const round = await getActiveHilo(userId);
+  if (!round) return null;
+  const userInstance = await userManager.getUser(user.id);
+  return {
+    ...round,
+    provablyFair: buildHiloProvablyFair(userInstance, round.roundNonce),
+  };
 };
