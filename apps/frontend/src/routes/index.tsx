@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Club } from 'lucide-react';
+import { Club, Package } from 'lucide-react';
 import { useState } from 'react';
 
 import { Footer2 } from '@/components/footer2';
@@ -68,14 +68,21 @@ function HomePage(): JSX.Element {
                 )}
               </div>
 
-              {/* Promo Card */}
-              <div className="hidden justify-center sm:block w-full sm:w-auto">
+              {/* Promo Cards: Casino + Cases */}
+              <div className="hidden sm:flex w-full sm:w-auto justify-center gap-4 shrink-0">
                 <PromoCard
-                  className="w-80 shrink-0"
+                  className="w-80"
                   icon={Club}
                   imageSrc="/banner/casino.png"
                   navigateTo="/casino"
                   title="Casino"
+                />
+                <PromoCard
+                  className="w-80"
+                  icon={Package}
+                  imageSrc="/banner/cases banner.png"
+                  navigateTo="/cases"
+                  title="Cases"
                 />
               </div>
             </div>

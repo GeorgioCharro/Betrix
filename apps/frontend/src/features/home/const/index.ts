@@ -23,4 +23,20 @@ export const featuredGames = [
     id: 'blackjack',
     image: '/games/blackjack/blackjack-icon.png',
   },
+  {
+    id: 'limbo',
+    image: '/games/limbo/limbo.png',
+  },
+  {
+    id: 'hilo',
+    image: '/games/hilo/hilo.png',
+  },
+  {
+    id: 'chicken-road',
+    image: '/games/rocket/rocket blast.png',
+  },
+  {
+    id: 'crash',
+    image: '/games/crash/crash.png',
+  },
 ];
