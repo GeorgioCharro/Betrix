@@ -40,9 +40,9 @@ function ProtectedLayout(): JSX.Element {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen min-w-0">
       <SideMenu isOpen={isMenuOpen} onToggle={toggleMenu} />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Header />
         <Outlet />
       </div>

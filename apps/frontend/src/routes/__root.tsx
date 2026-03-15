@@ -50,10 +50,10 @@ function RootLayout(): JSX.Element {
   }, []);
 
   return (
-    <>
+    <div className="min-w-0 w-full max-w-[100vw] overflow-x-hidden">
       <Outlet />
       <LoginModal />
       {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
-    </>
+    </div>
   );
 }

@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { Card } from '@/features/games/blackjack/components/Card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const REVEAL_DELAY_MS = 600;
 
@@ -351,8 +352,8 @@ export function Hilo(): JSX.Element {
 
   return (
     <TooltipProvider>
-    <div className="relative w-full">
-      <div className="flex flex-col-reverse lg:flex-row w-full items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
+    <div className="relative min-w-0 w-full max-w-full overflow-x-hidden">
+      <div className="flex flex-col-reverse lg:flex-row w-full max-w-full min-w-0 items-stretch mx-auto rounded-t-md overflow-hidden shadow-md">
         <div className="bg-brand-weak flex flex-col gap-4 p-3 w-full lg:w-1/4">
           <div className="flex flex-col-reverse sm:flex-col gap-4">
             <BetAmountInput
@@ -495,7 +496,7 @@ export function Hilo(): JSX.Element {
           </div>
         </div>
 
-        <div className="relative flex-1 min-h-[320px] bg-brand-stronger flex flex-col items-center justify-center p-4 lg:p-8 gap-4">
+        <div className="relative flex-1 min-w-0 min-h-[320px] bg-brand-stronger flex flex-col items-center justify-center p-4 lg:p-8 gap-4">
           <div className="relative flex items-center justify-center mb-8 w-full max-w-2xl">
             {/* K = Highest (big screens only): card-style at left edge */}
             <div className="hidden sm:flex absolute left-2 sm:left-8 flex-col items-center gap-1.5 opacity-90">
@@ -708,41 +709,43 @@ export function Hilo(): JSX.Element {
           </div>
 
           {roundCards.length > 0 && (
-            <div className="mt-2 md:mt-4 w-full max-w-2xl px-3 md:px-4">
-              <div className="flex items-end gap-3 overflow-x-auto pb-1 md:pb-2">
-                {roundCards.map(({ card, cumulativeMultiplier }, idx) => (
-                  <div
-                    key={`${card.rank}-${card.suit}-${idx}`}
-                    className="flex flex-col items-center gap-1 flex-none"
-                  >
-                    <Card
-                      rank={RANK_LABELS[card.rank]}
-                      suit={
-                        card.suit === 'hearts'
-                          ? 'H'
-                          : card.suit === 'diamonds'
-                            ? 'D'
-                            : card.suit === 'clubs'
-                              ? 'C'
-                              : 'S'
-                      }
-                      className={cn(
-                        'h-20 w-14',
-                        idx === 0 && 'ring-2 ring-emerald-400/70'
+            <div className="mt-2 md:mt-4 min-w-0 w-full px-3 md:px-4">
+              <ScrollArea className="min-w-0">
+                <div className="flex items-end gap-3 min-w-max pb-2">
+                  {roundCards.map(({ card, cumulativeMultiplier }, idx) => (
+                    <div
+                      key={`${card.rank}-${card.suit}-${idx}`}
+                      className="flex flex-col items-center gap-1 flex-none"
+                    >
+                      <Card
+                        rank={RANK_LABELS[card.rank]}
+                        suit={
+                          card.suit === 'hearts'
+                            ? 'H'
+                            : card.suit === 'diamonds'
+                              ? 'D'
+                              : card.suit === 'clubs'
+                                ? 'C'
+                                : 'S'
+                        }
+                        className={cn(
+                          'h-20 w-14',
+                          idx === 0 && 'ring-2 ring-emerald-400/70'
+                        )}
+                      />
+                      {idx === 0 ? (
+                        <span className="mt-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[9px] font-semibold text-black">
+                          Start
+                        </span>
+                      ) : (
+                        <div className="mt-0.5 w-full rounded-sm border border-emerald-500 bg-emerald-600/20 px-1 py-[2px] text-[10px] font-semibold text-emerald-300 text-center">
+                          {cumulativeMultiplier.toFixed(2)}x
+                        </div>
                       )}
-                    />
-                    {idx === 0 ? (
-                      <span className="mt-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[9px] font-semibold text-black">
-                        Start
-                      </span>
-                    ) : (
-                      <div className="mt-0.5 w-full rounded-sm border border-emerald-500 bg-emerald-600/20 px-1 py-[2px] text-[10px] font-semibold text-emerald-300 text-center">
-                        {cumulativeMultiplier.toFixed(2)}x
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
           )}
 

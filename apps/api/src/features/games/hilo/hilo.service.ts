@@ -377,21 +377,23 @@ export async function advanceHilo(params: AdvanceHiloParams): Promise<AdvanceHil
   let newCurrentCard: HiloCard = currentCard;
   let active = true;
   let lost = false;
+  const isEdgeRank = currentCard.rank === 1 || currentCard.rank === 13;
 
   // Win: outcome matches choice (including outcome === 'equal' && choice === 'equal')
-  // Push: outcome === 'equal' but player did NOT choose equal → multiplier unchanged, round continues
-  // Lose: outcome !== choice and outcome !== 'equal'
   if (outcome === choice) {
     newTotalMultiplier = currentTotalMultiplier * mult;
     stepProfitCents = Math.round(stakeCents * (newTotalMultiplier - currentTotalMultiplier));
     newCurrentCard = nextCard;
-  } else if (outcome === 'equal') {
-    // Push: card advances, multiplier unchanged, no balance change
+  }
+  // Push: outcome === 'equal', player did NOT choose equal, and both higher/lower are possible
+  if (outcome === 'equal' && choice !== 'equal' && !isEdgeRank) {
     newTotalMultiplier = currentTotalMultiplier;
     stepProfitCents = 0;
     newCurrentCard = nextCard;
     active = true;
-  } else {
+  }
+  // Lose: outcome does not match choice and not a push (e.g. edge rank equal, or wrong direction)
+  if (outcome !== choice && !(outcome === 'equal' && choice !== 'equal' && !isEdgeRank)) {
     active = false;
     lost = true;
   }
